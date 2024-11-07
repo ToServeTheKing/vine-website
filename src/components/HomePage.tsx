@@ -9,7 +9,7 @@ const HomePage = () => {
         {/* Background Image */}
         <Image
           src="/images/ressources/main-banner.jpeg"
-          alt="Boulangerie Artisanale"
+          alt="Au Blé d'Or - Boulangerie Artisanale"
           fill
           priority
           className="object-cover"
@@ -46,7 +46,17 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {['Pains Traditionnels', 'Viennoiseries', 'Pâtisseries'].map((item, index) => (
               <div key={index} className="text-center p-6 bg-bakery-50 rounded-lg">
-                <h3 className="font-serif text-2xl mb-4">{item}</h3>
+                <h3 className="font-serif text-2xl mb-6">{item}</h3>
+                <div className="flex justify-center items-center mb-4">
+                  <Image
+                    src={`/images/gallery/${item.toLowerCase()}.png`}
+                    alt={item}
+                    width={300}
+                    height={200}
+                    className="object-cover rounded-[20px] border border-black/20 shadow-lg"
+                    priority={index < 3}
+                  />
+                </div>
                 <p className="text-bakery-700">Découvrez notre sélection de {item.toLowerCase()} préparés chaque jour avec amour.</p>
               </div>
             ))}
@@ -111,7 +121,7 @@ const HomePage = () => {
                 <p className="mb-2">123 Rue du Pain</p>
                 <p className="mb-2">75001 Paris</p>
                 <p className="mb-2">Tél: 01 23 45 67 89</p>
-                <p>Email: contact@boulangerie-artisanale.fr</p>
+                <p>Email: contact@blédor-artisanale.fr</p>
               </address>
             </div>
           </div>

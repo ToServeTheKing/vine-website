@@ -3,7 +3,6 @@ import Image from 'next/image';
 
 const Header = () => {
   const navItems = [
-    { label: 'Accueil', href: '/' },
     { label: 'Nos Produits', href: '/produits' },
     { label: 'Notre Histoire', href: '/notre-histoire' },
     { label: 'Commander', href: '/commander' },
@@ -18,13 +17,13 @@ const Header = () => {
           <Link href="/" className="flex items-center">
             <Image
               src="/images/ressources/logo.png"
-              alt="Boulangerie Artisanale"
-              width={50}
-              height={50}
+              alt="Au Blé d'Or - Boulangerie Artisanale"
+              width={60}
+              height={60}
               className="h-12 w-auto"
             />
             <span className="ml-3 font-serif text-xl text-bakery-800">
-              Boulangerie Artisanale
+              Au Blé d&apos;Or
             </span>
           </Link>
 

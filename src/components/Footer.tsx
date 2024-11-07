@@ -7,18 +7,21 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-1 md:col-span-2 flex items-center">
             <Image
               src="/images/ressources/logo.png"
-              alt="Boulangerie Artisanale"
+              alt="Au Blé d'Or - Boulangerie Artisanale"
               width={60}
               height={60}
-              className="mb-4"
+              className="mb-4 mr-4"
             />
-            <p className="text-bakery-200 max-w-md">
-              Artisans boulangers depuis 1987, nous perpétuons la tradition
-              du bon pain et des pâtisseries artisanales.
-            </p>
+            <div>
+              <h2 className="text-bakery-400 font-semibold mb-2 text-lg">Au Blé d&apos;Or</h2>
+              <p className="text-bakery-200 max-w-md">
+                Artisans boulangers depuis 1987, nous perpétuons la tradition
+                du bon pain et des pâtisseries artisanales.
+              </p>
+            </div>
           </div>
 
           {/* Navigation Links */}
@@ -57,7 +60,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-bakery-700 mt-8 pt-8 text-center text-bakery-300">
-          <p>© 2024 Boulangerie Artisanale. Tous droits réservés.</p>
+          <p>© 2024 Au Blé d&apos;Or - Boulangerie Artisanale. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
