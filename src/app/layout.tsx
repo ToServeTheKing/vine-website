@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Raleway } from "next/font/google";
 import "./globals.css";
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
@@ -34,7 +36,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${playfair.variable} ${raleway.variable}`}>
-      <body className="min-h-screen bg-bakery-50">{children}</body>
+      <body className="min-h-screen bg-bakery-50 flex flex-col">
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }

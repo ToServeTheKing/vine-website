@@ -5,21 +5,39 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[80vh] bg-bakery-100">
-        <div className="absolute inset-0 bg-black/30" />
+      <section className="relative h-[80vh]">
+        {/* Background Image */}
+        <Image
+          src="/images/ressources/main-banner.jpeg"
+          alt="Boulangerie Artisanale"
+          fill
+          priority
+          className="object-cover"
+          quality={90}
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+        
+        {/* Content */}
         <div className="relative container mx-auto px-4 h-full flex items-center">
           <div className="text-white max-w-2xl">
-            <h1 className="font-serif text-5xl mb-4">Boulangerie Artisanale</h1>
-            <p className="text-xl mb-8">Découvrez nos pains et pâtisseries faits maison avec passion depuis 1987</p>
-            <Link href="/commander" className="bg-bakery-600 hover:bg-bakery-700 text-white px-8 py-3 rounded-md inline-block transition">
+            <h1 className="font-serif text-5xl md:text-6xl mb-4">
+              Boulangerie Artisanale
+            </h1>
+            <p className="text-xl mb-8">
+              Découvrez nos pains et pâtisseries faits maison avec passion depuis 1987
+            </p>
+            <Link 
+              href="/commander" 
+              className="bg-bakery-600 hover:bg-bakery-700 text-white px-8 py-3 rounded-md inline-block transition"
+            >
               Commander en ligne
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Le reste du code reste identique, mais remplacez tous les `to=` par `href=` */}
-      {/* ... */}
+
 
       {/* Nos Spécialités */}
       <section className="py-16 bg-white">
