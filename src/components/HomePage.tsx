@@ -88,6 +88,33 @@ const HomePage = () => {
             Rejoignez notre programme de fidélité et bénéficiez d&apos;avantages exclusifs.
             Votre 10ème baguette offerte !
           </p>
+          
+          {/* Loyalty Card with Flip Effect */}
+          <div className="card-container max-w-2xl mx-auto h-[200px] mb-8">
+            <div className="card relative w-full h-full">
+              {/* Front of the card */}
+              <div className="card-front">
+                <Image
+                  src="/images/ressources/card-front.png"
+                  alt="Carte de fidélité - Recto"
+                  fill
+                  className="object-contain rounded-xl shadow-lg"
+                  priority
+                />
+              </div>
+              {/* Back of the card */}
+              <div className="card-back">
+                <Image
+                  src="/images/ressources/card-back.png"
+                  alt="Carte de fidélité - Verso"
+                  fill
+                  className="object-contain rounded-xl shadow-lg"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+
           <button className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition">
             Obtenir ma carte
           </button>
