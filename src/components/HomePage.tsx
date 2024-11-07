@@ -91,25 +91,27 @@ const HomePage = () => {
           
           {/* Loyalty Card with Flip Effect */}
           <div className="card-container max-w-2xl mx-auto aspect-[1.586/1] mb-8">
-            <div className="card relative w-full h-full rounded-2xl shadow-2xl">
+            <div className="card relative w-full h-full">
               {/* Front of the card */}
-              <div className="card-front absolute w-full h-full rounded-2xl overflow-hidden">
+              <div className="card-side card-front absolute w-full h-full rounded-[24px] overflow-hidden bg-bakery-600">
                 <Image
                   src="/images/ressources/card-front.png"
                   alt="Carte de fidélité - Recto"
                   fill
-                  className="object-cover"
+                  className="object-contain p-1"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               {/* Back of the card */}
-              <div className="card-back absolute w-full h-full rounded-2xl overflow-hidden">
+              <div className="card-side card-back absolute w-full h-full rounded-[24px] overflow-hidden bg-bakery-600">
                 <Image
                   src="/images/ressources/card-back.png"
                   alt="Carte de fidélité - Verso"
                   fill
-                  className="object-cover"
+                  className="object-contain p-1"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
             </div>
