@@ -49,7 +49,7 @@ const HomePage = () => {
                 <h3 className="font-serif text-2xl mb-6">{item}</h3>
                 <div className="flex justify-center items-center mb-4">
                   <Image
-                    src={`/images/gallery/${item.toLowerCase()}.png`}
+                    src={`/images/gallery/${item}.png`}
                     alt={item}
                     width={300}
                     height={200}
