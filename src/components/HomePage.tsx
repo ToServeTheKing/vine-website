@@ -75,7 +75,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl mb-8">Carte de Fidélité</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Rejoignez notre programme de fidélité et bénéficiez d'avantages exclusifs.
+            Rejoignez notre programme de fidélité et bénéficiez d&apos;avantages exclusifs.
             Votre 10ème baguette offerte !
           </p>
           <button className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition">
