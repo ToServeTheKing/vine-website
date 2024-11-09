@@ -39,8 +39,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/commander" className="text-bakery-200 hover:text-white transition">
-                  Commander
+                <Link href="/contact" className="text-bakery-200 hover:text-white transition">
+                  Contact
                 </Link>
               </li>
             </ul>

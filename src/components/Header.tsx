@@ -9,7 +9,6 @@ const Header = () => {
   const navItems = [
     { label: 'Nos Produits', href: '/produits' },
     { label: 'Notre Histoire', href: '/notre-histoire' },
-    { label: 'Commander', href: '/commander' },
     { label: 'Contact', href: '/contact' },
   ];
 
