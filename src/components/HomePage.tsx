@@ -32,7 +32,7 @@ const HomePage = () => {
               Découvrez nos pains et pâtisseries faits maison avec passion depuis 1987
             </p>
             <Link 
-              href="/commander" 
+              href="/produits" 
               className="bg-bakery-600 hover:bg-bakery-700 text-white px-8 py-3 rounded-md inline-block transition"
             >
               Commander en ligne
