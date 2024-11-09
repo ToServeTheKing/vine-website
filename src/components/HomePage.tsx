@@ -1,7 +1,12 @@
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
+import LoyaltyCardForm from './LoyaltyCardForm';
 
 const HomePage = () => {
+  const [isLoyaltyFormOpen, setIsLoyaltyFormOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -117,7 +122,10 @@ const HomePage = () => {
             </div>
           </div>
 
-          <button className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition">
+          <button 
+            onClick={() => setIsLoyaltyFormOpen(true)} 
+            className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition"
+          >
             Obtenir ma carte
           </button>
         </div>
@@ -156,6 +164,11 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      <LoyaltyCardForm 
+        isOpen={isLoyaltyFormOpen} 
+        onClose={() => setIsLoyaltyFormOpen(false)} 
+      />
     </div>
   );
 };
