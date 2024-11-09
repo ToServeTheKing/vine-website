@@ -2,10 +2,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import LoyaltyCardForm from './LoyaltyCardForm';
 
 const HomePage = () => {
-  const [isLoyaltyFormOpen, setIsLoyaltyFormOpen] = useState(false);
+  const [showLoyaltyForm, setShowLoyaltyForm] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -85,15 +84,16 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Carte de Fidélité */}
+      {/* Loyalty Card Section */}
       <section className="py-16 bg-bakery-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl mb-8">Carte de Fidélité</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Rejoignez notre programme de fidélité et bénéficiez d&apos;avantages exclusifs.
-            Votre 10ème baguette offerte !
-          </p>
-          
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="font-serif text-3xl mb-4">Carte de Fidélité</h2>
+            <p className="text-lg mb-8">
+              Profitez de nombreux avantages avec notre carte de fidélité
+            </p>
+          </div>
+
           {/* Loyalty Card with Flip Effect */}
           <div className="card-container max-w-2xl mx-auto aspect-[1.586/1] mb-8">
             <div className="card relative w-full h-full">
@@ -122,12 +122,111 @@ const HomePage = () => {
             </div>
           </div>
 
-          <button 
-            onClick={() => setIsLoyaltyFormOpen(true)} 
-            className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition"
-          >
-            Obtenir ma carte
-          </button>
+          {/* Button and Form Section */}
+          <div className="max-w-2xl mx-auto">
+            <button 
+              onClick={() => setShowLoyaltyForm(!showLoyaltyForm)}
+              className="bg-white text-bakery-600 px-8 py-3 rounded-md hover:bg-bakery-50 transition mb-8 mx-auto block"
+            >
+              {showLoyaltyForm ? 'Masquer le formulaire' : 'Obtenir ma carte'}
+            </button>
+
+            {/* Form */}
+            {showLoyaltyForm && (
+              <div className="bg-white text-bakery-800 rounded-lg p-6 mt-8 shadow-lg">
+                <h3 className="font-serif text-2xl mb-6">Demande de Carte de Fidélité</h3>
+                
+                <form className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Prénom
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Nom
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Âge
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Adresse
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Code Postal
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Ville
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      className="w-full px-3 py-2 border border-bakery-200 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-500"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-bakery-600 text-white py-3 px-4 rounded-md hover:bg-bakery-700 transition duration-200 mt-6"
+                  >
+                    Demander ma carte
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -164,11 +263,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
-      <LoyaltyCardForm 
-        isOpen={isLoyaltyFormOpen} 
-        onClose={() => setIsLoyaltyFormOpen(false)} 
-      />
     </div>
   );
 };

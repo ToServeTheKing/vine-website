@@ -26,7 +26,7 @@ const Header = () => {
               height={60}
               className="h-12 w-auto"
             />
-            <span className="ml-3 font-serif text-xl text-bakery-800">
+            <span className="ml-3 font-serif text-2xl text-bakery-800">
               Au Blé d&apos;Or
             </span>
           </Link>
@@ -71,7 +71,13 @@ const Header = () => {
         `}>
           <div className="p-4">
             <div className="flex justify-between items-center mb-8">
-              <span className="font-serif text-xl text-bakery-800">Menu</span>
+              <span className="font-serif text-xl text-bakery-800"><Image
+              src="/images/ressources/logo.png"
+              alt="Au Blé d'Or - Boulangerie Artisanale"
+              width={60}
+              height={60}
+              className="mb-4 mr-4"
+            /><p>Au Blé d&apos;Or</p></span>
               <button 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2"
