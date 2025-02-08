@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Logo from './Logo';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { label: 'Nos Produits', href: '/produits' },
-    { label: 'Notre Histoire', href: '/notre-histoire' },
+    { label: 'Our Products', href: '/products' },
+    { label: 'History', href: '/history' },
     { label: 'Contact', href: '/contact' },
   ];
 
@@ -17,19 +18,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/images/ressources/logo.png"
-              alt="Au Blé d'Or - Boulangerie Artisanale"
-              width={60}
-              height={60}
-              className="h-12 w-auto"
-            />
-            <span className="ml-3 font-serif text-2xl text-bakery-800">
-              Au Blé d&apos;Or
-            </span>
-          </Link>
-
+          <Logo logoColor="#40433c"/>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {navItems.map((item) => (
@@ -70,13 +59,7 @@ const Header = () => {
         `}>
           <div className="p-4">
             <div className="flex justify-between items-center mb-8">
-              <span className="font-serif text-xl text-bakery-800"><Image
-              src="/images/ressources/logo.png"
-              alt="Au Blé d'Or - Boulangerie Artisanale"
-              width={60}
-              height={60}
-              className="mb-4 mr-4"
-            /><p>Au Blé d&apos;Or</p></span>
+              <Logo logoColor='black'/>
               <button 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2"

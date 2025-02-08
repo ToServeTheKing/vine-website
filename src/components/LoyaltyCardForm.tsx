@@ -64,7 +64,7 @@ const LoyaltyCardForm = ({ isOpen, onClose }: LoyaltyCardFormProps) => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="font-serif text-2xl text-bakery-800">
+            <h2 className="font-sans text-2xl text-bakery-800">
               Demande de Carte de Fidélité
             </h2>
             <button
