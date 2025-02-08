@@ -6,13 +6,15 @@ import ProductModal from './ProductModal';
 import { products, categories } from '@/data/products';
 import type { Product } from '@/types/product';
 import LoadingSpinner from './LoadingSpinner';
-
+import 'react-awesome-slider/dist/styles.css';
+import AwesomeSlider from 'react-awesome-slider';
+  
 const ProductsPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('Tous');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const filteredProducts = selectedCategory === 'Tous'
+  const filteredProducts = selectedCategory === 'All'
     ? products
     : products.filter(product => product.category === selectedCategory);
 
@@ -29,16 +31,16 @@ const ProductsPage = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative h-[40vh] bg-bakery-900"
+        className="relative h-[40vh] bg-bakery-600"
       >
-        <div className="absolute inset-0 bg-black/40 bg-cover bg-center" style={{ backgroundImage: 'url(/images/ressources/produits-boutique.jpeg)', opacity: '0.6' }} />
+        <div className="absolute inset-0 bg-black/40 bg-cover bg-center" style={{ backgroundImage: 'url(/images/ressources/contact-bg.jpeg)', opacity: '0.6' }} />
         <div className="relative container mx-auto px-4 h-[45vh] flex items-center justify-center text-center">
           <div>
-            <h1 className="font-serif text-4xl md:text-5xl text-white mb-4">
-              Nos Produits
+            <h1 className="font-sans text-4xl md:text-5xl text-white mb-4">
+              Products
             </h1>
             <p className="text-white/90 text-lg max-w-2xl">
-              Découvrez notre sélection de produits artisanaux, préparés chaque jour avec passion
+              Explore our wide range of products crafted with the finest ingredients. Whether you're looking for something sweet or savory, we have something for everyone. Browse through our categories to find your perfect treat.
             </p>
           </div>
         </div>
@@ -86,42 +88,35 @@ const ProductsPage = () => {
                   className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
                 >
                   {/* Image Container */}
-                  <div 
-                    className="relative h-64 overflow-hidden cursor-pointer"
+                    <div 
+                    className="relative w-full overflow-hidden cursor-pointer"
                     onClick={() => setSelectedProduct(product)}
-                  >
-                    <div className="absolute inset-0 bg-bakery-200/20" />
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover transform group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+                    >
+                    <AwesomeSlider 
+                      bullets={false} 
+                      style={{ aspectRatio: '1 / 1' }} 
+                      organicArrows={product.images.length > 1}
+                      customContent={true}
+                      buttonContentLeft={product.images.length > 1 ? <span className="text-white text-2xl">{'<'}</span> : null}
+                      buttonContentRight={product.images.length > 1 ? <span className="text-white text-2xl">{'>'}</span> : null}
+                    >
+                      {product.images.map((image, index) => (
+                      <div key={index} data-src={image} />
+                      ))}
+                    </AwesomeSlider>
+                    </div>
 
                   {/* Content */}
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-serif text-xl text-bakery-800">
+                      <h3 className="font-sans text-xl text-bakery-800">
                         {product.name}
                       </h3>
-                      <span className="text-bakery-600 font-semibold">
-                        {product.price}
-                      </span>
                     </div>
-                    <p className="text-bakery-600/80 text-sm mb-4">
-                      {product.description}
-                    </p>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-bakery-500">
                         {product.category}
                       </span>
-                      <button 
-                        onClick={() => setSelectedProduct(product)}
-                        className="text-bakery-600 hover:text-bakery-800 text-sm font-medium transition-colors"
-                      >
-                        En savoir plus →
-                      </button>
                     </div>
                   </div>
                 </motion.div>
@@ -132,10 +127,10 @@ const ProductsPage = () => {
       </div>
 
       {/* Product Modal */}
-      <ProductModal 
+      {/* <ProductModal 
         product={selectedProduct} 
         onClose={() => setSelectedProduct(null)} 
-      />
+      /> */}
     </div>
   );
 };
