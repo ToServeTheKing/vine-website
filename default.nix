@@ -6,6 +6,7 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.nodejs
     pkgs.yarn
+    pkgs.firebase-tools
   ];
 
   # Install Next.js via yarn in the shell
