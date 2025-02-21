@@ -1,15 +1,15 @@
 'use client'
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 const HomePage = () => {
-  const [showLoyaltyForm, setShowLoyaltyForm] = useState(false);
+  // const [showLoyaltyForm, setShowLoyaltyForm] = useState(false);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-16 bg-bakery-600 text-white">"
+      <section className="relative py-16 bg-bakery-600 text-white">
         {/* Background Image */}
         {/* <Image
           src="/images/gallery/Outside.jpg"
@@ -82,7 +82,7 @@ const HomePage = () => {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="font-adbhashitha text-4xl mb-8" style={{ letterSpacing: '0.01em' }}>About Us</h2>
             <p className="text-lg mb-6">
-            Welcome to The Vine Bakery, where the warmth of home meets the heart of Princeville, IL. We're passionate about baking delicious, fresh goods that bring people together. Our cozy space invites you to gather with friends and family, sharing in the simple joy of homemade treats made with love and the finest ingredients. Come join us at The Vine and feel right at home.
+            Welcome to The Vine Bakery, where the warmth of home meets the heart of Princeville, IL. We are passionate about baking delicious, fresh goods that bring people together. Our cozy space invites you to gather with friends and family, sharing in the simple joy of homemade treats made with love and the finest ingredients. Come join us at The Vine and feel right at home.
             </p>
             <Link href="/notre-histoire" className="text-white hover:text-bakery-700 font-semibold">
               Learn More →

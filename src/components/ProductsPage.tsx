@@ -1,17 +1,14 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import ProductModal from './ProductModal';
 import { products, categories } from '@/data/products';
-import type { Product } from '@/types/product';
 import LoadingSpinner from './LoadingSpinner';
 import 'react-awesome-slider/dist/styles.css';
 import AwesomeSlider from 'react-awesome-slider';
   
 const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  // const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const filteredProducts = selectedCategory === 'All'
@@ -40,7 +37,7 @@ const ProductsPage = () => {
               Products
             </h1>
             <p className="text-white/90 text-lg max-w-2xl">
-              Explore our wide range of products crafted with the finest ingredients. Whether you're looking for something sweet or savory, we have something for everyone. Browse through our categories to find your perfect treat.
+              Explore our wide range of products crafted with the finest ingredients. Whether you are looking for something sweet or savory, we have something for everyone. Browse through our categories to find your perfect treat.
             </p>
           </div>
         </div>
@@ -89,9 +86,7 @@ const ProductsPage = () => {
                 >
                   {/* Image Container */}
                     <div 
-                    className="relative w-full overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedProduct(product)}
-                    >
+                    className="relative w-full overflow-hidden cursor-pointer">
                     <AwesomeSlider 
                       bullets={false} 
                       style={{ aspectRatio: '1 / 1' }} 
