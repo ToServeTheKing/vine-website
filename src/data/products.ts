@@ -1,6 +1,6 @@
 import { Product } from '@/types/product';
 
-export const categories = ['All', 'Cookies', 'Cakes', 'Rolls', 'Pie', 'Brownies'];
+export const categories = ['All', 'Cookies', 'Cakes', 'Rolls', 'Pie', 'Brownies', 'Pastries'];
 
 export const products: Product[] = [
   {
@@ -32,13 +32,13 @@ export const products: Product[] = [
   {
     id: 4,
     name: "Blueberry Cream Pie",
-    category: "Pastries",
+    category: "Pie",
     images: ["/images/products/blueberry_cream_pie.jpg"],
   },
   {
     id: 5,
     name: "Bridesmaids Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/bridesmaids_sugar_cookies.jpg",
       "/images/products/bridesmaids_sugar_cookies2.jpg"
@@ -53,7 +53,7 @@ export const products: Product[] = [
   {
     id: 7,
     name: "Caramel Rolls",
-    category: "Pastries",
+    category: "Rolls",
     images: ["/images/products/carmel_rolls.jpg"],
   },
   {
@@ -71,7 +71,7 @@ export const products: Product[] = [
   {
     id: 10,
     name: "Christmas Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/christmas_sugar_cookies.jpg",
       "/images/products/christmas_sugar_cookies2.jpg"
@@ -89,7 +89,7 @@ export const products: Product[] = [
   {
     id: 12,
     name: "Cookie Bars",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/cookie_bars.jpg",
       "/images/products/cookie_bars2.jpg"
@@ -98,7 +98,7 @@ export const products: Product[] = [
   {
     id: 13,
     name: "Cinnamon Rolls",
-    category: "Pastries",
+    category: "Rolls",
     images: ["/images/products/cinnamonrolls.jpg"],
   },
   {
@@ -113,13 +113,13 @@ export const products: Product[] = [
   {
     id: 15,
     name: "Cow Cupcakes",
-    category: "Pastries",
+    category: "Cakes",
     images: ["/images/products/cow_cupcakes.jpg"],
   },
   {
     id: 16,
     name: "Doggy Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/doggy_sugar_cookies.jpg",
       "/images/products/doggy_sugar_cookies2.jpg",
@@ -129,7 +129,7 @@ export const products: Product[] = [
   {
     id: 17,
     name: "Fall Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/fall_sugar_cookies.jpg",
       "/images/products/fall_sugar_cookies2.jpg"
@@ -138,7 +138,7 @@ export const products: Product[] = [
   {
     id: 18,
     name: "Flower Cupcakes",
-    category: "Pastries",
+    category: "Cakes",
     images: ["/images/products/flower_cupcakes.jpg"],
   },
   {
@@ -194,13 +194,13 @@ export const products: Product[] = [
   {
     id: 24,
     name: "Oreo Brownies",
-    category: "Pastries",
+    category: "Brownies",
     images: ["/images/products/oreo_brownies.jpg"],
   },
   {
     id: 25,
     name: "Peanut Butter Cookie Cake",
-    category: "Pastries",
+    category: "Cakes",
     images: [
       "/images/products/peanutbutter_cookie_cake.jpg",
       "/images/products/peanutbutter_cookie_cake2.jpg"
@@ -215,7 +215,7 @@ export const products: Product[] = [
   {
     id: 27,
     name: "Princeville Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/princeville_sugar_cookies.jpg",
       "/images/products/princeville_sugar_cookies2.jpg",
@@ -227,7 +227,7 @@ export const products: Product[] = [
   {
     id: 28,
     name: "Princeville XC Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/princeville_xc_sugar_cookies.jpg",
       "/images/products/princeville_xc_sugar_cookies2.jpg"
@@ -252,7 +252,7 @@ export const products: Product[] = [
   {
     id: 31,
     name: "Rainbow Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/rainbow_sugar_cookies.jpg",
       "/images/products/rainbow_sugar_cookies2.jpg"
@@ -273,7 +273,7 @@ export const products: Product[] = [
   {
     id: 34,
     name: "Soccer Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: [
       "/images/products/soccer_sugar_cookies.jpg",
       "/images/products/soccer_sugar_cookies2.jpg"
@@ -282,13 +282,13 @@ export const products: Product[] = [
   {
     id: 35,
     name: "Speciality Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: ["/images/products/speciality_cookies.jpg"],
   },
   {
     id: 36,
     name: "Strawberry Pie",
-    category: "Pastries",
+    category: "Pies",
     images: [
       "/images/products/strawberry_pie.jpg",
       "/images/products/strawberry_pie2.jpg",
@@ -298,7 +298,7 @@ export const products: Product[] = [
   {
     id: 37,
     name: "Timecapsul Sugar Cookies",
-    category: "Pastries",
+    category: "Cookies",
     images: ["/images/products/timecapsul_sugar_cookies.jpg"],
   },
   {
@@ -310,7 +310,7 @@ export const products: Product[] = [
   {
     id: 39,
     name: "Valentines Cookie Cakes",
-    category: "Pastries",
+    category: "Cakes",
     images: [
       "/images/products/valentines_cookie_cakes.jpg",
       "/images/products/valentines_cookie_cakes2.jpg",
