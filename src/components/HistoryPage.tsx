@@ -31,7 +31,7 @@ const HistoryPage = () => {
             Our bakery was founded in 1920 by John Doe, a passionate baker with a dream to bring the finest baked goods to the community. Over the years, our bakery has grown and evolved, but our commitment to quality and tradition has remained the same.
           </p>
           <p className="mb-4">
-            In the early days, John would wake up before dawn to prepare fresh bread and pastries for the day. His dedication and hard work quickly earned him a loyal customer base. As the bakery's reputation grew, so did its offerings. Today, we offer a wide variety of baked goods, from classic breads and pastries to modern cakes and desserts.
+            In the early days, John would wake up before dawn to prepare fresh bread and pastries for the day. His dedication and hard work quickly earned him a loyal customer base. As the bakerys reputation grew, so did its offerings. Today, we offer a wide variety of baked goods, from classic breads and pastries to modern cakes and desserts.
           </p>
           <p className="mb-4">
             Throughout the decades, our bakery has remained a family-owned business. Each generation has brought new ideas and innovations, while staying true to the values and traditions that John established. We are proud to be a part of this community and to continue serving our customers with the same passion and dedication that started it all.

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import Logo_R from 'public/images/resources/logo_R.svg';
 import Logo_L from 'public/images/resources/logo_L.svg';
 

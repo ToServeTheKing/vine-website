@@ -31,14 +31,22 @@ const lejour = localFont({
 
 export const metadata: Metadata = {
   title: "The Vine Coffeehouse & Bakery",
-  description: "Boulangerie artisanale proposant des Breads traditionnels, Pastries et Cakes faits maison avec des products de qualité.",
-  keywords: "boulangerie, pâtisserie, pain artisanal, Pastries, gâteaux, Cakes françaises",
-  metadataBase: new URL('https://votre-domaine.fr'),
+  description: "Artisanal bakery and coffeehouse in Princeville, IL offering traditional breads, pastries, and cakes made with quality ingredients.",
+  keywords: "bakery, coffeehouse, artisanal bread, pastries, cakes, Princeville IL",
+  metadataBase: new URL('https://itsthevine.com'),
   openGraph: {
     title: 'The Vine Coffeehouse & Bakery',
-    description: 'Découvrez nos Breads et Cakes artisanales',
+    description: 'Discover The Vine Coffeehouse and Bakery in Princeville, IL',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/images/og/gallery.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Products of The Vine'
+      },
+    ],
   },
 };
 

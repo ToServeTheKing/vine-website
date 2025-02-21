@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import type { Product } from '@/types/product';
 import AwesomeSlider from 'react-awesome-slider';
 import "keen-slider/keen-slider.min.css"
