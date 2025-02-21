@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link';
-import Image from 'next/image';
 // import { useState } from 'react';
 
 const HomePage = () => {
@@ -26,14 +25,10 @@ const HomePage = () => {
         <div className="relative container mx-auto px-4 h-full flex items-center">
             <div className="text-white max-w-2xl">
               <div className="w-full">
-                <Image
+                <img
                 src="/images/vine_logo/linen_mist.png"
                 alt="The Vine Coffeehouse & Bakery"
-                width={2}
-                height={1}
-                layout="responsive"
                 className="object-cover"
-                quality={90}
                 />
               </div>
               <p className="text-xl mb-8">
@@ -60,13 +55,12 @@ const HomePage = () => {
               <div key={index} className="text-center p-6 bg-bakery-50 rounded-lg">
                 <h3 className="font-sans text-2xl mb-6">{item}</h3>
                 <div className="flex justify-center items-center mb-4">
-                  <Image
+                  <img
                     src={`/images/gallery/${item}.png`}
                     alt={item}
                     width={300}
                     height={200}
                     className="object-cover rounded-[20px] border border-black/20 shadow-lg"
-                    priority={index < 3}
                   />
                 </div>
                 {/* <p className="text-bakery-700">Discover our selection of {item.toLowerCase()} prepared daily with love.</p> */}
