@@ -39,14 +39,6 @@ export const metadata: Metadata = {
     description: 'Discover The Vine Coffeehouse and Bakery in Princeville, IL',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: '/images/og/gallery.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Products of The Vine'
-      },
-    ],
   },
 };
 
