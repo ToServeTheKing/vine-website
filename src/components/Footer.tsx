@@ -37,10 +37,10 @@ const Footer = () => {
           <div>
             <h3 className="font-adbhashitha text-xl mb-4">Contact</h3>
             <ul className="space-y-2 text-bakery-200">
-              <li>123 Rue du Pain</li>
-              <li>75001 Paris</li>
-              <li>01 23 45 67 89</li>
-              <li>contact@boulangerie-artisanale.fr</li>
+              <li>215 E Main Street</li>
+              <li>Princeville, IL 61559</li>
+              <li>(309) 701-0660</li>
+              <li>contact@itsthevine.com</li>
             </ul>
           </div>
         </div>

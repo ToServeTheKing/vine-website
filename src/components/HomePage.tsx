@@ -93,7 +93,7 @@ const HomePage = () => {
               <h2 className="font-adbhashitha text-3xl mb-6">Our Hours</h2>
               <ul className="space-y-3">
                 <li className="flex justify-between">
-                  <span>Monday - Saturday</span>
+                  <span>Tuesday - Saturday</span>
                   <span>7:00am - 2:00pm</span>
                 </li>
                 <li className="flex justify-between">

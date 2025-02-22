@@ -1,0 +1,23 @@
+[debug] [2025-02-22T00:26:26.883Z] ----------------------------------------------------------------------
+[debug] [2025-02-22T00:26:26.885Z] Command:       /nix/store/i1jdnip70qb7yh4krlzsgyxs0zdvw7xv-nodejs-22.13.1/bin/node /nix/store/wp0dk1ch05688n2afbcwb5h1a0q9811y-firebase-tools-13.30.0/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy
+[debug] [2025-02-22T00:26:26.885Z] CLI Version:   13.30.0
+[debug] [2025-02-22T00:26:26.886Z] Platform:      linux
+[debug] [2025-02-22T00:26:26.886Z] Node Version:  v22.13.1
+[debug] [2025-02-22T00:26:26.886Z] Time:          Fri Feb 21 2025 18:26:26 GMT-0600 (Central Standard Time)
+[debug] [2025-02-22T00:26:26.886Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-02-22T00:26:27.079Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-02-22T00:26:27.080Z] > authorizing via signed-in user (austinthebennett@gmail.com)
+[debug] [2025-02-22T00:26:27.080Z] [iam] checking project itsthevine for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-02-22T00:26:27.081Z] Checked if tokens are valid: true, expires at: 1740187448918
+[debug] [2025-02-22T00:26:27.081Z] Checked if tokens are valid: true, expires at: 1740187448918
+[debug] [2025-02-22T00:26:27.082Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/itsthevine:testIamPermissions [none]
+[debug] [2025-02-22T00:26:27.082Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/itsthevine:testIamPermissions x-goog-quota-user=projects/itsthevine
+[debug] [2025-02-22T00:26:27.082Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/itsthevine:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-02-22T00:26:27.327Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/itsthevine:testIamPermissions 200
+[debug] [2025-02-22T00:26:27.327Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/itsthevine:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-02-22T00:26:27.328Z] Checked if tokens are valid: true, expires at: 1740187448918
+[debug] [2025-02-22T00:26:27.328Z] Checked if tokens are valid: true, expires at: 1740187448918
+[debug] [2025-02-22T00:26:27.328Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/itsthevine [none]
+[debug] [2025-02-22T00:26:27.503Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/itsthevine 200
+[debug] [2025-02-22T00:26:27.504Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/itsthevine {"projectId":"itsthevine","projectNumber":"314996668200","displayName":"itsthevine","name":"projects/itsthevine","resources":{"hostingSite":"itsthevine"},"state":"ACTIVE","etag":"1_e26b816a-014c-4b87-8a37-384db429b1e6"}
