@@ -40,6 +40,20 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
+  icons: {
+    icon: [
+      {
+        media: '(prefers-color-scheme: light)',
+        url: '/images/resources/logo_L.png',
+        href: '/images/resources/logo_L.png',
+      },
+      {
+        media: '(prefers-color-scheme: dark)',
+        url: '/images/resources/logo_dark.png',
+        href: '/images/resources/logo_dark.png',
+      },
+    ],
+  }
 };
 
 export default function RootLayout({
