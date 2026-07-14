@@ -5,14 +5,11 @@ in
 pkgs.mkShell {
   buildInputs = [
     pkgs.nodejs
-    pkgs.yarn
-    pkgs.firebase-tools
   ];
 
-  # Install Next.js via yarn in the shell
   shellHook = ''
     if ! [ -d "node_modules" ]; then
-      yarn add next react react-dom
+      npm install --legacy-peer-deps
     fi
   '';
 }

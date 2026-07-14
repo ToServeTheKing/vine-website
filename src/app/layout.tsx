@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Raleway } from "next/font/google";
+import { Raleway } from "next/font/google";
 import localFont from 'next/font/local';
 import "./globals.css";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-const playfair = Playfair_Display({ 
-  subsets: ["latin"],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const raleway = Raleway({ 
+const raleway = Raleway({
   subsets: ["latin"],
   variable: '--font-raleway',
   display: 'swap',
@@ -30,13 +24,13 @@ const lejour = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "The Vine Coffeehouse & Bakery",
-  description: "Artisanal bakery and coffeehouse in Princeville, IL offering traditional breads, pastries, and cakes made with quality ingredients.",
-  keywords: "bakery, coffeehouse, artisanal bread, pastries, cakes, Princeville IL",
+  title: "The Vine Coffeehouse + Bakery",
+  description: "A locally owned coffeehouse and bakery in downtown Princeville, Illinois. We bake pastries, custom cakes, cookies, and cinnamon rolls, and serve sandwiches, paninis, and coffee.",
+  keywords: "bakery, coffeehouse, pastries, custom cakes, cinnamon rolls, paninis, Princeville IL",
   metadataBase: new URL('https://itsthevine.com'),
   openGraph: {
-    title: 'The Vine Coffeehouse & Bakery',
-    description: 'Discover The Vine Coffeehouse and Bakery in Princeville, IL',
+    title: 'The Vine Coffeehouse + Bakery',
+    description: 'A locally owned coffeehouse and bakery in downtown Princeville, IL.',
     locale: 'en_US',
     type: 'website',
   },
@@ -62,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${raleway.variable} ${adbhashitha.variable} ${lejour.variable}`}>
+    <html lang="en" className={`${raleway.variable} ${adbhashitha.variable} ${lejour.variable}`}>
       <body className="min-h-screen bg-bakery-50 flex flex-col">
         <Header />
         <main className="flex-grow">

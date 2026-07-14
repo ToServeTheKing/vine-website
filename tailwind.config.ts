@@ -9,21 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Sage & Cream. 500 is the signature sage; 600+ are the darker tones that
+        // white text can actually sit on (500 on white is only 3.6:1 — too low).
         'bakery': {
-          50: '#f2f3f2',
-          100: '#d9dbd7',
-          200: '#c0c3bc',
-          300: '#a7aba1',
-          400: '#8e9386',
-          500: '#74796c',
-          600: '#5a5e54',
-          700: '#40433c',
-          800: '#272824',
-          900: '#0d0d0c',
+          50: '#faf7f0',
+          100: '#f0efe3',
+          200: '#dde0cc',
+          300: '#c3cbae',
+          400: '#a2ae8b',
+          500: '#7c8b6b',
+          600: '#5f6f52',
+          700: '#4a5740',
+          800: '#37412f',
+          900: '#232b1e',
         },
       },
       fontFamily: {
-        'serif': ['var(--font-playfair)'],
         'sans': ['var(--font-raleway)'],
         'adbhashitha': ['var(--font-adbhashitha)'],
         'lejour': ['var(--font-lejour)'],
