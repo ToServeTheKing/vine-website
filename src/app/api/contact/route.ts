@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 const { SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_TOKEN, CONTACT_TO, CONTACT_FROM } = process.env;
 
 export async function POST(request: Request) {
-  if (!SMTP_SERVER || !SMTP_PORT || !SMTP_USERNAME || !SMTP_TOKEN) {
+  if (!SMTP_SERVER || !SMTP_PORT) {
     console.error('contact: SMTP env vars missing');
     return NextResponse.json({ error: 'Email is not configured.' }, { status: 500 });
   }
@@ -36,8 +36,10 @@ export async function POST(request: Request) {
   const transporter = nodemailer.createTransport({
     host: SMTP_SERVER,
     port,
-    secure: port === 465, // 465 is implicit TLS; 587 upgrades via STARTTLS
-    auth: { user: SMTP_USERNAME, pass: SMTP_TOKEN },
+    secure: port === 465, // 465 is implicit TLS; 587/other upgrade via STARTTLS
+    auth: SMTP_USERNAME && SMTP_TOKEN ? { user: SMTP_USERNAME, pass: SMTP_TOKEN } : undefined,
+    // local Proton Bridge / SMTP relay presents a self-signed cert (CN=127.0.0.1) — trust it
+    tls: { rejectUnauthorized: false },
   });
 
   try {
