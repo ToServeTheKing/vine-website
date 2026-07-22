@@ -16,10 +16,10 @@ jobs:
       - name: Build image
         run: |
           docker build \
-            -t git.thebennett.net/austin/itsthevine:latest \
-            -t git.thebennett.net/austin/itsthevine:${{ github.sha }} .
+            -t git.thebennett.net/thevine/itsthevine:latest \
+            -t git.thebennett.net/thevine/itsthevine:${{ github.sha }} .
 
       - name: Push image
         run: |
-          docker push git.thebennett.net/austin/itsthevine:latest
-          docker push git.thebennett.net/austin/itsthevine:${{ github.sha }}
+          docker push git.thebennett.net/thevine/itsthevine:latest
+          docker push git.thebennett.net/thevine/itsthevine:${{ github.sha }}
