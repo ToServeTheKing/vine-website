@@ -4,6 +4,26 @@ import nodemailer from 'nodemailer';
 // Server-side only, so the SMTP credentials never reach the browser.
 const { SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_TOKEN, CONTACT_TO, CONTACT_FROM } = process.env;
 
+// Optional automation hub (n8n). When set, we also POST the enquiry here so it can
+// send the customer auto-reply and (later) create a CRM lead / task. Best-effort:
+// the direct email above is the reliable path, so a slow or down hub never blocks
+// — or fails — the contact form.
+const CONTACT_HUB_URL = process.env.CONTACT_HUB_URL;
+
+function notifyHub(payload: { name: string; email: string; message: string }) {
+  if (!CONTACT_HUB_URL) return;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4000);
+  fetch(CONTACT_HUB_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: controller.signal,
+  })
+    .catch((err) => console.error('contact: hub notify failed (non-fatal)', err))
+    .finally(() => clearTimeout(timeout));
+}
+
 export async function POST(request: Request) {
   if (!SMTP_SERVER || !SMTP_PORT) {
     console.error('contact: SMTP env vars missing');
@@ -54,6 +74,9 @@ export async function POST(request: Request) {
     console.error('contact: send failed', err);
     return NextResponse.json({ error: 'Could not send the message.' }, { status: 502 });
   }
+
+  // Email delivered — fan out to the automation hub (fire-and-forget).
+  notifyHub({ name, email, message });
 
   return NextResponse.json({ ok: true });
 }
