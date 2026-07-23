@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" media="(prefers-color-scheme: light)" href="/images/resources/logo_L.png">
+  <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/resources/logo_dark.png">
+  <!-- Preconnect to the photo bucket so product images start loading a round-trip sooner. -->
+  <link rel="preconnect" href="https://s3.thebennett.net" crossorigin>
+  <!-- PageMetaController rewrites the title and the four meta tags below per route, so crawlers and
+       link-preview scrapers get real per-page metadata instead of one generic shell. Keep the
+       attribute order and quoting as-is — it matches on them. -->
+  <title>The Vine Coffeehouse + Bakery</title>
+  <meta name="description" content="A locally owned coffeehouse and bakery in downtown Princeville, Illinois. We bake pastries, custom cakes, cookies, and cinnamon rolls, and serve sandwiches, paninis, and coffee.">
+  <meta property="og:title" content="The Vine Coffeehouse + Bakery">
+  <meta property="og:description" content="A locally owned coffeehouse and bakery in downtown Princeville, IL.">
+  <meta property="og:url" content="https://itsthevine.com">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta name="keywords" content="bakery, coffeehouse, pastries, custom cakes, cinnamon rolls, paninis, Princeville IL">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

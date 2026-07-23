@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.thebennett.platform</groupId>
+        <artifactId>platform-parent</artifactId>
+        <version>0.1.4</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.itsthevine</groupId>
+    <artifactId>itsthevine</artifactId>
+    <version>0.1.0</version>
+    <name>The Vine Coffeehouse + Bakery</name>
+    <description>Site for The Vine in Princeville, IL — menu, story, and contact form — on the Bennett platform.</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.thebennett.platform</groupId>
+                <artifactId>platform-bom</artifactId>
+                <version>0.1.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Boot 4.1 no longer manages the raw org.testcontainers:* module versions -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.21.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Platform releases live in the Gitea Maven registry (anonymous read). Declared here so Renovate
+         can discover new platform versions and open a bump PR. Maven still needs this repo in
+         settings.xml for PARENT resolution (see .gitea/ci-settings.xml). -->
+    <repositories>
+        <repository>
+            <id>gitea</id>
+            <url>https://git.thebennett.net/api/packages/austin/maven</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-data</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-contact</artifactId>
+        </dependency>
+        <!-- No starter-security: this is a public brochure site with nothing to sign in to, and no
+             starter-storage: the photos are served straight from the public MinIO bucket. -->
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- SPA build inherited from platform-parent (node install + npm build + copy dist -> jar). -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Brand fonts ship with the app rather than coming from Google — same look, no third-party request
+   on every page load. Raleway is the variable latin subset. */
+@font-face {
+  font-family: 'Raleway';
+  src: url('./fonts/raleway-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AdBhashitha';
+  src: url('./fonts/AdBhashitha.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LeJour Script';
+  src: url('./fonts/LeJour-Script.woff') format('woff');
+  font-display: swap;
+}
+
+@theme {
+  /* Sage & Cream. 500 is the signature sage; 600+ are the darker tones that white text can actually
+     sit on (500 on white is only 3.6:1 — too low). */
+  --color-bakery-50: #faf7f0;
+  --color-bakery-100: #f0efe3;
+  --color-bakery-200: #dde0cc;
+  --color-bakery-300: #c3cbae;
+  --color-bakery-400: #a2ae8b;
+  --color-bakery-500: #7c8b6b;
+  --color-bakery-600: #5f6f52;
+  --color-bakery-700: #4a5740;
+  --color-bakery-800: #37412f;
+  --color-bakery-900: #232b1e;
+
+  --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+  --font-adbhashitha: 'AdBhashitha', ui-serif, Georgia, serif;
+  --font-lejour: 'LeJour Script', ui-serif, Georgia, cursive;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Nothing on this site is meant to scroll sideways. */
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--color-bakery-50);
+  color: var(--color-bakery-900);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body { animation: none; opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Deliberately unlayered so it overrides Tailwind's own `container` utility — the site's gutters are
+   part of the layout, not the breakpoint default. */
+.container {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 40rem) {
+  .container { padding-inline: 1.5rem; }
+}
+@media (min-width: 64rem) {
+  .container { padding-inline: 2rem; }
+}
+
+::selection {
+  background-color: var(--color-bakery-300);
+  color: var(--color-bakery-900);
+}
