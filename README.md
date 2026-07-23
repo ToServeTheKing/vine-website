@@ -64,6 +64,8 @@ mvn verify
 | `SITE_BASE_URL` | absolute base for `og:url` |
 | `VITE_ASSET_BASE` / `site.assets.base-url` | photo bucket |
 
-`platform.contact.to` unset disables the contact starter, and the app won't start with a
-`ContactController` that has nothing to send with — so a missing `CONTACT_TO` fails loudly rather than
-silently dropping enquiries.
+A missing `CONTACT_TO` **stops the app from starting**. That is deliberate: `application.yaml` maps it
+to `platform.contact.to`, and an unset variable leaves the property present-but-empty, which is enough
+to activate the contact starter. Without the `@NotBlank` check in `platform-starter-contact` the site
+would come up, show a working contact form, and mail every enquiry to nobody. Better to fail on deploy
+than to lose a week of orders.
