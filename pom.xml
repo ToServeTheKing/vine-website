@@ -62,8 +62,16 @@
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-contact</artifactId>
         </dependency>
-        <!-- No starter-security: this is a public brochure site with nothing to sign in to, and no
-             starter-storage: the photos are served straight from the public MinIO bucket. -->
+        <!-- Admin needs a login, and uploading a product photo needs the bucket. The public site
+             still reads photos straight from the bucket's public URLs. -->
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-storage</artifactId>
+        </dependency>
 
         <!-- test -->
         <!-- Contract tests every app on the platform inherits. -->
@@ -75,6 +83,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- springSecurity() for MockMvc: without it the filter chain is absent and every protected
+             path answers 200, which would make a security test prove the opposite of what it says. -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
