@@ -25,8 +25,13 @@ jobs:
       - name: Test
         run: |
           set -euo pipefail
+          echo "--- hostname: $(hostname)"
+          echo "--- GITHUB_WORKSPACE: ${GITHUB_WORKSPACE:-unset}"
+          echo "--- pwd: $(pwd)"
+          echo "--- mounts of this job container:"
+          docker inspect "$(hostname)" --format '{{json .Mounts}}' || echo "  cannot inspect self"
           VOL=$(docker inspect "$(hostname)" \
-            --format '{{range .Mounts}}{{if eq .Destination "/workspace"}}{{.Name}}{{end}}{{end}}')
+            --format '{{range .Mounts}}{{if eq .Destination "/workspace"}}{{.Name}}{{end}}{{end}}' 2>/dev/null || true)
           if [ -z "$VOL" ]; then
             echo "could not find this job's workspace volume — refusing to skip the tests" >&2
             exit 1
