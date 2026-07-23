@@ -12,8 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 
-import org.hibernate.annotations.BatchSize;
-
 import net.thebennett.platform.data.BaseEntity;
 
 /** Something the bakery makes, with the photos that show it off. */
@@ -34,16 +32,11 @@ public class Product extends BaseEntity {
     /**
      * Object keys, not URLs — where the bucket lives is deployment configuration, so the absolute
      * URL is built at the edge of the app ({@code ProductCatalog}) rather than baked into the data.
-     *
-     * <p>{@code @BatchSize} because the products page loads the whole catalogue at once: without it
-     * Hibernate issues a separate query per product for its photos — forty-odd round trips for a page
-     * that needs two.
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_image", joinColumns = @JoinColumn(name = "product_id"))
     @OrderColumn(name = "position")
     @Column(name = "image_key", nullable = false, length = 300)
-    @BatchSize(size = 64)
     private List<String> imageKeys = new ArrayList<>();
 
     protected Product() {
@@ -57,15 +50,25 @@ public class Product extends BaseEntity {
         this.imageKeys = new ArrayList<>(imageKeys);
     }
 
-    /** Replaces every editable field — the admin form always submits the whole product. */
-    public void update(String name, String category, int position, List<String> imageKeys) {
+    /** Rename and/or refile the item; both are free text the editor typed. */
+    public void describe(String name, String category) {
         this.name = name;
         this.category = category;
+    }
+
+    /** Where this sits on the products page. Reordering renumbers the whole catalogue. */
+    public void moveTo(int position) {
         this.position = position;
-        // Mutate in place rather than reassigning: Hibernate tracks THIS list instance, and handing it
-        // a different one makes it delete and re-insert every row.
+    }
+
+    /**
+     * Replace the photo list wholesale. {@code @OrderColumn} makes Hibernate rewrite the tail of the
+     * collection on any insert or removal anyway, so there's nothing to gain from finer-grained
+     * mutators — and one path in means the stored order always matches what the editor arranged.
+     */
+    public void replacePhotos(List<String> keys) {
         this.imageKeys.clear();
-        this.imageKeys.addAll(imageKeys);
+        this.imageKeys.addAll(keys);
     }
 
     public String getName() { return name; }

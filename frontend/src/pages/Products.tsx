@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { fetchCategories, fetchProducts, type Product } from '@/lib/api';
 import ProductGallery from '@/components/ProductGallery';
 
@@ -38,10 +37,9 @@ const ProductsPage = () => {
         {/* Categories */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {categories.map((category) => (
-            <motion.button
+            <button
               key={category}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              type="button"
               onClick={() => setSelectedCategory(category)}
               className={`px-6 py-2 rounded-full border text-sm uppercase tracking-[0.12em] transition-colors ${
                 selectedCategory === category
@@ -50,7 +48,7 @@ const ProductsPage = () => {
               }`}
             >
               {category}
-            </motion.button>
+            </button>
           ))}
         </div>
 
@@ -61,39 +59,33 @@ const ProductsPage = () => {
           </p>
         )}
 
-        {/* Products Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          <AnimatePresence>
-            {products.map((product) => (
-              <motion.div
-                key={product.id}
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition duration-300"
-              >
-                {/* Image Container */}
-                <div className="relative w-full overflow-hidden">
-                  <ProductGallery images={product.images} alt={product.name} />
-                </div>
+        {/* Products Grid — deliberately unanimated. Filtering used to run a `layout` reflow plus
+            an enter/exit fade on every card, which on a 40-card grid reads as the page lurching
+            rather than responding. Swapping the list outright is instant, and the only motion
+            left is the shadow on hover. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="group bg-white rounded-3xl overflow-hidden shadow-xs transition-shadow duration-300 hover:shadow-lg"
+            >
+              {/* Image Container */}
+              <div className="relative w-full overflow-hidden">
+                <ProductGallery images={product.images} alt={product.name} />
+              </div>
 
-                {/* Content */}
-                <div className="p-6 text-center">
-                  <h3 className="font-adbhashitha text-xl text-bakery-900 mb-2 tracking-wide">
-                    {product.name}
-                  </h3>
-                  <span className="text-xs uppercase tracking-[0.15em] text-bakery-600">
-                    {product.category}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+              {/* Content */}
+              <div className="p-6 text-center">
+                <h3 className="font-adbhashitha text-xl text-bakery-900 mb-2 tracking-wide">
+                  {product.name}
+                </h3>
+                <span className="text-xs uppercase tracking-[0.15em] text-bakery-600">
+                  {product.category}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

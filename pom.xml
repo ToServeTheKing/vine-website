@@ -62,8 +62,10 @@
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-contact</artifactId>
         </dependency>
-        <!-- Admin needs a login, and uploading a product photo needs the bucket. The public site
-             still reads photos straight from the bucket's public URLs. -->
+        <!-- The site is still a public brochure, but the catalogue is now editable from it: the admin
+             screens sign in against Authentik (OIDC) and upload photos to the bucket. Both are off
+             unless platform.security.mode=OIDC, which is what gates the admin endpoints existing at
+             all — see AdminProductController. -->
         <dependency>
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-security</artifactId>
@@ -85,8 +87,8 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- springSecurity() for MockMvc: without it the filter chain is absent and every protected
-             path answers 200, which would make a security test prove the opposite of what it says. -->
+        <!-- springSecurity() for MockMvc — without it the filter chain is absent and every protected
+             path answers 200, so a security test would prove the opposite of what it claims. -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>

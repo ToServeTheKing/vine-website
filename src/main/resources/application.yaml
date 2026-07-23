@@ -36,30 +36,44 @@ platform:
   data:
     auditing:
       enabled: true
-  security:
-    # Public site: only the admin API needs a login. An allowlist of public paths would mean
-    # enumerating every static directory, and anything missed 401s — which is exactly how the
-    # confessions site broke its own cover images. mode=OIDC comes from the deploy env so tests
-    # stay on NONE.
-    authenticated-paths:
-      - /api/admin/**
-  storage:
-    endpoint: ${S3_ENDPOINT:https://s3.thebennett.net}
-    access-key: ${S3_ACCESS_KEY:}
-    secret-key: ${S3_SECRET_KEY:}
-    path-style-access: true
   contact:
     to: ${CONTACT_TO:}
     from: ${CONTACT_FROM:}
     hub-url: ${CONTACT_HUB_URL:}
-
-vine:
+  security:
+    # Unset means the platform's permit-all chain, which is what a brochure site wants and what the
+    # web contract expects (an unknown /api path must 404, not 401). Set SECURITY_MODE=OIDC in the
+    # deployment to turn on Authentik login — that, and only that, brings the admin endpoints into
+    # existence. Leaving it unset in dev keeps `mvn spring-boot:run` working with no identity provider.
+    mode: ${SECURITY_MODE:NONE}
+    permit-paths:
+      - /api/products
+      - /api/categories
+      - /api/contact
+      - /actuator/health/**
+    authenticated-paths:
+      - /api/admin/**
+      # The admin screen itself, not just its API. The platform sends /api/** a bare 401 (right for
+      # fetch) but bounces everything else to Authentik, so protecting the page means a browser that
+      # opens /admin lands on the login form and comes back signed in — rather than loading an editor
+      # whose every request immediately fails. It also keeps the page out of strangers' hands entirely.
+      - /admin/**
   storage:
-    bucket: ${VINE_BUCKET:itsthevine}
+    # Only consulted when someone uploads a photo, i.e. only in a deployment that also set OIDC above.
+    # Blank endpoint leaves the storage auto-config switched off, so tests and local runs boot without
+    # MinIO credentials.
+    endpoint: ${STORAGE_ENDPOINT:}
+    access-key: ${STORAGE_ACCESS_KEY:}
+    secret-key: ${STORAGE_SECRET_KEY:}
 
 # Absolute URLs for og:url. Only matters to link-preview scrapers, which need a full URL.
 site:
   base-url: ${SITE_BASE_URL:https://itsthevine.com}
+  assets:
+    # Where uploaded photos land. The key stored on a product is bucket-relative and excludes the
+    # prefix, because ProductCatalog re-adds `/images/` when it builds the public URL.
+    bucket: ${STORAGE_BUCKET:itsthevine}
+    key-prefix: images/
 
 management:
   endpoints:
