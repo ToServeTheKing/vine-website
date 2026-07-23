@@ -11,6 +11,10 @@ import net.thebennett.platform.test.PlatformWebContract;
 
 /** Everything in {@link PlatformWebContract} — what this app must do because it is on the platform. */
 @SpringBootTest(properties = {
+        // The storage starter activates on its default endpoint, so an S3 client is built even in
+        // tests and fails on blank keys.
+        "platform.storage.access-key=test",
+        "platform.storage.secret-key=test",
         "platform.contact.to=test@example.com",
         "platform.contact.from=noreply@example.com"
 })
