@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { submitContact } from '@/lib/api';
+import { csrfHeader } from '@/lib/api';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -24,7 +24,16 @@ const ContactPage = () => {
     setStatus('sending');
     setError('');
     try {
-      await submitContact(formData);
+      // csrfHeader() is empty unless security is switched on, so this posts the same as it always
+      // has on a deployment with no identity provider — and keeps working once one is configured,
+      // where an unaccompanied POST would otherwise be rejected.
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...csrfHeader() },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not send the message.');
       setStatus('sent');
       setFormData({ name: '', email: '', message: '' });
     } catch (err) {

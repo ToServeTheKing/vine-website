@@ -11,14 +11,19 @@ export interface Product {
   images: string[];
 }
 
-/**
- * Spring Security protects every mutating request with a CSRF token, and the platform's security
- * starter writes it to a readable XSRF-TOKEN cookie. Without this header a POST is rejected 403 —
- * including the public contact form, which is not obvious until the form stops working.
- */
-function csrfHeaders(): Record<string, string> {
-  const token = document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN='))?.split('=')[1];
-  return token ? { 'X-XSRF-TOKEN': decodeURIComponent(token) } : {};
+/** What the admin screens get back: the public shape plus where it sits in the order. */
+export interface AdminProduct extends Product {
+  position: number;
+  /** The same photos as `images`, in the same order — these are what arrangePhotos names them by. */
+  keys: string[];
+}
+
+export interface AdminCategory {
+  id: number;
+  name: string;
+  position: number;
+  /** How many products are filed under it — deleting one that's in use is refused. */
+  used: number;
 }
 
 async function get<T>(path: string): Promise<T> {
@@ -32,82 +37,90 @@ export const fetchProducts = (category?: string) =>
 
 export const fetchCategories = () => get<string[]>('/api/categories');
 
-// ---- who is signed in (public: the SPA asks on every page load) ----
-export interface Me { authenticated: boolean; admin: boolean; name: string | null }
-export const fetchMe = () => get<Me>('/api/me');
-
-// ---- admin (everything below needs an Authentik login) ----
-export interface AdminProduct {
-  id: number;
-  name: string;
-  category: string;
-  position: number;
-  imageKeys: string[];
-  imageUrls: string[];
-}
-export interface AdminEnquiry {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  delivered: boolean;
-  receivedAt: string;
-}
-export interface ProductForm {
-  name: string;
-  category: string;
-  position: number | null;
-  imageKeys: string[];
+/**
+ * Spring hands the SPA a CSRF token in a cookie and wants it echoed on anything that writes. Read
+ * per request rather than cached: it rotates on sign-in, and a stale token fails exactly like a
+ * missing one. Returns nothing when security is off, which is why the contact form still posts
+ * happily on a deployment with no identity provider.
+ */
+export function csrfHeader(): Record<string, string> {
+  const token = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith('XSRF-TOKEN='))
+    ?.slice('XSRF-TOKEN='.length);
+  return token ? { 'X-XSRF-TOKEN': decodeURIComponent(token) } : {};
 }
 
-async function send<T>(path: string, method: string, body?: unknown): Promise<T> {
+/**
+ * Every admin write funnels through here so one place understands the server's failure shapes: a
+ * 401/403 means the session lapsed (the OIDC chain answers /api with a status rather than bouncing
+ * you to a login page), and anything else carries a ProblemDetail whose `detail` is the sentence
+ * the server wants the editor to read.
+ */
+async function send<T>(path: string, method: string, body?: unknown, form?: FormData): Promise<T> {
   const res = await fetch(path, {
     method,
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...csrfHeaders() },
-    body: body === undefined ? undefined : JSON.stringify(body),
+    headers: {
+      Accept: 'application/json',
+      ...(form ? {} : { 'Content-Type': 'application/json' }),
+      ...csrfHeader(),
+    },
+    body: form ?? (body === undefined ? undefined : JSON.stringify(body)),
   });
-  if (!res.ok) {
-    // The backend puts a human-readable reason in `detail`; show that rather than a status code.
-    let detail = `${method} ${path} responded ${res.status}`;
-    try { detail = (await res.json()).detail ?? detail; } catch { /* not JSON */ }
-    throw new Error(detail);
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Your sign-in has expired — refresh the page to sign in again.');
   }
-  return res.status === 204 ? (undefined as T) : (res.json() as Promise<T>);
+  if (!res.ok) {
+    const problem = await res.json().catch(() => null);
+    throw new Error(problem?.detail || problem?.error || 'That did not save. Please try again.');
+  }
+  return (res.status === 204 ? undefined : await res.json()) as T;
 }
 
-export const fetchAdminProducts = () => get<AdminProduct[]>('/api/admin/products');
-export const createProduct = (f: ProductForm) => send<AdminProduct>('/api/admin/products', 'POST', f);
-export const updateProduct = (id: number, f: ProductForm) =>
-  send<AdminProduct>(`/api/admin/products/${id}`, 'PUT', f);
-export const deleteProduct = (id: number) => send<void>(`/api/admin/products/${id}`, 'DELETE');
-export const fetchEnquiries = () => get<AdminEnquiry[]>('/api/admin/enquiries');
+// --- products ---------------------------------------------------------------
 
-export interface UploadTarget { key: string; uploadUrl: string; publicUrl: string }
+export const adminProducts = () => get<AdminProduct[]>('/api/admin/products');
 
-/** Presign, then PUT the file straight to the bucket — the photo never passes through the app. */
-export async function uploadPhoto(file: File): Promise<UploadTarget> {
-  const target = await send<UploadTarget>(
-    `/api/admin/images/presign-upload?filename=${encodeURIComponent(file.name)}`
-      + `&contentType=${encodeURIComponent(file.type || 'application/octet-stream')}`,
-    'POST');
-  // Straight to the bucket, so no CSRF header here — it is a different origin and a presigned URL.
-  const put = await fetch(target.uploadUrl, {
-    method: 'PUT',
-    headers: { 'Content-Type': file.type || 'application/octet-stream' },
-    body: file,
-  });
-  if (!put.ok) throw new Error(`the bucket rejected the upload (${put.status})`);
-  return target;
+export function createProduct(name: string, category: string, photos: File[]) {
+  const form = new FormData();
+  form.append('name', name);
+  form.append('category', category);
+  photos.forEach((p) => form.append('photos', p));
+  return send<AdminProduct>('/api/admin/products', 'POST', undefined, form);
 }
 
-/** The public contact form. Mutating, so it needs the CSRF token too. */
-export async function submitContact(input: { name: string; email: string; message: string }) {
-  const res = await fetch('/api/contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
-    body: JSON.stringify(input),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Could not send the message.');
-  return data;
+export const describeProduct = (id: number, name: string, category: string) =>
+  send<AdminProduct>(`/api/admin/products/${id}`, 'PUT', { name, category });
+
+export const deleteProduct = (id: number) =>
+  send<{ ok: boolean }>(`/api/admin/products/${id}`, 'DELETE');
+
+export function addPhotos(id: number, photos: File[]) {
+  const form = new FormData();
+  photos.forEach((p) => form.append('photos', p));
+  return send<AdminProduct>(`/api/admin/products/${id}/photos`, 'POST', undefined, form);
 }
+
+/** The full arrangement the editor is looking at — removing a photo is just an omission. */
+export const arrangePhotos = (id: number, keys: string[]) =>
+  send<AdminProduct>(`/api/admin/products/${id}/photos`, 'PUT', keys);
+
+export const reorderProducts = (ids: number[]) =>
+  send<AdminProduct[]>('/api/admin/products/order', 'PUT', { ids });
+
+// --- categories -------------------------------------------------------------
+
+export const adminCategories = () => get<AdminCategory[]>('/api/admin/categories');
+
+export const createCategory = (name: string) =>
+  send<AdminCategory>('/api/admin/categories', 'POST', { name });
+
+export const renameCategory = (id: number, name: string) =>
+  send<AdminCategory>(`/api/admin/categories/${id}`, 'PUT', { name });
+
+export const reorderCategories = (ids: number[]) =>
+  send<AdminCategory[]>('/api/admin/categories/order', 'PUT', { ids });
+
+export const deleteCategory = (id: number) =>
+  send<{ ok: boolean }>(`/api/admin/categories/${id}`, 'DELETE');
