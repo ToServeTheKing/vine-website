@@ -15,7 +15,9 @@ import NotFoundPage from '@/pages/NotFound';
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    if (!hash) window.scrollTo(0, 0);
+    // 'instant' overrides the page's scroll-behavior:smooth, which is meant for the #visit
+    // anchor, not for landing on a new page.
+    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' });
   }, [pathname, hash]);
   return null;
 };
