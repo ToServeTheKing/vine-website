@@ -7,6 +7,9 @@
   <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/resources/logo_dark.png">
   <!-- Preconnect to the photo bucket so product images start loading a round-trip sooner. -->
   <link rel="preconnect" href="https://s3.thebennett.net" crossorigin>
+  <!-- The wordmark is set in these; without preloading they arrive late and the logo visibly reflows. -->
+  <link rel="preload" as="font" type="font/woff2" href="/src/fonts/raleway-latin.woff2" crossorigin>
+  <link rel="preload" as="image" href="https://s3.thebennett.net/itsthevine/images/gallery/Outside.webp" fetchpriority="high">
   <!-- PageMetaController rewrites the title and the four meta tags below per route, so crawlers and
        link-preview scrapers get real per-page metadata instead of one generic shell. Keep the
        attribute order and quoting as-is — it matches on them. -->

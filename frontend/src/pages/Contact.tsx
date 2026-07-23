@@ -50,7 +50,7 @@ const ContactPage = () => {
 
       {/* Contact Form Section */}
       <div className="container mx-auto px-4 pb-16 md:pb-24">
-        <div className="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-sm">
+        <div className="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-xs">
           <h2 className="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-2">Get in touch</h2>
           <p className="text-bakery-700 mb-8">
             Or call us: <a href="tel:+13097010660" className="underline underline-offset-4 hover:text-bakery-600">(309) 701-0660</a>

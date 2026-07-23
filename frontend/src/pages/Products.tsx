@@ -74,7 +74,7 @@ const ProductsPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition duration-300"
+                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition duration-300"
               >
                 {/* Image Container */}
                 <div className="relative w-full overflow-hidden">

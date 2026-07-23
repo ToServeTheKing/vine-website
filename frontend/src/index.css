@@ -70,18 +70,13 @@ body {
   }
 }
 
-/* Deliberately unlayered so it overrides Tailwind's own `container` utility — the site's gutters are
-   part of the layout, not the breakpoint default. */
-.container {
-  max-width: 80rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-@media (min-width: 40rem) {
-  .container { padding-inline: 1.5rem; }
-}
-@media (min-width: 64rem) {
-  .container { padding-inline: 2rem; }
+/* In @layer components, matching the old site. That ordering matters: a utility like `px-4` — which
+   the markup applies alongside `container` on nearly every section — has to win over this, or every
+   gutter on the site silently widens. */
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 }
 
 ::selection {

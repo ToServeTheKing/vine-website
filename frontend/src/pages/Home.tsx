@@ -54,7 +54,7 @@ const HomePage = () => {
             {['Cinnamon Rolls', 'Sugar Cookies', 'Cakes'].map((item) => (
               <div
                 key={item}
-                className="group text-center bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition duration-300"
+                className="group text-center bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition duration-300"
               >
                 <div className="overflow-hidden">
                   <img
