@@ -2,11 +2,12 @@ name: build-and-publish
 on:
   push:
     branches: [main]
-    # Files that can't change the image. Skipping them avoids a pointless rebuild that Watchtower
-    # would then redeploy — a few seconds of downtime on a live site for a docs-only commit.
+    # Files that can't change the image — skip a pointless rebuild + redeploy for a docs/config commit.
     paths-ignore: ["renovate.json", "**.md"]
-  # Lets `rebuild-all-apps.sh` force a rebuild (e.g. to roll out an urgent platform fix immediately
-  # instead of waiting for a Renovate bump PR).
+  # Runs on PRs too so the check below gates the MERGE, not just the image. Branch protection requires it.
+  pull_request:
+    branches: [main]
+  # Lets rebuild-all-apps.sh force a rebuild to roll out an urgent platform fix immediately.
   workflow_dispatch:
 
 jobs:
@@ -15,21 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
-      # Tests run BEFORE the image is built, and they gate it.
-      #
-      # They cannot run inside `docker build` — Testcontainers needs a Docker daemon and there is none
-      # in a build. So Maven runs as a sibling container instead, mounting the volume act_runner gave
-      # this job (discovered from our own container rather than guessed) and sharing the host network so
-      # the ports Testcontainers publishes are reachable as localhost.
-      # Tests run BEFORE the image and gate it.
-      #
-      # They cannot run inside `docker build` — Testcontainers needs a Docker daemon and a build has
-      # none. Maven runs as a sibling container instead, mounting the volume act_runner gave this job
-      # and sharing the host network so the ports Testcontainers publishes are reachable as localhost.
-      #
-      # The volume is mounted at the full repo path, not at /workspace, so it is matched on
-      # GITHUB_WORKSPACE rather than a guess.
+      # Tests gate the build AND the merge. They can't run inside `docker build` — Testcontainers needs a
+      # Docker daemon and a build has none — so Maven runs as a sibling container, mounting the workspace
+      # volume act_runner gave this job (matched on GITHUB_WORKSPACE, since it's mounted at the full repo
+      # path, not /workspace) and sharing the host network so published test ports resolve as localhost.
       - name: Test
         run: |
           set -euo pipefail
@@ -39,7 +29,6 @@ jobs:
             echo "could not find this job's workspace volume — refusing to skip the tests" >&2
             exit 1
           fi
-          echo "workspace volume: $VOL"
           docker run --rm --network host \
             -v "$VOL":/w \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -50,11 +39,8 @@ jobs:
             maven:3.9-eclipse-temurin-25 \
             mvn -B -ntp -s .gitea/ci-settings.xml -DskipFrontend=true verify
 
-      - name: Log in to the Gitea container registry
-        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login git.thebennett.net -u "${{ secrets.REGISTRY_USER }}" --password-stdin
-
-      # The platform is now referenced by an immutable RELEASE version, so a cached maven layer can't
-      # silently hold an old build — layer caching is safe again (and much faster).
+      # Build + Trivy on every run (PRs included), so a broken Dockerfile or a new HIGH/CRITICAL CVE
+      # blocks the merge. Only the push is main-only.
       - name: Build image
         env:
           DOCKER_BUILDKIT: "1"
@@ -65,8 +51,7 @@ jobs:
             --secret id=maven_user,env=MAVEN_USER \
             --secret id=maven_token,env=MAVEN_TOKEN \
             --build-arg GIT_SHA=${{ github.sha }} \
-            -t git.thebennett.net/thevine/itsthevine:latest \
-            -t git.thebennett.net/thevine/itsthevine:${{ github.sha }} .
+            -t git.thebennett.net/thevine/itsthevine:latest -t git.thebennett.net/thevine/itsthevine:${{ github.sha }} .
 
       - name: Scan image (Trivy)
         run: |
@@ -78,7 +63,10 @@ jobs:
             --pkg-types library --exit-code 1 --no-progress \
             git.thebennett.net/thevine/itsthevine:latest
 
+      # Publish only on a real push to main (or manual dispatch) — never from a pull request.
       - name: Push image
+        if: github.event_name != 'pull_request'
         run: |
+          echo "${{ secrets.REGISTRY_TOKEN }}" | docker login git.thebennett.net -u "${{ secrets.REGISTRY_USER }}" --password-stdin
           docker push git.thebennett.net/thevine/itsthevine:latest
           docker push git.thebennett.net/thevine/itsthevine:${{ github.sha }}
