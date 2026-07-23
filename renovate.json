@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "Bennett platform releases: our own code, already tested and Trivy-scanned before publish. Group the parent + BOM + starters into one PR and merge it automatically so security fixes reach this app without manual work. Merging main triggers the build, which re-runs tests and re-scans; if either fails no image is pushed, so a bad bump can't reach production.",
+      "matchPackageNames": ["net.thebennett.platform:**"],
+      "groupName": "bennett platform",
+      "automerge": true
+    },
+    {
+      "description": "Stay on Testcontainers 1.x. 2.0 renamed the module artifacts (postgresql, junit-jupiter), so the major bump doesn't just fail the build — its POM won't even parse. Revisit deliberately, not via a bot PR.",
+      "matchPackageNames": ["org.testcontainers:**"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  }
+}

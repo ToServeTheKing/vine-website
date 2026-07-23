@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: itsthevine
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/itsthevine}
+    username: ${DB_USER:itsthevine}
+    password: ${DB_PASSWORD:changeme}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  mail:
+    host: ${SMTP_SERVER:localhost}
+    port: ${SMTP_PORT:25}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_TOKEN:}
+    properties:
+      mail:
+        smtp:
+          # Only authenticate when we were actually given credentials — the LAN relay takes mail
+          # from the docker network without them.
+          auth: ${SMTP_AUTH:false}
+          starttls:
+            enable: ${SMTP_STARTTLS:false}
+          # The local relay / Proton Bridge presents a self-signed cert (CN=127.0.0.1). This trusts
+          # only the configured host, not every server we might ever talk to.
+          ssl:
+            trust: ${SMTP_SERVER:localhost}
+
+platform:
+  web:
+    spa:
+      enabled: true
+  data:
+    auditing:
+      enabled: true
+  contact:
+    to: ${CONTACT_TO:}
+    from: ${CONTACT_FROM:}
+    hub-url: ${CONTACT_HUB_URL:}
+
+# Absolute URLs for og:url. Only matters to link-preview scrapers, which need a full URL.
+site:
+  base-url: ${SITE_BASE_URL:https://itsthevine.com}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    mail:
+      # OFF deliberately. Boot's mail contributor opens an SMTP connection on every health check, so a
+      # relay outage would report the container unhealthy and get it restarted — taking a perfectly
+      # good website down over a side feature. Enquiries are persisted either way, and a failed send
+      # is already surfaced to the visitor and the log.
+      enabled: false
