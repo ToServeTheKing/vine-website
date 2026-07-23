@@ -7,6 +7,9 @@ import ProductsPage from '@/pages/Products';
 import HistoryPage from '@/pages/History';
 import ContactPage from '@/pages/Contact';
 import NotFoundPage from '@/pages/NotFound';
+import AdminPage from '@/pages/admin/AdminPage';
+import ProductEditorPage from '@/pages/admin/ProductEditorPage';
+import { AuthProvider } from '@/lib/auth';
 
 /**
  * Client-side navigation keeps the previous scroll position, which lands you halfway down a page you
@@ -23,6 +26,7 @@ const ScrollToTop = () => {
 };
 
 const App = () => (
+  <AuthProvider>
   <div className="min-h-screen bg-bakery-50 flex flex-col">
     <ScrollToTop />
     <Header />
@@ -32,11 +36,15 @@ const App = () => (
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/products/new" element={<ProductEditorPage />} />
+        <Route path="/admin/products/:id" element={<ProductEditorPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </main>
     <Footer />
   </div>
+  </AuthProvider>
 );
 
 export default App;

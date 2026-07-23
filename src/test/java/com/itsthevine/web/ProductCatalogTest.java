@@ -29,6 +29,12 @@ class ProductCatalogTest {
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
         registry.add("site.assets.base-url", () -> "https://s3.example.test/itsthevine");
+        // The contact starter refuses to start on a blank recipient, and this app has a
+        // ContactController, so the context needs one even to test the catalogue.
+        registry.add("platform.contact.to", () -> "test@example.com");
+        registry.add("platform.contact.from", () -> "noreply@example.com");
+        registry.add("platform.storage.access-key", () -> "test");
+        registry.add("platform.storage.secret-key", () -> "test");
     }
 
     @Autowired

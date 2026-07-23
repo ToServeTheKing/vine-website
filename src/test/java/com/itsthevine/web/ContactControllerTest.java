@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -15,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -47,6 +50,8 @@ class ContactControllerTest {
         // Activates the contact starter without pointing it at anything real.
         registry.add("platform.contact.to", () -> "shop@example.com");
         registry.add("platform.contact.from", () -> "noreply@example.com");
+        registry.add("platform.storage.access-key", () -> "test");
+        registry.add("platform.storage.secret-key", () -> "test");
     }
 
     /** Nothing in a test run may reach a real relay. */
@@ -65,6 +70,9 @@ class ContactControllerTest {
 
     @BeforeEach
     void setUp() {
+        // The contact starter builds a MimeMessage through the sender (platform 0.1.6, so the display
+        // name is quoted properly). A bare mock returns null for that, so give it a real one.
+        when(mailSender.createMimeMessage()).thenAnswer(i -> new JavaMailSenderImpl().createMimeMessage());
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
         enquiries.deleteAll();
     }
@@ -82,7 +90,7 @@ class ContactControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ok").value(true));
 
-        verify(mailSender).send(any(SimpleMailMessage.class));
+        verify(mailSender).send(any(MimeMessage.class));
 
         assertThat(enquiries.findAll()).singleElement().satisfies(e -> {
             assertThat(e.getName()).isEqualTo("Ada");
@@ -107,7 +115,7 @@ class ContactControllerTest {
     @Test
     void keepsTheEnquiryWhenTheRelayIsDown() throws Exception {
         // The whole reason the row is written before delivery: a broken relay must not lose business.
-        doThrow(new MailSendException("relay down")).when(mailSender).send(any(SimpleMailMessage.class));
+        doThrow(new MailSendException("relay down")).when(mailSender).send(any(MimeMessage.class));
 
         mvc.perform(post("/api/contact").contentType(MediaType.APPLICATION_JSON)
                         .content(body("Ada", "ada@example.com", "Cinnamon rolls for 30?")))
