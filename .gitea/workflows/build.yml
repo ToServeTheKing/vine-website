@@ -22,27 +22,31 @@ jobs:
       # in a build. So Maven runs as a sibling container instead, mounting the volume act_runner gave
       # this job (discovered from our own container rather than guessed) and sharing the host network so
       # the ports Testcontainers publishes are reachable as localhost.
+      # Tests run BEFORE the image and gate it.
+      #
+      # They cannot run inside `docker build` — Testcontainers needs a Docker daemon and a build has
+      # none. Maven runs as a sibling container instead, mounting the volume act_runner gave this job
+      # and sharing the host network so the ports Testcontainers publishes are reachable as localhost.
+      #
+      # The volume is mounted at the full repo path, not at /workspace, so it is matched on
+      # GITHUB_WORKSPACE rather than a guess.
       - name: Test
         run: |
           set -euo pipefail
-          echo "--- hostname: $(hostname)"
-          echo "--- GITHUB_WORKSPACE: ${GITHUB_WORKSPACE:-unset}"
-          echo "--- pwd: $(pwd)"
-          echo "--- mounts of this job container:"
-          docker inspect "$(hostname)" --format '{{json .Mounts}}' || echo "  cannot inspect self"
           VOL=$(docker inspect "$(hostname)" \
-            --format '{{range .Mounts}}{{if eq .Destination "/workspace"}}{{.Name}}{{end}}{{end}}' 2>/dev/null || true)
+            --format "{{range .Mounts}}{{if eq .Destination \"$GITHUB_WORKSPACE\"}}{{.Name}}{{end}}{{end}}")
           if [ -z "$VOL" ]; then
             echo "could not find this job's workspace volume — refusing to skip the tests" >&2
             exit 1
           fi
+          echo "workspace volume: $VOL"
           docker run --rm --network host \
-            -v "$VOL":/workspace \
+            -v "$VOL":/w \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -e TESTCONTAINERS_RYUK_DISABLED=true \
             -e MAVEN_USER="${{ secrets.REGISTRY_USER }}" \
             -e MAVEN_TOKEN="${{ secrets.REGISTRY_TOKEN }}" \
-            -w "/workspace/${{ github.repository }}" \
+            -w /w \
             maven:3.9-eclipse-temurin-25 \
             mvn -B -ntp -s .gitea/ci-settings.xml -DskipFrontend=true verify
 
