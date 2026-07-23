@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.thebennett.platform</groupId>
         <artifactId>platform-parent</artifactId>
-        <version>0.1.7</version>
+        <version>0.1.9</version>
         <relativePath/>
     </parent>
 
@@ -22,7 +22,7 @@
             <dependency>
                 <groupId>net.thebennett.platform</groupId>
                 <artifactId>platform-bom</artifactId>
-                <version>0.1.7</version>
+                <version>0.1.9</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -66,6 +66,12 @@
              starter-storage: the photos are served straight from the public MinIO bucket. -->
 
         <!-- test -->
+        <!-- Contract tests every app on the platform inherits. -->
+        <dependency>
+            <groupId>net.thebennett.platform</groupId>
+            <artifactId>platform-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
