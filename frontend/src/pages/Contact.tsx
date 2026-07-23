@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { submitContact } from '@/lib/api';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -23,13 +24,7 @@ const ContactPage = () => {
     setStatus('sending');
     setError('');
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not send the message.');
+      await submitContact(formData);
       setStatus('sent');
       setFormData({ name: '', email: '', message: '' });
     } catch (err) {

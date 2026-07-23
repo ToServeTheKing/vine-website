@@ -36,10 +36,26 @@ platform:
   data:
     auditing:
       enabled: true
+  security:
+    # Public site: only the admin API needs a login. An allowlist of public paths would mean
+    # enumerating every static directory, and anything missed 401s — which is exactly how the
+    # confessions site broke its own cover images. mode=OIDC comes from the deploy env so tests
+    # stay on NONE.
+    authenticated-paths:
+      - /api/admin/**
+  storage:
+    endpoint: ${S3_ENDPOINT:https://s3.thebennett.net}
+    access-key: ${S3_ACCESS_KEY:}
+    secret-key: ${S3_SECRET_KEY:}
+    path-style-access: true
   contact:
     to: ${CONTACT_TO:}
     from: ${CONTACT_FROM:}
     hub-url: ${CONTACT_HUB_URL:}
+
+vine:
+  storage:
+    bucket: ${VINE_BUCKET:itsthevine}
 
 # Absolute URLs for og:url. Only matters to link-preview scrapers, which need a full URL.
 site:
