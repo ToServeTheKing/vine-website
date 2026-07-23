@@ -15,6 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
+      # Tests run BEFORE the image is built, and they gate it.
+      #
+      # They cannot run inside `docker build` — Testcontainers needs a Docker daemon and there is none
+      # in a build. So Maven runs as a sibling container instead, mounting the volume act_runner gave
+      # this job (discovered from our own container rather than guessed) and sharing the host network so
+      # the ports Testcontainers publishes are reachable as localhost.
+      - name: Test
+        run: |
+          set -euo pipefail
+          VOL=$(docker inspect "$(hostname)" \
+            --format '{{range .Mounts}}{{if eq .Destination "/workspace"}}{{.Name}}{{end}}{{end}}')
+          if [ -z "$VOL" ]; then
+            echo "could not find this job's workspace volume — refusing to skip the tests" >&2
+            exit 1
+          fi
+          docker run --rm --network host \
+            -v "$VOL":/workspace \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -e TESTCONTAINERS_RYUK_DISABLED=true \
+            -e MAVEN_USER="${{ secrets.REGISTRY_USER }}" \
+            -e MAVEN_TOKEN="${{ secrets.REGISTRY_TOKEN }}" \
+            -w "/workspace/${{ github.repository }}" \
+            maven:3.9-eclipse-temurin-25 \
+            mvn -B -ntp -s .gitea/ci-settings.xml -DskipFrontend=true verify
+
       - name: Log in to the Gitea container registry
         run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login git.thebennett.net -u "${{ secrets.REGISTRY_USER }}" --password-stdin
 
