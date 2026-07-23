@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.itsthevine.web.domain.Category;
+import com.itsthevine.web.domain.CategoryRepository;
 import com.itsthevine.web.domain.Product;
 import com.itsthevine.web.domain.ProductRepository;
 
@@ -28,20 +30,15 @@ public class ProductCatalog {
     /** The filter shown first — every category at once. Not a stored category. */
     public static final String ALL = "All";
 
-    /**
-     * Curated display order. The catalogue is sorted for browsing, not alphabetically, and the order
-     * predates the database, so it's stated here. Categories that exist in the data but aren't listed
-     * still show up (appended, alphabetically) rather than silently disappearing from the filter.
-     */
-    private static final List<String> ORDER =
-            List.of("Cookies", "Cakes", "Rolls", "Pie", "Brownies", "Pastries");
-
     private final ProductRepository products;
+    private final CategoryRepository categories;
     private final String assetBaseUrl;
 
     public ProductCatalog(ProductRepository products,
+                          CategoryRepository categories,
                           @Value("${site.assets.base-url:https://s3.thebennett.net/itsthevine}") String assetBaseUrl) {
         this.products = products;
+        this.categories = categories;
         // A trailing slash here would produce '//images/...' — harmless on most servers, but it shows
         // up in every image URL on the page.
         this.assetBaseUrl = assetBaseUrl.replaceAll("/+$", "");
@@ -60,21 +57,39 @@ public class ProductCatalog {
         return found.stream().map(this::toView).toList();
     }
 
-    /** The filter buttons, in display order, starting with "All". */
+    /**
+     * The filter buttons, in display order, starting with "All".
+     *
+     * Order comes from the category table. Only categories something is actually filed under are
+     * offered — an empty filter button is a dead end — and a category found on a product but missing
+     * from the table still shows up (appended, alphabetically) rather than silently disappearing.
+     */
     @Transactional(readOnly = true)
     public List<String> categories() {
         Set<String> present = products.findAllByOrderByPositionAsc().stream()
                 .map(Product::getCategory)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
+        List<String> defined = categories.findAllByOrderByPositionAsc().stream()
+                .map(Category::getName)
+                .toList();
+
         List<String> ordered = new ArrayList<>();
         ordered.add(ALL);
-        ORDER.stream().filter(present::contains).forEach(ordered::add);
+        defined.stream().filter(present::contains).forEach(ordered::add);
         present.stream()
-                .filter(c -> !ORDER.contains(c))
+                .filter(c -> !defined.contains(c))
                 .sorted(Comparator.naturalOrder())
                 .forEach(ordered::add);
         return ordered;
+    }
+
+    /**
+     * Public so the admin screens render photos through exactly the same URL building as the shop
+     * front — an editor should never arrange something that looks different once it's live.
+     */
+    public ProductView view(Product product) {
+        return toView(product);
     }
 
     private ProductView toView(Product p) {

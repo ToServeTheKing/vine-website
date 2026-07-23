@@ -15,7 +15,10 @@ RUN --mount=type=secret,id=maven_user --mount=type=secret,id=maven_token \
 
 # ---------- runtime ----------
 FROM eclipse-temurin:25-jre-alpine AS runtime
-RUN apk -U upgrade --no-cache && apk add --no-cache curl
+# libwebp-tools supplies cwebp, which ProductPhotoService shells out to when an editor uploads a
+# photo. Alpine's build is musl-native — the Java webp writers on Maven Central bundle glibc natives
+# that will not load here, and no pure-Java webp encoder exists.
+RUN apk -U upgrade --no-cache && apk add --no-cache curl libwebp-tools
 RUN addgroup -S spring && adduser -S -D -H -h /app -s /sbin/nologin -G spring spring
 WORKDIR /app
 

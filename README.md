@@ -29,6 +29,25 @@ The SPA renders; it doesn't decide anything.
 - **Per-page metadata** — `PageMetaController` rewrites `<title>`/`<meta>`/OG tags per route. Next used
   to server-render these; a plain SPA would hand crawlers and link-preview scrapers one generic shell.
 
+## /admin
+
+The catalogue is editable from the site: add an item with a photo and a name, reorder it, rename or
+reorder the category filters. Nothing there needs a deploy or a migration — which is the point, since
+the person adding a cake is the person who baked it.
+
+Photos are resized, stripped of EXIF, converted to webp and put in the bucket on upload
+(`ProductPhotoService`, using `cwebp` from `libwebp-tools` — the pure-Java encoders either can't write
+webp or ship glibc natives that don't run on Alpine).
+
+**The admin only exists when `SECURITY_MODE=OIDC`.** `AdminProductController` and
+`AdminCategoryController` are `@ConditionalOnProperty` on it, so a deployment that forgets to configure
+Authentik gets 404s rather than catalogue writes open to the internet. `/admin` and `/api/admin/**` are
+both authenticated paths: a browser opening the page is sent to Authentik first, while `fetch` calls get
+a bare 401 to handle.
+
+Known gap: `StorageService` has no delete, so removing a product or a photo leaves the object in the
+bucket. Harmless — nothing links to it — but it accumulates.
+
 ## Photos
 
 Re-encoded to webp and uploaded to the bucket once (50 MB of originals → 14 MB), served with a
@@ -63,6 +82,12 @@ mvn verify
 | `CONTACT_HUB_URL` | optional n8n webhook; best-effort, never blocks a submission |
 | `SITE_BASE_URL` | absolute base for `og:url` |
 | `VITE_ASSET_BASE` / `site.assets.base-url` | photo bucket |
+| `SECURITY_MODE` | `OIDC` turns on Authentik login **and brings `/admin` into existence**. Unset = brochure site, no admin |
+| `STORAGE_ENDPOINT` / `STORAGE_ACCESS_KEY` / `STORAGE_SECRET_KEY` / `STORAGE_BUCKET` | MinIO, for admin photo uploads. Blank endpoint leaves storage switched off |
+
+With `SECURITY_MODE=OIDC` the app also needs the standard Spring OAuth2 client properties for the
+Authentik application — `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_*` and
+`..._PROVIDER_*_ISSUER_URI`. The starter configures the filter chain, not the identity provider.
 
 A missing `CONTACT_TO` **stops the app from starting**. That is deliberate: `application.yaml` maps it
 to `platform.contact.to`, and an unset variable leaves the property present-but-empty, which is enough
