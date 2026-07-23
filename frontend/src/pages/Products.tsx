@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { fetchCategories, fetchProducts, type Product } from '@/lib/api';
 import ProductGallery from '@/components/ProductGallery';
 
