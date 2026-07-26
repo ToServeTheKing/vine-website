@@ -1,7 +1,6 @@
 package com.itsthevine.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,10 +24,9 @@ import org.testcontainers.utility.DockerImageName;
  * <p>It used to extend {@code PlatformWebContract} from platform-starter-test and inherit these five
  * assertions verbatim. It can't any more, and the reason is worth stating: the shared contract asserts
  * that an unknown extension-less path forwards to {@code /index.html}, because it was written when every
- * app on the platform was a React SPA. This one is server-rendered now — {@code /index.html} holds
- * nothing but the admin shell — so forwarding a mistyped URL there would answer with a blank page and a
- * 200 instead of the site's own 404. The contract's own test methods are package-private, so the
- * assertion cannot be overridden from here.
+ * app on the platform was a React SPA. There is no SPA here at all now — no shell to forward to — so
+ * that assertion describes an app this no longer is. The contract's own test methods are package-private,
+ * so it cannot be overridden from here.
  *
  * <p>The other four are restated below unchanged, so this app still fails the build on the regression
  * the contract exists for (an {@code /api} typo answering with a page and a 200).
@@ -92,13 +90,12 @@ class PlatformContractTest {
     }
 
     @Test
-    @DisplayName("an unknown route is a 404, and only /admin serves the SPA shell")
-    void routingIsServerSideExceptForTheAdmin() throws Exception {
+    @DisplayName("routing is server-side: an unknown path is a 404, and so is /admin with no identity provider")
+    void routingIsServerSide() throws Exception {
         mvc.perform(get("/some/client/side/route")).andExpect(status().isNotFound());
-        // Assert the forward TARGET, not the body: MockMvc records a forward rather than executing it,
-        // so the body is empty here by design — which also means this passes before the admin is built.
-        mvc.perform(get("/admin"))
-                .andExpect(status().isOk())
-                .andExpect(forwardedUrl("/index.html"));
+        // No SECURITY_MODE here, so AdminController does not exist — "no Authentik configured" means "no
+        // admin", and it 404s like any other unknown path rather than exposing catalogue writes.
+        // AdminSecurityTest covers the other half: with OIDC on, /admin exists and needs a login.
+        mvc.perform(get("/admin")).andExpect(status().isNotFound());
     }
 }

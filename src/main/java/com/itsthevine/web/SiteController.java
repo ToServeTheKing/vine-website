@@ -130,18 +130,6 @@ public class SiteController {
         return "contact";
     }
 
-    /**
-     * The admin is still a React screen, and this is the one route that serves it.
-     *
-     * <p>The platform's SPA fallback used to do this for every extension-less path, which is why it's
-     * switched off in application.yaml: with the site server-rendered, forwarding an unknown URL to a
-     * JavaScript shell would answer a typo with a blank page and a 200 instead of the site's own 404.
-     */
-    @GetMapping("/admin")
-    public String admin() {
-        return "forward:/index.html";
-    }
-
     private void contactMeta(Model model) {
         meta(model, "/contact", "Contact us · " + NAME,
                 "Get in touch with The Vine Coffeehouse + Bakery, 215 E Main Street, Princeville, "

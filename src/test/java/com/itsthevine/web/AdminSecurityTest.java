@@ -70,21 +70,24 @@ class AdminSecurityTest {
     }
 
     @Test
-    void everyAdminApiIsClosedToAnonymousVisitors() throws Exception {
-        // csrf() on the writes, so these assert AUTHORIZATION (401), not a missing token.
-        mvc.perform(get("/api/admin/products")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/api/admin/categories")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/api/admin/catering")).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/admin/products").with(csrf())).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/admin/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"x\"}"))
+    void everyAdminWriteIsClosedToAnonymousVisitors() throws Exception {
+        // csrf() on the writes, so these assert AUTHORIZATION, not a missing token. The admin is pages
+        // and form posts now, so this is the whole surface — there is no JSON admin left to guard.
+        mvc.perform(get("/admin")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/admin/catering")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/admin/catering/tables/1")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/items").with(csrf()).param("name", "Free cake").param("category", "Cakes"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/items/1/delete").with(csrf())).andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/categories").with(csrf()).param("name", "x"))
                 .andExpect(status().isUnauthorized());
         // The prices are the one thing on this site a stranger would most enjoy editing.
-        mvc.perform(put("/api/admin/catering/packages/1").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Free\",\"tiers\":[],\"rows\":[],\"notes\":[]}"))
+        mvc.perform(post("/admin/catering/tables/1").with(csrf())
+                        .param("do", "save").param("name", "Free")
+                        .param("columns[0].label", "Any").param("columns[0].price", "0")
+                        .param("lines[0].label", "Everything").param("lines[0].values[0]", "yes"))
                 .andExpect(status().isUnauthorized());
-        mvc.perform(put("/api/admin/catering/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                        .content("[\"anything\"]"))
+        mvc.perform(post("/admin/catering/notes").with(csrf()).param("notes", "anything"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -92,9 +95,11 @@ class AdminSecurityTest {
     void theAdminPageRedirectsABrowserToLogin() throws Exception {
         // Protecting /admin server-side is what makes sign-in work: a browser opening it is bounced to
         // Authentik and comes back signed in. The redirect only fires for a request that prefers HTML —
-        // the platform answers */* (a fetch/XHR) with a bare 401 so the SPA can handle it — so this
-        // must send a browser's Accept header to see the 302. (Verified against a running container.)
+        // the platform answers */* with a bare 401, which is why the checks above see 401 and this one
+        // has to send a browser's Accept header to see the 302. (Verified against a running container.)
         mvc.perform(get("/admin").header("Accept", "text/html,application/xhtml+xml"))
+                .andExpect(status().is3xxRedirection());
+        mvc.perform(get("/admin/catering").header("Accept", "text/html,application/xhtml+xml"))
                 .andExpect(status().is3xxRedirection());
     }
 

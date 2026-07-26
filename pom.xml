@@ -124,20 +124,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- Node install + npm install + `npm run build` (the admin screen) are inherited from
-                 platform-parent; the extra execution below compiles the server-rendered site's
-                 stylesheet. -->
+            <!--
+              There is no JavaScript application here any more, so node is present for one reason:
+              Tailwind needs a compiler, and the alternative to it is a hand-written stylesheet.
+              `styles/` is the whole asset pipeline (see styles/site.css).
+            -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Overrides platform-parent's `frontend`, which was where the SPA lived. -->
+                    <workingDirectory>styles</workingDirectory>
+                </configuration>
                 <executions>
                     <!--
-                      Tailwind, run as a CLI over the Thymeleaf templates, straight into the build output.
+                      Tailwind, over every template, straight into the build output.
 
-                      Bound to process-classes rather than prepare-package (where the admin's Vite build
-                      sits) because `mvn spring-boot:run` stops at process-classes: bind it any later and
-                      a local run serves an unstyled site. It writes to target/classes/static/css, so the
-                      generated file is never mistaken for a source file.
+                      process-classes, not prepare-package: `mvn spring-boot:run` stops at
+                      process-classes, and bound any later a local run would serve an unstyled site. The
+                      output goes to target/classes/static/css so the generated file can never be
+                      mistaken for a source file.
                     -->
                     <execution>
                         <id>npm-build-css</id>
@@ -145,11 +151,26 @@
                         <goals><goal>npm</goal></goals>
                         <configuration><arguments>run build:css</arguments></configuration>
                     </execution>
+                    <!-- Inherited from platform-parent to build an SPA at prepare-package. There isn't
+                         one; the stylesheet is already built above. -->
+                    <execution>
+                        <id>npm-build</id>
+                        <phase>none</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <!-- Same: this copied frontend/dist into the jar's static/. No dist, nothing to
+                         copy — the pages are templates and the stylesheet is written straight to
+                         target/classes/static/css. -->
+                    <execution>
+                        <id>copy-frontend</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

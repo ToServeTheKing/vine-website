@@ -3,8 +3,8 @@
 Site for The Vine, 215 E Main Street, Princeville, Illinois. Spring Boot rendering its own pages with
 Thymeleaf, on [the Bennett platform](https://git.thebennett.net/austin/platform).
 
-Previously a Next.js app on Cloudflare, then a React SPA on Spring, now server-rendered. The look has
-not changed through any of it.
+Previously a Next.js app on Cloudflare, then a React SPA on Spring, now server-rendered end to end —
+there is no JavaScript framework in this repo. The look has not changed through any of it.
 
 ## Shape
 
@@ -12,8 +12,8 @@ not changed through any of it.
 |---|---|
 | Backend | Spring Boot 4 / Java 25, `com.itsthevine.web` |
 | Pages | Thymeleaf, `src/main/resources/templates` — **no JavaScript** except one 100-line file for the product-card arrows |
-| Styling | Tailwind v4, compiled from the templates by the Tailwind CLI into `static/css/site.css` |
-| Admin | the one React screen that is left, served at `/admin` only |
+| Styling | Tailwind v4, compiled from the templates by the Tailwind CLI into `static/css/site.css`. `styles/` is the whole asset pipeline |
+| Admin | Thymeleaf forms at `/admin`, behind Authentik |
 | Database | Postgres (`itsthevine` on the shared `app-db` cluster), Flyway |
 | Photos | public MinIO bucket `itsthevine` — **not** in the repo or the image |
 | Deploy | Gitea CI → image → Watchtower → Caddy |
@@ -29,7 +29,8 @@ writes its own head, so that whole mechanism is deleted rather than ported. The 
 someone, and the contact form is a form post.
 
 `platform.web.spa.enabled=false` follows from that: the platform's fallback forwards extension-less paths
-to `/index.html`, which now holds nothing but the admin. `SiteController` maps `/admin` to it explicitly.
+to `/index.html` so a React SPA can own routing, and there is no SPA here — leaving it on would answer a
+mistyped URL with a blank page and a 200 instead of the site's own 404.
 
 ## What the server owns
 
@@ -64,10 +65,10 @@ Everything. The pages arrive complete.
 
 ## /admin
 
-**The last React in the repo.** The public pages are server-rendered; this screen is a Vite/React app
-because it is not content — it is an editor, and the instant-feedback editing (reorder that applies
-before the network answers, a whole price table arranged on screen and saved in one go) is the point of
-it. Everything under `frontend/` builds only this, plus the site's stylesheet.
+Forms and redirects. Every write is a POST followed by a redirect back to the page, so the back button
+and reload do what they look like they do, a double-tap can't repeat an upload, and there is no
+client-side state to lose — a reload is always the truth. Two screens: `/admin` is the catalogue,
+`/admin/catering` lists the price tables and `/admin/catering/tables/{id}` edits one.
 
 The catalogue is editable from the site: add an item with a photo and a name, reorder it, rename or
 reorder the category filters. Nothing there needs a deploy or a migration — which is the point, since
@@ -77,18 +78,31 @@ Photos are resized, stripped of EXIF, converted to webp and put in the bucket on
 (`ProductPhotoService`, using `cwebp` from `libwebp-tools` — the pure-Java encoders either can't write
 webp or ship glibc natives that don't run on Alpine).
 
-The catering tables are editable there too, but a table at a time rather than a field at a time. That
-isn't a different taste in interfaces: a column heading, its price and the entries beneath it only mean
-anything together, so `CateringPackage#arrange` takes the whole table and refuses one whose lines and
-columns disagree. Drop the middle column on its own and every remaining entry shifts one place left —
-the Large box then advertises the Medium box's contents at the Large price, and nothing about the page
-looks broken.
+The catering tables are edited a table at a time rather than a field at a time. That isn't a taste in
+interfaces: a column heading, its price and the entries beneath it only mean anything together, so
+`CateringPackage#arrange` takes the whole table and refuses one whose lines and columns disagree. Drop
+the middle column on its own and every remaining entry shifts one place left — the Large box then
+advertises the Medium box's contents at the Large price, and nothing about the page looks broken.
 
-**The admin only exists when `SECURITY_MODE=OIDC`.** `AdminProductController`,
-`AdminCategoryController` and `AdminCateringController` are `@ConditionalOnProperty` on it, so a deployment that forgets to configure
-Authentik gets 404s rather than catalogue writes open to the internet. `/admin` and `/api/admin/**` are
-both authenticated paths: a browser opening the page is sent to Authentik first, while `fetch` calls get
-a bare 401 to handle.
+**How that works without JavaScript.** One form holds the whole table and every button in it submits
+that form; `name="do"` says which was pressed and its value carries the position it applies to
+(`remove-column:2`). So "add a column" arrives with every cell the editor has typed, adds the column to
+what arrived — plus an empty entry on every line — and re-renders. Nothing typed is lost, and **only
+Save writes**: a half-built table with a blank column heading never reaches the live page, and the
+aggregate would refuse it anyway. A failed save comes back the same way, with the work still in the
+form and the reason above it, because a redirect would throw the work away and leave the editor guessing
+which cell the message was about.
+
+**The admin only exists when `SECURITY_MODE=OIDC`.** `AdminController` and `AdminCateringController` are
+`@ConditionalOnProperty` on it, so a deployment that forgets to configure Authentik gets 404s rather than
+catalogue writes open to the internet. `/admin/**` is an authenticated path, so a browser opening it is
+sent to Authentik and comes back signed in. There is no JSON admin any more: `AdminProductController`,
+`AdminCategoryController` and the old `/api/admin/**` endpoints existed for the React screen and went
+with it. Their logic lives in `Catalogue` and `CateringMenu`, which the pages call.
+
+**Testing a protected page needs `Accept: text/html`.** curl and MockMvc both send `*/*`, which the
+platform answers with a bare 401; only a request that prefers HTML gets the 302 to Authentik. Asserting
+the 401 and calling the page broken is a mistake worth not making twice.
 
 Known gap: `StorageService` has no delete, so removing a product or a photo leaves the object in the
 bucket. Harmless — nothing links to it — but it accumulates.
@@ -102,15 +116,17 @@ history. EXIF (including GPS from phone photos) is stripped by the re-encode.
 ## Local development
 
 ```bash
-# the whole site (needs Postgres on :5432 with an itsthevine database)
+# the whole site, admin included (needs Postgres on :5432 with an itsthevine database)
 mvn spring-boot:run     # http://localhost:8080
 
-# just the stylesheet, while editing templates — watches and recompiles
-cd frontend && npm install && npx tailwindcss -i site.css -o ../target/classes/static/css/site.css --watch
-
-# the admin screen, proxying /api to :8080
-cd frontend && npm run dev   # http://localhost:2024/admin
+# the stylesheet, while editing templates — watches and recompiles
+cd styles && npm install && npm run watch
 ```
+
+`/admin` only exists when `SECURITY_MODE=OIDC`, so a plain local run has the site and no admin. To work
+on the admin without an identity provider, run with `SECURITY_MODE=OIDC`, dummy
+`spring.security.oauth2.client.*` values (see `AdminPagesTest` for a set that starts without touching
+the network) and `platform.security.authenticated-paths=/nothing/**` so nothing asks you to sign in.
 
 `mvn spring-boot:run` compiles the stylesheet on the way (the Tailwind step is bound to
 `process-classes` for exactly that reason). `-DskipFrontend=true` skips both frontend steps for a fast
