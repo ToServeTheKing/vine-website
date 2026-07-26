@@ -96,16 +96,21 @@ class SiteControllerTest {
     @Test
     void theCateringTablesAreRenderedFromTheDatabase() throws Exception {
         mvc.perform(get("/catering")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Office")))
+                .andExpect(content().string(containsString("Office boxes")))
                 .andExpect(content().string(containsString("Weddings")))
                 // Prices as the server writes them — the page never formats money.
                 .andExpect(content().string(containsString("$24")))
                 .andExpect(content().string(containsString("$236")))
-                // A cell, and a note.
-                .andExpect(content().string(containsString("6+6+6 or 12+6")))
-                .andExpect(content().string(containsString("Minimum of 6 items per baked good")))
-                // Both renderings of the same table are present; CSS decides which one is visible.
-                .andExpect(content().string(containsString("<table")));
+                // A cell and a note, in the wording a customer reads rather than the spreadsheet's.
+                .andExpect(content().string(containsString("Eighteen, in two or three flavors")))
+                .andExpect(content().string(containsString("baked in sixes")))
+                // One card per size, and one enquiry link per table — not one per card, which would have
+                // read "Ask about the 15–20 people".
+                // The size label is in the HTML as written; the small caps are CSS.
+                .andExpect(content().string(containsString("Large")))
+                .andExpect(content().string(containsString("Ask about office boxes")))
+                // The price grid is gone: it was the source spreadsheet, rendered.
+                .andExpect(content().string(not(containsString("<table"))));
     }
 
     @Test

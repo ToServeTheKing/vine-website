@@ -57,10 +57,12 @@ class CateringMenuTest {
 
     @Test
     void carriesTheBakerysSpreadsheetIntoTheDatabase() {
+        // The prices, the sizes and the shape are the spreadsheet's (V4). The wording is not: V6 rewrote
+        // the cells as sentences a customer can read, since "6+6" and "4 dz" were notes to the baker.
         List<CateringMenu.PackageView> tables = catering.menu().packages();
 
         assertThat(tables).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office", "Parties", "Weddings");
+                .containsExactly("Office boxes", "Parties", "Weddings");
 
         CateringMenu.PackageView office = tables.get(0);
         assertThat(office.tiers()).extracting(CateringMenu.TierView::label)
@@ -69,9 +71,10 @@ class CateringMenuTest {
                 .containsExactly("$24", "$32", "$40");
         assertThat(office.rows()).extracting(CateringMenu.RowView::label)
                 .containsExactly("Mini muffins", "Mini scones", "Mini cinnamon rolls");
-        assertThat(office.rows().get(0).values()).containsExactly("12 items", "18 items", "24 items");
-        assertThat(office.rows().get(1).values().get(2)).isEqualTo("6+6+6+6 or 12+6+6 or 12+12");
-        assertThat(office.notes()).singleElement().asString().contains("Minimum of 6 items per baked good");
+        assertThat(office.rows().get(0).values()).containsExactly("A dozen", "Eighteen", "Two dozen");
+        assertThat(office.rows().get(1).values().get(2)).isEqualTo("Two dozen, in up to four flavors");
+        assertThat(office.blurb()).contains("morning meeting");
+        assertThat(office.notes()).anySatisfy(note -> assertThat(note).contains("baked in sixes"));
 
         assertThat(tables.get(1).tiers()).extracting(CateringMenu.TierView::label)
                 .containsExactly("15–20 people", "20–30 people", "30–40 people");
@@ -79,6 +82,9 @@ class CateringMenuTest {
                 .containsExactly("$236", "$310", "$386");
         // Wedding delivery terms belong to the wedding table, not to the page.
         assertThat(tables.get(2).notes()).anySatisfy(note -> assertThat(note).contains("delivery fee"));
+        // No cell anywhere still speaks in shorthand.
+        assertThat(tables).allSatisfy(table -> assertThat(table.rows()).allSatisfy(row ->
+                assertThat(row.values()).noneMatch(value -> value.matches(".*\\b(dz|B&G|in cake)\\b.*"))));
     }
 
     @Test
@@ -90,12 +96,25 @@ class CateringMenuTest {
         CateringMenu.PackageView weddings = catering.menu().packages().get(2);
 
         assertThat(weddings.rows()).extracting(CateringMenu.RowView::label)
-                .containsExactly("Bride & groom cake (8 in)", "Sheet cakes or 12x17 bars",
+                .containsExactly("Bride & groom cake", "Sheet cakes or 12×17 bars",
                         "Cupcakes or sugar cookies");
-        assertThat(weddings.rows().get(1).values()).containsExactly("2 pans", "3 pans", "4 pans");
-        assertThat(weddings.rows().get(2).values()).containsExactly("4 dz", "5 dz", "6 dz");
+        assertThat(weddings.rows().get(1).values()).containsExactly("Two pans", "Three pans", "Four pans");
+        assertThat(weddings.rows().get(2).values()).containsExactly("Four dozen", "Five dozen", "Six dozen");
         // Nothing left that is blank the whole way across.
         assertThat(weddings.rows())
+                .noneMatch(row -> row.values().stream().allMatch(String::isEmpty));
+    }
+
+    @Test
+    void thePartyLinesEachSaySomethingToo() {
+        // Same offset as the wedding table: the quantities on "Cupcakes" were always
+        // cupcakes-or-sugar-cookies, with an empty "Sugar cookies" line beneath.
+        CateringMenu.PackageView parties = catering.menu().packages().get(1);
+        assertThat(parties.rows()).extracting(CateringMenu.RowView::label)
+                .containsExactly("Cake", "Cupcakes or sugar cookies");
+        assertThat(parties.rows().get(0).values())
+                .containsExactly("A 6-inch cake", "An 8-inch cake", "A 10-inch cake");
+        assertThat(parties.rows())
                 .noneMatch(row -> row.values().stream().allMatch(String::isEmpty));
     }
 
@@ -166,7 +185,7 @@ class CateringMenuTest {
         CateringMenu.PackageView saved = catering.everything().packages().get(0);
         assertThat(saved.tiers()).extracting(CateringMenu.TierView::label).containsExactly("Small", "Large");
         assertThat(saved.tiers()).extracting(CateringMenu.TierView::id).doesNotContain(medium);
-        assertThat(saved.rows().get(0).values()).containsExactly("12 items", "24 items");
+        assertThat(saved.rows().get(0).values()).containsExactly("A dozen", "Two dozen");
         assertThat(saved.rows()).allSatisfy(row -> assertThat(row.values()).hasSize(2));
     }
 
@@ -192,7 +211,7 @@ class CateringMenuTest {
         Long muffins = office.rows().get(0).id();
 
         List<CateringMenu.RowEdit> rows = new ArrayList<>(asLines(office));
-        rows.set(0, new CateringMenu.RowEdit(muffins, "Mini muffins", List.of("12 items", "20 items", "24 items")));
+        rows.set(0, new CateringMenu.RowEdit(muffins, "Mini muffins", List.of("A dozen", "Twenty", "Two dozen")));
         catering.save(office.id(), new CateringMenu.PackageEdit(
                 "Office boxes", "For meetings and staff mornings.", asEdits(office), rows, office.notes()));
 
@@ -201,7 +220,7 @@ class CateringMenuTest {
         assertThat(saved.blurb()).isEqualTo("For meetings and staff mornings.");
         // Same line, edited — not a new line that happens to read the same.
         assertThat(saved.rows().get(0).id()).isEqualTo(muffins);
-        assertThat(saved.rows().get(0).values()).containsExactly("12 items", "20 items", "24 items");
+        assertThat(saved.rows().get(0).values()).containsExactly("A dozen", "Twenty", "Two dozen");
     }
 
     @Test
@@ -209,7 +228,7 @@ class CateringMenuTest {
         CateringMenu.PackageView fresh = catering.add("Holiday boxes");
 
         assertThat(catering.everything().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office", "Parties", "Weddings", "Holiday boxes");
+                .containsExactly("Office boxes", "Parties", "Weddings", "Holiday boxes");
         assertThat(catering.menu().packages()).extracting(CateringMenu.PackageView::name)
                 .doesNotContain("Holiday boxes");
 
@@ -233,7 +252,7 @@ class CateringMenuTest {
         entityManager.clear();
 
         assertThat(catering.everything().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office", "Parties");
+                .containsExactly("Office boxes", "Parties");
         // The page's own terms outlive any one table.
         assertThat(catering.menu().notes()).hasSize(2);
     }
@@ -244,9 +263,9 @@ class CateringMenuTest {
         List<Long> weddingsFirst = List.of(tables.get(2).id(), tables.get(0).id(), tables.get(1).id());
 
         assertThat(catering.reorder(weddingsFirst)).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Weddings", "Office", "Parties");
+                .containsExactly("Weddings", "Office boxes", "Parties");
         assertThat(catering.menu().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Weddings", "Office", "Parties");
+                .containsExactly("Weddings", "Office boxes", "Parties");
     }
 
     @Test
