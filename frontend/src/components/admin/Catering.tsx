@@ -90,6 +90,15 @@ const Notes = ({
             <button
               type="button"
               className={iconButton}
+              disabled={disabled || i === notes.length - 1}
+              onClick={() => onChange(shift(notes, i, 1))}
+              aria-label="Move note down"
+            >
+              <Icon d={ARROW_DOWN} />
+            </button>
+            <button
+              type="button"
+              className={iconButton}
               disabled={disabled}
               onClick={() => onChange(notes.filter((_, at) => at !== i))}
               aria-label="Remove note"
