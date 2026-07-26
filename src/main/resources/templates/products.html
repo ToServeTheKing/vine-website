@@ -3,15 +3,15 @@
 <body>
 <div th:fragment="content" class="min-h-screen bg-bakery-50">
 
-  <header class="container mx-auto px-4 pt-14 pb-10 md:pt-20 md:pb-12 text-center">
+  <header class="page-head">
     <h1 class="h1 text-bakery-900">Our products</h1>
-    <p class="mt-4 text-bakery-800 max-w-2xl mx-auto leading-relaxed">
+    <p class="mt-4 text-bakery-800 measure leading-relaxed">
       What comes out of the kitchen on Main Street. Cakes and decorated cookies are made to order, so
       most of what follows started as somebody describing what they wanted.
     </p>
   </header>
 
-  <div class="container mx-auto px-4 pb-16">
+  <div class="container pb-16">
     <!--/*
       The category filter: links, not buttons. Each filtered view is now a URL you can bookmark or send
       to somebody, the browser's back button does what it looks like it does, and a crawler can see all
@@ -46,14 +46,14 @@
 
     <p th:if="${#lists.isEmpty(products)}" class="text-center text-bakery-800">
       Nothing in that category just now.
-      <a href="/products" class="underline underline-offset-4">See everything</a>.
+      <a href="/products" class="link-plain">See everything</a>.
     </p>
   </div>
 
   <!--/* A catalogue with no way to order from it is a gallery. */-->
   <section class="section bg-bakery-800 text-white">
-    <div class="container mx-auto px-4">
-      <div class="max-w-2xl mx-auto text-center">
+    <div class="container">
+      <div class="measure text-center">
         <h2 class="h3">Want one of these, or something else?</h2>
         <p class="mt-4 text-bakery-100 leading-relaxed">
           Cakes and decorated cookies are made to order. Tell us the date and roughly what you have in

@@ -7,13 +7,68 @@
  * only a registered utility can take a variant (`hover:`, `md:`, `file:`).
  */
 
-/* The exception. In @layer components, matching the old site — and that ordering matters: a utility like
-   `px-4`, which the markup applies alongside `container` on nearly every section, has to win over this,
-   or every gutter on the site silently widens. */
+/*
+ * The page gutter, and the only plain class left in a layer.
+ *
+ * Every section used to write `container mx-auto px-4`, carried over from the React site: `mx-auto` twice
+ * and a px-4 that beat the responsive padding below, so the gutter was 16px at every width including a
+ * 27-inch screen. The markup now says `container` and nothing else, which is why this can stay in the
+ * components layer — there is no longer a utility next to it that has to win.
+ */
 @layer components {
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+}
+
+/*
+ * MEASURES. Text you read wants a narrow column and a grid of cards wants a wide one; those two numbers
+ * were seven different max-w-* classes chosen a template at a time.
+ */
+@utility measure {
+  @apply max-w-2xl mx-auto;
+}
+
+@utility measure-wide {
+  @apply max-w-5xl mx-auto;
+}
+
+/*
+ * LINKS in running text. Underlined, offset so the line clears the descenders, and colour-shifting on
+ * hover — three variants because a link in a paragraph, a link on a sage band and a quiet one in small
+ * print are the same idea in different rooms.
+ */
+@utility link {
+  @apply underline underline-offset-4 text-bakery-700 hover:text-bakery-900 transition-colors;
+}
+
+@utility link-on-dark {
+  @apply underline underline-offset-4 text-bakery-50 hover:text-white transition-colors;
+}
+
+/* Inherits its colour: for a link inside a coloured paragraph that already sets one. */
+@utility link-plain {
+  @apply underline underline-offset-4 hover:text-bakery-600 transition-colors;
+}
+
+/*
+ * FIELDS. One input, everywhere. The public form had its own (cream, ring-2, py-2.5) and the admin had
+ * another (white, ring-1, py-2, text-sm), which is what happens when a form gets written twice.
+ */
+@utility field {
+  @apply w-full rounded-field border border-bakery-300 bg-white px-3.5 py-2.5 text-sm
+         focus:border-bakery-500 focus:outline-none focus:ring-1 focus:ring-bakery-500;
+}
+
+/* A photograph standing on the page rather than inside a card: same edge and shadow as one. */
+@utility photo {
+  @apply rounded-panel border border-bakery-200/70;
+  box-shadow: var(--shadow-card);
+}
+
+/* The cream header at the top of a page that has no photographic band. */
+@utility page-head {
+  @apply container pt-14 pb-10 md:pt-20 md:pb-12 text-center;
 }
 
 /*

@@ -15,7 +15,7 @@
 
     <!--/* w-full/min-w-0 keep this flex item from sizing to its max-content width and blowing out the
            page on narrow screens. */-->
-    <div class="relative container mx-auto px-4 w-full min-w-0">
+    <div class="relative container w-full min-w-0">
       <div class="max-w-3xl mx-auto text-center">
         <div th:replace="~{fragments/lockup :: large('text-bakery-50 mb-10')}"></div>
         <p class="lede sm:text-xl text-bakery-100 mb-10">
@@ -37,7 +37,7 @@
 
   <!--/* What people come in for */-->
   <section class="section bg-bakery-50">
-    <div class="container mx-auto px-4">
+    <div class="container">
       <h2 class="h2 text-center text-bakery-900 mb-12">What people come in for</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         <div th:each="item : ${ {'Cinnamon Rolls', 'Sugar Cookies', 'Cakes'} }"
@@ -55,14 +55,14 @@
 
   <!--/* Our story */-->
   <section class="section bg-bakery-800 text-white">
-    <div class="container mx-auto px-4">
+    <div class="container">
       <div class="max-w-3xl mx-auto text-center">
         <h2 class="h2 mb-8" style="letter-spacing: 0.01em">Our story</h2>
         <p class="text-base md:text-lg text-bakery-100 mb-8 leading-relaxed">
           Morissa Bennett opened The Vine in 2024. We bake in our own kitchen on Main Street:
           cinnamon rolls, cookies, custom cakes, sandwiches, paninis, and coffee.
         </p>
-        <a href="/history" class="text-white hover:text-bakery-200 font-semibold underline underline-offset-4">
+        <a href="/history" class="link-on-dark font-semibold">
           Read our story
         </a>
       </div>
@@ -75,11 +75,11 @@
     the link is worth following.
   */-->
   <section class="section bg-bakery-50">
-    <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-5xl mx-auto">
+    <div class="container">
+      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center measure-wide">
         <img th:src="${photos.of('gallery/Sugar Cookies.webp')}" alt="Iced sugar cookies from The Vine"
              width="800" height="600" loading="lazy"
-             class="w-full h-64 md:h-80 object-cover rounded-panel shadow-xs">
+             class="photo w-full h-64 md:h-80 object-cover">
         <div>
           <h2 class="h2 text-bakery-900">Ordering for a crowd?</h2>
           <p class="mt-4 text-bakery-800 leading-relaxed">
@@ -97,7 +97,7 @@
 
   <!--/* Visit us */-->
   <section id="visit" class="section bg-bakery-50 scroll-mt-24">
-    <div class="container mx-auto px-4">
+    <div class="container">
       <h2 class="h2 text-center text-bakery-900 mb-12">Visit us</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
         <div class="panel p-6 md:p-8">
@@ -107,7 +107,7 @@
         <div class="panel p-6 md:p-8">
           <h2 class="h3 text-bakery-900 mb-6">Find us</h2>
           <div class="text-bakery-800"
-               th:replace="~{fragments/visit :: address('hover:text-bakery-600 underline underline-offset-4')}"></div>
+               th:replace="~{fragments/visit :: address('link-plain')}"></div>
         </div>
       </div>
     </div>

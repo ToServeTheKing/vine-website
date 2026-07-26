@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <footer th:fragment="footer" class="bg-bakery-900 text-bakery-100">
-  <div class="container mx-auto px-4 py-14">
+  <div class="container py-14">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
       <div class="col-span-1 md:col-span-2 flex items-start">
         <div th:replace="~{fragments/lockup :: small('text-bakery-50')}"></div>
@@ -11,16 +11,16 @@
       <div>
         <h3 class="label text-bakery-300 mb-4 font-adbhashitha">Navigation</h3>
         <ul class="space-y-2">
-          <li><a href="/products" class="hover:text-white transition">Our Products</a></li>
-          <li><a href="/catering" class="hover:text-white transition">Goodie Boxes &amp; Catering</a></li>
-          <li><a href="/history" class="hover:text-white transition">Our Story</a></li>
-          <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
+          <li><a href="/products" class="hover:text-white transition-colors">Our Products</a></li>
+          <li><a href="/catering" class="hover:text-white transition-colors">Goodie Boxes &amp; Catering</a></li>
+          <li><a href="/history" class="hover:text-white transition-colors">Our Story</a></li>
+          <li><a href="/contact" class="hover:text-white transition-colors">Contact</a></li>
         </ul>
       </div>
 
       <div>
         <h3 class="label text-bakery-300 mb-4 font-adbhashitha">Visit</h3>
-        <div th:replace="~{fragments/visit :: address('hover:text-white transition')}"></div>
+        <div th:replace="~{fragments/visit :: address('link-on-dark')}"></div>
         <!--/* The hours are the thing people come to a bakery's site for, and the footer is on every
                page. */-->
         <div class="mt-4 text-sm text-bakery-200"

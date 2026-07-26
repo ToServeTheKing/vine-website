@@ -17,7 +17,7 @@
   here would resolve against the 80px header box and get clipped to a sliver.
 */-->
 <header th:fragment="header" class="sticky top-0 z-40 bg-bakery-50/90 backdrop-blur border-b border-bakery-200">
-  <div class="container mx-auto px-4">
+  <div class="container">
     <div class="flex items-center justify-between gap-2 h-20 md:h-24">
       <div th:replace="~{fragments/lockup :: small('text-bakery-700')}"></div>
 
@@ -37,7 +37,7 @@
           </svg>
         </summary>
         <div class="absolute inset-x-0 top-full z-30 h-[calc(100dvh-5rem)] bg-bakery-50">
-          <nav class="container mx-auto px-4 flex flex-col">
+          <nav class="container flex flex-col">
             <th:block th:replace="~{:: links('text-bakery-800 hover:text-bakery-600 transition py-4 text-lg border-b border-bakery-100')}"></th:block>
           </nav>
         </div>
