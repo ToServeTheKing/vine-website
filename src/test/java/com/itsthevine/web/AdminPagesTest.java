@@ -94,6 +94,7 @@ class AdminPagesTest {
     @Test
     void renamingAnItemLandsAndSaysSo() throws Exception {
         mvc.perform(post("/admin/items/1").with(user("morissa")).with(csrf())
+                        .param("do", "save")
                         .param("name", "76th Birthday Cake (chocolate)")
                         .param("category", "Cakes"))
                 .andExpect(status().is3xxRedirection())
@@ -107,7 +108,7 @@ class AdminPagesTest {
     @Test
     void aRefusalComesBackAsASentenceTheEditorCanActOn() throws Exception {
         // Cookies has items filed under it, and deleting the button shouldn't decide what happens to them.
-        mvc.perform(post("/admin/categories/1/delete").with(user("morissa")).with(csrf()))
+        mvc.perform(post("/admin/categories/1").with(user("morissa")).with(csrf()).param("do", "delete"))
                 .andExpect(redirectedUrl("/admin"))
                 .andExpect(flash().attribute("problem", containsString("still filed under Cookies")));
     }
@@ -115,7 +116,7 @@ class AdminPagesTest {
     @Test
     void movingAnItemUpFromTheTopIsNotAnError() throws Exception {
         // The button is disabled in the page, but a stale page could still post this.
-        mvc.perform(post("/admin/items/1/move").with(user("morissa")).with(csrf()).param("by", "-1"))
+        mvc.perform(post("/admin/items/1").with(user("morissa")).with(csrf()).param("do", "move:-1"))
                 .andExpect(redirectedUrl("/admin"))
                 .andExpect(flash().attributeCount(0));
     }
