@@ -205,6 +205,22 @@ class CateringMenuTest {
     }
 
     @Test
+    void deletingATableTakesItsColumnsLinesAndCellsWithIt() {
+        CateringMenu.PackageView weddings = catering.everything().packages().get(2);
+
+        catering.remove(weddings.id());
+        // Flushed on purpose: a delete that leaves its children behind fails against the real foreign
+        // keys, not in memory, and this one is a button on the admin screen.
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(catering.everything().packages()).extracting(CateringMenu.PackageView::name)
+                .containsExactly("Office", "Parties");
+        // The page's own terms outlive any one table.
+        assertThat(catering.menu().notes()).hasSize(2);
+    }
+
+    @Test
     void putsTheTablesWhereTheEditorLeftThem() {
         List<CateringMenu.PackageView> tables = catering.everything().packages();
         List<Long> weddingsFirst = List.of(tables.get(2).id(), tables.get(0).id(), tables.get(1).id());
