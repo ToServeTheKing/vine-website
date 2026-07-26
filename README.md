@@ -12,7 +12,7 @@ there is no JavaScript framework in this repo. The look has not changed through 
 |---|---|
 | Backend | Spring Boot 4 / Java 25, `com.itsthevine.web` |
 | Pages | Thymeleaf, `src/main/resources/templates` — **no JavaScript** except one 100-line file for the product-card arrows |
-| Styling | Tailwind v4, compiled from the templates by the Tailwind CLI into `static/css/site.css`. `styles/` is the whole asset pipeline |
+| Styling | Tailwind v4, compiled from the templates by the Tailwind CLI into `static/css/site.css`. `src/main/styles` is the whole asset pipeline |
 | Admin | Thymeleaf forms at `/admin`, behind Authentik |
 | Database | Postgres (`itsthevine` on the shared `app-db` cluster), Flyway |
 | Photos | public MinIO bucket `itsthevine` — **not** in the repo or the image |
@@ -120,7 +120,7 @@ history. EXIF (including GPS from phone photos) is stripped by the re-encode.
 mvn spring-boot:run     # http://localhost:8080
 
 # the stylesheet, while editing templates — watches and recompiles
-cd styles && npm install && npm run watch
+cd src/main/styles && npm install && npm run watch
 ```
 
 `/admin` only exists when `SECURITY_MODE=OIDC`, so a plain local run has the site and no admin. To work

@@ -127,14 +127,16 @@
             <!--
               There is no JavaScript application here any more, so node is present for one reason:
               Tailwind needs a compiler, and the alternative to it is a hand-written stylesheet.
-              `styles/` is the whole asset pipeline (see styles/site.css).
+              src/main/styles is the whole asset pipeline (see its site.css).
             -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <configuration>
-                    <!-- Overrides platform-parent's `frontend`, which was where the SPA lived. -->
-                    <workingDirectory>styles</workingDirectory>
+                    <!-- Overrides platform-parent's `frontend`, which was where the SPA lived. The
+                         stylesheet sources live with the rest of the app's source; node_modules has to
+                         sit beside them, because that is where Tailwind resolves its own import from. -->
+                    <workingDirectory>src/main/styles</workingDirectory>
                 </configuration>
                 <executions>
                     <!--

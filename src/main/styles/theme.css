@@ -1,0 +1,45 @@
+/*
+ * The brand: three typefaces and the sage-and-cream palette. Nothing here draws anything — these are the
+ * names the rest of the CSS and every template are written in.
+ *
+ * Fonts are served by Spring from /fonts rather than bundled, so the stylesheet can name a stable URL and
+ * the browser caches one copy across the whole site.
+ */
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/raleway-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AdBhashitha';
+  src: url('/fonts/AdBhashitha.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LeJour Script';
+  src: url('/fonts/LeJour-Script.woff') format('woff');
+  font-display: swap;
+}
+
+@theme {
+  /* Sage & Cream. 500 is the signature sage; 600+ are the darker tones that white text can actually
+     sit on (500 on white is only 3.6:1 — too low). */
+  --color-bakery-50: #faf7f0;
+  --color-bakery-100: #f0efe3;
+  --color-bakery-200: #dde0cc;
+  --color-bakery-300: #c3cbae;
+  --color-bakery-400: #a2ae8b;
+  --color-bakery-500: #7c8b6b;
+  --color-bakery-600: #5f6f52;
+  --color-bakery-700: #4a5740;
+  --color-bakery-800: #37412f;
+  --color-bakery-900: #232b1e;
+
+  --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+  --font-adbhashitha: 'AdBhashitha', ui-serif, Georgia, serif;
+  --font-lejour: 'LeJour Script', ui-serif, Georgia, cursive;
+}
+

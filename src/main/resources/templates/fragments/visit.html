@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  The opening hours and the address, in one place.
+
+  They were on the homepage and in the footer already, and the moment the contact page wanted them too
+  that became three copies of the one fact a customer most often comes here for. A shop that changes its
+  Saturday hours should change them once.
+
+  Both fragments take the classes that vary by where they sit — cream text in the footer, sage on white
+  in a card — so the content is shared without the styling being averaged into something that suits
+  neither.
+*/-->
+
+<ul th:fragment="hours(rowClass)" class="space-y-3">
+  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
+    <span>Tuesday &ndash; Friday</span>
+    <span class="font-medium whitespace-nowrap">7:00am &ndash; 2:00pm</span>
+  </li>
+  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
+    <span>Saturday</span>
+    <span class="font-medium whitespace-nowrap">7:00am &ndash; 12:00pm</span>
+  </li>
+  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
+    <span>Sunday &ndash; Monday</span>
+    <span class="font-medium">Closed</span>
+  </li>
+</ul>
+
+<address th:fragment="address(linkClass)" class="not-italic space-y-3">
+  <p>215 E Main Street<br>Princeville, IL 61559</p>
+  <p>
+    <a href="tel:+13097010660" th:class="${linkClass}">(309) 701-0660</a>
+  </p>
+  <p class="break-words">
+    <a href="mailto:contact@itsthevine.com" th:class="${linkClass}">contact@itsthevine.com</a>
+  </p>
+</address>
+</body>
+</html>
