@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content">
+
+  <!--/* Hero — centred lockup on a sage wash. */-->
+  <section class="relative flex items-center min-h-[78svh] py-20 md:py-28 bg-bakery-900 text-white overflow-hidden">
+    <!--/* Softened on purpose: the storefront's own painted sign sits right behind the logo, so a sharp
+           photo makes you read the name twice. scale-110 hides the blur's feathered edges. */-->
+    <img th:src="${photos.of('gallery/Outside.webp')}" alt="" fetchpriority="high"
+         class="absolute inset-0 w-full h-full object-cover object-bottom blur-[3px] scale-110">
+    <!--/* Sage wash rather than a neutral black scrim — the tint is the identity. */-->
+    <div class="absolute inset-0 bg-bakery-900/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
+
+    <!--/* w-full/min-w-0 keep this flex item from sizing to its max-content width and blowing out the
+           page on narrow screens. */-->
+    <div class="relative container mx-auto px-4 w-full min-w-0">
+      <div class="max-w-3xl mx-auto text-center">
+        <div th:replace="~{fragments/lockup :: large('text-bakery-50 mb-10')}"></div>
+        <p class="text-lg sm:text-xl text-bakery-100 mb-10 text-balance leading-relaxed">
+          A coffeehouse and bakery in downtown Princeville, Illinois.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/products"
+             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+            See the menu
+          </a>
+          <a href="#visit"
+             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+            Visit us
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--/* What people come in for */-->
+  <section class="py-16 md:py-24 bg-bakery-50">
+    <div class="container mx-auto px-4">
+      <h2 class="font-adbhashitha text-3xl md:text-4xl text-center text-bakery-900 mb-12">What people come in for</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+        <div th:each="item : ${ {'Cinnamon Rolls', 'Sugar Cookies', 'Cakes'} }"
+             class="group text-center bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition duration-300">
+          <div class="overflow-hidden">
+            <!--/* The filenames carry the spaces in these names; SitePhotos encodes them. */-->
+            <img th:src="${photos.of('gallery/' + item + '.webp')}" th:alt="${item}" width="600" height="400" loading="lazy"
+                 class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105">
+          </div>
+          <h3 class="font-adbhashitha text-xl md:text-2xl text-bakery-800 py-6 tracking-wide" th:text="${item}">Cinnamon Rolls</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--/* Our story */-->
+  <section class="py-16 md:py-24 bg-bakery-800 text-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="font-adbhashitha text-3xl md:text-4xl mb-8" style="letter-spacing: 0.01em">Our story</h2>
+        <p class="text-base md:text-lg text-bakery-100 mb-8 leading-relaxed">
+          Morissa Bennett opened The Vine in 2024. We bake in our own kitchen on Main Street:
+          cinnamon rolls, cookies, custom cakes, sandwiches, paninis, and coffee.
+        </p>
+        <a href="/history" class="text-white hover:text-bakery-200 font-semibold underline underline-offset-4">
+          Read our story
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--/* Visit us */-->
+  <section id="visit" class="py-16 md:py-24 bg-bakery-50 scroll-mt-24">
+    <div class="container mx-auto px-4">
+      <h2 class="font-adbhashitha text-3xl md:text-4xl text-center text-bakery-900 mb-12">Visit us</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
+        <div class="bg-white rounded-3xl p-6 md:p-8">
+          <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Our hours</h2>
+          <ul class="space-y-3 text-bakery-800">
+            <li class="flex justify-between gap-4">
+              <span>Tuesday &ndash; Friday</span>
+              <span class="font-medium whitespace-nowrap">7:00am &ndash; 2:00pm</span>
+            </li>
+            <li class="flex justify-between gap-4">
+              <span>Saturday</span>
+              <span class="font-medium whitespace-nowrap">7:00am &ndash; 12:00pm</span>
+            </li>
+            <li class="flex justify-between gap-4">
+              <span>Sunday &ndash; Monday</span>
+              <span class="font-medium">Closed</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-3xl p-6 md:p-8">
+          <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Find us</h2>
+          <address class="not-italic space-y-3 text-bakery-800">
+            <p>215 E Main Street<br>Princeville, IL 61559</p>
+            <p>
+              <a href="tel:+13097010660" class="hover:text-bakery-600 underline underline-offset-4">(309) 701-0660</a>
+            </p>
+            <p class="break-words">
+              <a href="mailto:contact@itsthevine.com" class="hover:text-bakery-600 underline underline-offset-4">contact@itsthevine.com</a>
+            </p>
+          </address>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
