@@ -1,16 +1,12 @@
 package com.itsthevine.web;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,16 +28,12 @@ public class ProductCatalog {
 
     private final ProductRepository products;
     private final CategoryRepository categories;
-    private final String assetBaseUrl;
+    private final SitePhotos photos;
 
-    public ProductCatalog(ProductRepository products,
-                          CategoryRepository categories,
-                          @Value("${site.assets.base-url:https://s3.thebennett.net/itsthevine}") String assetBaseUrl) {
+    public ProductCatalog(ProductRepository products, CategoryRepository categories, SitePhotos photos) {
         this.products = products;
         this.categories = categories;
-        // A trailing slash here would produce '//images/...' — harmless on most servers, but it shows
-        // up in every image URL on the page.
-        this.assetBaseUrl = assetBaseUrl.replaceAll("/+$", "");
+        this.photos = photos;
     }
 
     public record ProductView(Long id, String name, String category, List<String> images) {}
@@ -94,18 +86,6 @@ public class ProductCatalog {
 
     private ProductView toView(Product p) {
         return new ProductView(p.getId(), p.getName(), p.getCategory(),
-                p.getImageKeys().stream().map(this::imageUrl).toList());
-    }
-
-    /**
-     * Some photo filenames contain spaces ("Cinnamon Rolls.webp"), and a raw space in a URL doesn't
-     * fetch — so each path segment is encoded. {@code URLEncoder} is form-encoding, which differs
-     * from path-encoding in exactly one way that matters here: it turns a space into '+'.
-     */
-    private String imageUrl(String key) {
-        String encoded = Arrays.stream(key.replaceAll("^/+", "").split("/"))
-                .map(segment -> URLEncoder.encode(segment, StandardCharsets.UTF_8).replace("+", "%20"))
-                .collect(Collectors.joining("/"));
-        return assetBaseUrl + "/images/" + encoded;
+                p.getImageKeys().stream().map(photos::of).toList());
     }
 }

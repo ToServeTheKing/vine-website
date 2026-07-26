@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content" class="min-h-screen bg-bakery-50">
+
+  <header class="container mx-auto px-4 pt-14 pb-10 md:pt-20 md:pb-12 text-center">
+    <h1 class="font-adbhashitha text-4xl md:text-5xl text-bakery-900">Goodie boxes &amp; catering</h1>
+    <p class="mt-4 text-bakery-800 max-w-2xl mx-auto leading-relaxed">
+      Boxes for the office, packages for a party, and cakes and desserts for a wedding. Every one of
+      these is a starting point &mdash; tell us what you have in mind and we will work from it.
+    </p>
+  </header>
+
+  <div class="container mx-auto px-4 pb-16 md:pb-24">
+    <div class="max-w-4xl mx-auto space-y-10 md:space-y-12">
+
+      <!--/*
+        One table per package. Two renderings of the same data, and only one is ever visible:
+
+        - A real <table> from `md` up. These are prices in columns; a table is what that is, and a
+          screen reader announces the size and the item together because of the row and column headers.
+        - Stacked cards below `md`. A four-column price table on a phone is either an illegible squeeze
+          or a sideways scroll, and this page is mostly read on phones.
+
+        Both come from the same model, so they cannot drift.
+      */-->
+      <section th:each="table : ${menu.packages}"
+               class="bg-white rounded-3xl shadow-xs overflow-hidden">
+        <div class="px-6 pt-6 md:px-8 md:pt-8">
+          <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900" th:text="${table.name}">Office</h2>
+          <p th:if="${table.blurb}" class="mt-2 text-bakery-700" th:text="${table.blurb}">Blurb</p>
+        </div>
+
+        <!--/* Wide: the table. */-->
+        <div class="hidden md:block px-8 pt-6">
+          <table class="w-full border-collapse text-left">
+            <caption class="sr-only" th:text="|${table.name} — what each size includes and what it costs|">Sizes</caption>
+            <thead>
+              <tr class="border-b border-bakery-200">
+                <th scope="col" class="py-3 pr-4 text-xs uppercase tracking-[0.15em] text-bakery-600 font-medium align-bottom">
+                  What you get
+                </th>
+                <th th:each="tier : ${table.tiers}" scope="col" class="py-3 px-4 align-bottom">
+                  <span class="block font-adbhashitha text-lg text-bakery-900" th:text="${tier.label}">Small</span>
+                  <span th:if="${tier.price}" class="block text-bakery-700" th:text="${tier.price}">$24</span>
+                  <!--/* No price means "ask us" — say so rather than leaving a hole in the column. */-->
+                  <span th:unless="${tier.price}" class="block text-bakery-600 text-sm">Ask us</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="row : ${table.rows}" class="border-b border-bakery-100 last:border-0 align-top">
+                <th scope="row" class="py-4 pr-4 font-medium text-bakery-900" th:text="${row.label}">Mini muffins</th>
+                <td th:each="value : ${row.values}" class="py-4 px-4 text-bakery-800">
+                  <span th:if="${!#strings.isEmpty(value)}" th:text="${value}">12 items</span>
+                  <!--/* A cell the bakery hasn't filled in. An em dash reads as "nothing here"; an empty
+                         cell reads as a broken page. */-->
+                  <span th:if="${#strings.isEmpty(value)}" class="text-bakery-400" aria-hidden="true">&mdash;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!--/* Narrow: one card per size. */-->
+        <div class="md:hidden px-6 pt-6 space-y-4">
+          <div th:each="tier, t : ${table.tiers}" class="rounded-2xl border border-bakery-200 p-4">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-adbhashitha text-lg text-bakery-900" th:text="${tier.label}">Small</h3>
+              <span th:if="${tier.price}" class="text-bakery-700 whitespace-nowrap" th:text="${tier.price}">$24</span>
+              <span th:unless="${tier.price}" class="text-bakery-600 text-sm whitespace-nowrap">Ask us</span>
+            </div>
+            <!--/* The cell for this size on each line — t.index picks this column out of every row, which
+                   is exactly the alignment the aggregate guarantees. Lines with nothing in this column are
+                   still listed: they are part of what's in the box, and the bakery just hasn't said how
+                   many yet. */-->
+            <dl class="mt-3 space-y-2">
+              <div th:each="row : ${table.rows}" class="flex justify-between gap-4 text-sm">
+                <dt class="text-bakery-900" th:text="${row.label}">Mini muffins</dt>
+                <dd class="text-bakery-800 text-right">
+                  <span th:if="${!#strings.isEmpty(row.values[t.index])}" th:text="${row.values[t.index]}">12 items</span>
+                  <span th:if="${#strings.isEmpty(row.values[t.index])}" class="text-bakery-400">&mdash;</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(table.notes)}" class="px-6 md:px-8 pt-6">
+          <ul class="space-y-2 text-sm text-bakery-700">
+            <li th:each="note : ${table.notes}" th:text="${note}">Minimum of 6 items per baked good.</li>
+          </ul>
+        </div>
+
+        <div class="px-6 pb-6 pt-6 md:px-8 md:pb-8">
+          <a th:href="|/contact?about=${#uris.escapeQueryParam(table.name)}|"
+             class="inline-block bg-bakery-600 hover:bg-bakery-700 text-white px-6 py-3 rounded-full font-medium tracking-wide transition">
+            Ask about <span th:text="${#strings.toLowerCase(table.name)}">office</span>
+          </a>
+        </div>
+      </section>
+
+      <!--/* The terms that apply whichever table you were reading. */-->
+      <section th:if="${!#lists.isEmpty(menu.notes)}" class="rounded-3xl border border-bakery-200 p-6 md:p-8">
+        <h2 class="font-adbhashitha text-xl text-bakery-900">Before you order</h2>
+        <ul class="mt-4 space-y-2 text-bakery-800">
+          <li th:each="note : ${menu.notes}" th:text="${note}">Prices may change.</li>
+        </ul>
+      </section>
+
+      <!--/* Only shows if every table has been emptied out in the admin. Better than a bare heading. */-->
+      <p th:if="${#lists.isEmpty(menu.packages)}" class="text-center text-bakery-800">
+        Our catering list is being updated. Call us on
+        <a href="tel:+13097010660" class="underline underline-offset-4">(309) 701-0660</a> and we will
+        talk it through.
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

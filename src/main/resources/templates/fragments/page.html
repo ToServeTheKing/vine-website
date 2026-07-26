@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--/*
+  The shell every page wears: the head, the sticky header, the footer, and the flex column that keeps
+  the footer at the bottom of a short page.
+
+  A page replaces its own <html> with this fragment and passes its content in as `~{::content}` — a
+  reference to the fragment named "content" in the page's own file. That is how a layout works in
+  Thymeleaf without a layout dialect, and it means the chrome exists once: a page that wanted its own
+  header would have to say so.
+
+  Title, description and path are parameters rather than model lookups so that the error pages — which
+  Boot renders through its own controller, with none of SiteController's model — can pass their own.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title, description, path, content)">
+<head th:replace="~{fragments/head :: head(${title}, ${description}, ${path})}"></head>
+<body>
+  <div class="min-h-screen bg-bakery-50 flex flex-col">
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main class="flex-grow">
+      <div th:replace="${content}"></div>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </div>
+  <!--/* The only script on the public site: it gives the multi-photo product cards their arrows and
+         dots. Without it they are still a swipeable strip of photos. */-->
+  <script defer th:src="|/js/gallery.js?v=${build}|"></script>
+</body>
+</html>

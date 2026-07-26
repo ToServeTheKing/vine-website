@@ -58,6 +58,13 @@
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-data</artifactId>
         </dependency>
+        <!-- The site is server-rendered: every public page is a Thymeleaf template in
+             src/main/resources/templates, and the only JavaScript left on it is a 100-line file that
+             gives the multi-photo product cards their arrows. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-contact</artifactId>
@@ -117,10 +124,28 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- SPA build inherited from platform-parent (node install + npm build + copy dist -> jar). -->
+            <!-- Node install + npm install + `npm run build` (the admin screen) are inherited from
+                 platform-parent; the extra execution below compiles the server-rendered site's
+                 stylesheet. -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <executions>
+                    <!--
+                      Tailwind, run as a CLI over the Thymeleaf templates, straight into the build output.
+
+                      Bound to process-classes rather than prepare-package (where the admin's Vite build
+                      sits) because `mvn spring-boot:run` stops at process-classes: bind it any later and
+                      a local run serves an unstyled site. It writes to target/classes/static/css, so the
+                      generated file is never mistaken for a source file.
+                    -->
+                    <execution>
+                        <id>npm-build-css</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration><arguments>run build:css</arguments></configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

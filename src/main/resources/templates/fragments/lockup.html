@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  The wordmark: branch · "The Vine" over "Coffeehouse + Bakery" · branch.
+
+  The two branch marks are masks over currentColor (see .mark in tokens.css), so the whole lockup takes
+  its colour from the `tint` class the caller passes — sage in the header, cream on the hero and in the
+  footer. Branch heights track the two-line wordmark so the marks read as part of it.
+*/-->
+
+<th:block th:fragment="inner(branch, name, tag)">
+  <span th:class="'mark mark-r shrink-0 ' + ${branch}" aria-hidden="true"></span>
+  <span class="flex flex-col items-center leading-none min-w-0">
+    <span th:class="'font-lejour ' + ${name}" style="letter-spacing: 0.01em">The Vine</span>
+    <span th:class="'font-adbhashitha uppercase mt-1.5 whitespace-nowrap ' + ${tag}">Coffeehouse + Bakery</span>
+  </span>
+  <span th:class="'mark mark-l shrink-0 ' + ${branch}" aria-hidden="true"></span>
+</th:block>
+
+<!--/* Header and footer: a link home. */-->
+<a th:fragment="small(tint)" href="/"
+   th:class="'flex items-center gap-1.5 sm:gap-2 min-w-0 shrink ' + ${tint}"
+   aria-label="The Vine Coffeehouse + Bakery, home">
+  <th:block th:replace="~{:: inner('w-12 h-12 sm:w-14 sm:h-14', 'text-xl sm:text-2xl md:text-3xl', 'text-[0.6rem] sm:text-xs tracking-[0.18em]')}"></th:block>
+</a>
+
+<!--/* The hero, on the homepage — where a link back to "/" would be pointless. */-->
+<div th:fragment="large(tint)"
+     th:class="'flex items-center justify-center gap-2 sm:gap-4 min-w-0 shrink ' + ${tint}"
+     role="img" aria-label="The Vine Coffeehouse + Bakery">
+  <th:block th:replace="~{:: inner('w-20 h-20 sm:w-28 sm:h-28', 'text-4xl sm:text-5xl md:text-6xl', 'text-xs sm:text-base tracking-[0.2em]')}"></th:block>
+</div>
+</body>
+</html>

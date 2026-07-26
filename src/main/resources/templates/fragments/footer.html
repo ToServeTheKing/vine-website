@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="bg-bakery-900 text-bakery-100">
+  <div class="container mx-auto px-4 py-14">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div class="col-span-1 md:col-span-2 flex items-start">
+        <div th:replace="~{fragments/lockup :: small('text-bakery-50')}"></div>
+      </div>
+
+      <div>
+        <h3 class="font-adbhashitha text-sm uppercase tracking-[0.18em] text-bakery-300 mb-4">Navigation</h3>
+        <ul class="space-y-2">
+          <li><a href="/products" class="hover:text-white transition">Our Products</a></li>
+          <li><a href="/catering" class="hover:text-white transition">Goodie Boxes &amp; Catering</a></li>
+          <li><a href="/history" class="hover:text-white transition">Our Story</a></li>
+          <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-adbhashitha text-sm uppercase tracking-[0.18em] text-bakery-300 mb-4">Visit</h3>
+        <address class="not-italic space-y-2">
+          <p>215 E Main Street<br>Princeville, IL 61559</p>
+          <p><a href="tel:+13097010660" class="hover:text-white transition">(309) 701-0660</a></p>
+          <p class="break-words">
+            <a href="mailto:contact@itsthevine.com" class="hover:text-white transition">contact@itsthevine.com</a>
+          </p>
+        </address>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center text-sm text-bakery-300">
+      <p>&copy; <span th:text="${year}">2026</span> The Vine Coffeehouse + Bakery</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

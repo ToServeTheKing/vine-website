@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*
+  The page head. `title`, `description`, `path` and (on the homepage) `preload` come from the model —
+  see SiteController, where each route states its own.
+
+  This is what the SPA could not do. PageMetaController used to rewrite the shell's <title> and four
+  meta tags with regular expressions on the way out, and its test read the real index.html so that
+  reformatting that file failed the build rather than silently breaking the rewriting. A page that is
+  rendered on the server just writes its own head, so all of that is gone.
+*/-->
+<head th:fragment="head(title, description, path)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" media="(prefers-color-scheme: light)" href="/images/resources/logo_L.png">
+  <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/resources/logo_dark.png">
+
+  <!--/* Open the connection to the photo bucket while the head is still parsing. */-->
+  <link rel="preconnect" th:href="${assetOrigin}" crossorigin>
+  <!--/* The wordmark is set in Raleway; without preloading it arrives late and the logo visibly reflows. */-->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/raleway-latin.woff2" crossorigin>
+  <link th:if="${preload}" rel="preload" as="image" th:href="${preload}" fetchpriority="high">
+
+  <title th:text="${title}">The Vine Coffeehouse + Bakery</title>
+  <meta name="description" th:content="${description}">
+  <meta property="og:title" th:content="${title}">
+  <meta property="og:description" th:content="${description}">
+  <meta property="og:url" th:content="${baseUrl + (path == '/' ? '' : path)}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta name="keywords" content="bakery, coffeehouse, pastries, custom cakes, cinnamon rolls, paninis, Princeville IL">
+
+  <!--/* ?v= is the commit sha in a deployment. One hand-written stylesheet has no content hash in its
+         name, so without it a returning visitor keeps the CSS they cached before the deploy. */-->
+  <link rel="stylesheet" th:href="|/css/site.css?v=${build}|">
+</head>
+<body></body>
+</html>

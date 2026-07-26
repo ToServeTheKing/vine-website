@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  The sticky bar, and the mobile menu.
+
+  The menu is a <details> element. That is not a trick to avoid writing JavaScript for its own sake —
+  the React version needed an effect to close the panel on navigation, another to close it on Escape,
+  another to stop the page behind it scrolling, and a third to unmount it (a panel parked off-screen
+  still extends the scrollable area, which is how you used to be able to scroll sideways and find the
+  menu). A <details> closes on Escape by itself, and navigation is a new document, so it cannot survive
+  it. Nothing to remember, nothing to clean up.
+
+  The panel is `absolute` and starts below the bar (`top-full`), so the logo and the toggle stay put and
+  the panel needs no second copy of either. It must not be `fixed`: the header carries `backdrop-blur`,
+  and a backdrop-filter makes an element a containing block for fixed descendants — a fixed panel in
+  here would resolve against the 80px header box and get clipped to a sliver.
+*/-->
+<header th:fragment="header" class="sticky top-0 z-40 bg-bakery-50/90 backdrop-blur border-b border-bakery-200">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between gap-2 h-20 md:h-24">
+      <div th:replace="~{fragments/lockup :: small('text-bakery-700')}"></div>
+
+      <nav class="hidden md:flex items-center gap-8">
+        <th:block th:replace="~{:: links('text-sm uppercase tracking-[0.15em] text-bakery-700 hover:text-bakery-900 transition')}"></th:block>
+      </nav>
+
+      <details class="group md:hidden shrink-0">
+        <summary class="p-2 cursor-pointer list-none" aria-label="Menu">
+          <svg class="h-6 w-6 text-bakery-700 group-open:hidden" fill="none" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg class="h-6 w-6 text-bakery-700 hidden group-open:block" fill="none" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </summary>
+        <div class="absolute inset-x-0 top-full z-30 h-[calc(100dvh-5rem)] bg-bakery-50">
+          <nav class="container mx-auto px-4 flex flex-col">
+            <th:block th:replace="~{:: links('text-bakery-800 hover:text-bakery-600 transition py-4 text-lg border-b border-bakery-100')}"></th:block>
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<!--/* One list of links, worn two ways — so the phone and the desktop can't end up offering different
+       pages. */-->
+<th:block th:fragment="links(itemClass)">
+  <a href="/products" th:class="${itemClass}">Our Products</a>
+  <a href="/catering" th:class="${itemClass}">Catering</a>
+  <a href="/history" th:class="${itemClass}">Our Story</a>
+  <a href="/contact" th:class="${itemClass}">Contact</a>
+</th:block>
+</body>
+</html>

@@ -32,7 +32,11 @@ spring:
 platform:
   web:
     spa:
-      enabled: true
+      # OFF. The platform's fallback forwards every extension-less path to /index.html so a React SPA can
+      # own routing; this site is server-rendered, and /index.html is now only the admin shell. Left on,
+      # a mistyped URL would answer with a blank JavaScript page and a 200 instead of the site's own 404.
+      # SiteController maps /admin to the shell explicitly — that one route is all the SPA is for.
+      enabled: false
   data:
     auditing:
       enabled: true
@@ -69,6 +73,10 @@ platform:
 # Absolute URLs for og:url. Only matters to link-preview scrapers, which need a full URL.
 site:
   base-url: ${SITE_BASE_URL:https://itsthevine.com}
+  # Hung on the stylesheet URL as ?v=… The SPA's bundles had content hashes in their filenames; one
+  # hand-written stylesheet does not, so without this a returning visitor keeps the CSS they cached
+  # before the deploy. The CI build already passes the commit sha to the image.
+  build: ${GIT_SHA:dev}
   assets:
     # Where uploaded photos land. The key stored on a product is bucket-relative and excludes the
     # prefix, because ProductCatalog re-adds `/images/` when it builds the public URL.
