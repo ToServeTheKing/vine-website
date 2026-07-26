@@ -34,8 +34,11 @@ public class CateringMenu {
         this.notes = notes;
     }
 
-    /** A column. {@code price} is ready to print ("$24"), and null when the column doesn't state one. */
-    public record TierView(Long id, String label, String price) {}
+    /**
+     * A column. {@code price} is ready to print ("$24") and null when the column doesn't state one;
+     * {@code serves} is roughly how many people it feeds, and null when the label already says.
+     */
+    public record TierView(Long id, String label, String price, String serves) {}
 
     /** A line, with one entry per column, in column order. */
     public record RowView(Long id, String label, List<String> values) {}
@@ -48,7 +51,7 @@ public class CateringMenu {
 
     // What the admin screen sends back. A whole table at a time — see CateringPackage#arrange.
     // `price` is the raw text from the box ("24", "$24.50", ""); Money decides what it means.
-    public record TierEdit(Long id, String label, String price) {}
+    public record TierEdit(Long id, String label, String price, String serves) {}
 
     public record RowEdit(Long id, String label, List<String> values) {}
 
@@ -99,7 +102,7 @@ public class CateringMenu {
         table.replaceNotes(clean(edit.notes()));
         table.arrange(
                 orEmpty(edit.tiers()).stream()
-                        .map(t -> new CateringPackage.Heading(t.id(), t.label(), t.price()))
+                        .map(t -> new CateringPackage.Heading(t.id(), t.label(), t.price(), t.serves()))
                         .toList(),
                 orEmpty(edit.rows()).stream()
                         .map(r -> new CateringPackage.Line(r.id(), r.label(), orEmpty(r.values())))
@@ -171,7 +174,7 @@ public class CateringMenu {
 
     private static PackageView toView(CateringPackage table) {
         List<TierView> tiers = table.getTiers().stream()
-                .map(t -> new TierView(t.getId(), t.getLabel(), t.getPrice()))
+                .map(t -> new TierView(t.getId(), t.getLabel(), t.getPrice(), t.getServes()))
                 .toList();
         List<RowView> rows = table.getRows().stream()
                 .map(r -> new RowView(r.getId(), r.getLabel(), r.getValues()))

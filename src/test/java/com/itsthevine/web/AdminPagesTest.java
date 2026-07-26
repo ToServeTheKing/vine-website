@@ -128,7 +128,7 @@ class AdminPagesTest {
                 // Indexed names are what let Spring bind the grid back into the right cells.
                 .andExpect(content().string(containsString("name=\"columns[0].label\"")))
                 .andExpect(content().string(containsString("name=\"lines[0].values[1]\"")))
-                .andExpect(content().string(containsString("value=\"Eighteen\"")))
+                .andExpect(content().string(containsString("value=\"18 items\"")))
                 // The price round-trips as text: it came out "$24" and goes back the same way.
                 .andExpect(content().string(containsString("value=\"$24\"")));
     }
@@ -170,7 +170,7 @@ class AdminPagesTest {
 
         // And nothing was written: the live page still says what it said.
         mvc.perform(get("/api/catering"))
-                .andExpect(content().string(containsString("A dozen")));
+                .andExpect(content().string(containsString("12 items")));
     }
 
     @Test
