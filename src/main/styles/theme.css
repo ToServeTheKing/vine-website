@@ -38,6 +38,14 @@
   --color-bakery-800: #37412f;
   --color-bakery-900: #232b1e;
 
+  /*
+   * Shadows tinted with the darkest sage rather than black. A neutral grey shadow on a cream page reads
+   * as a UI panel floating over a screen; a warm one reads as card stock lying on a counter, which is
+   * what these are meant to be.
+   */
+  --shadow-card: 0 1px 2px rgba(35, 43, 30, 0.04), 0 10px 30px -18px rgba(35, 43, 30, 0.28);
+  --shadow-card-lift: 0 2px 6px rgba(35, 43, 30, 0.06), 0 20px 44px -22px rgba(35, 43, 30, 0.4);
+
   --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
   --font-adbhashitha: 'AdBhashitha', ui-serif, Georgia, serif;
   --font-lejour: 'LeJour Script', ui-serif, Georgia, cursive;

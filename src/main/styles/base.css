@@ -39,6 +39,15 @@ body {
   color: var(--color-bakery-900);
 }
 
+/* The mobile menu is a <details>; its default disclosure triangle would sit beside the hamburger. Lost
+   once already in a refactor, which is exactly the kind of thing nobody notices until a phone. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
 /*
  * FOCUS. One visible ring for everything you can reach with a keyboard, as an outline rather than a
  * shadow so it shows up on cream, on white and on the sage bands without needing three variants.

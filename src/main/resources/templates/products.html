@@ -35,8 +35,10 @@
         <div class="relative w-full overflow-hidden">
           <div th:replace="~{:: gallery(${product})}"></div>
         </div>
-        <div class="p-6 text-center">
-          <h3 class="h4 text-bakery-900 mb-2" th:text="${product.name}">Name</h3>
+        <!--/* The caption sits on the cream, so the photo reads as mounted on the card rather than as
+               the card itself. */-->
+        <div class="panel-head border-b-0 border-t px-6 py-5 text-center">
+          <h3 class="h4 text-bakery-900" th:text="${product.name}">Name</h3>
           <span class="label text-bakery-600" th:text="${product.category}">Category</span>
         </div>
       </div>
