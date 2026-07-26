@@ -43,10 +43,10 @@
 
     <!--/* One place for the outcome of the last edit, whichever page posted it. */-->
     <div th:if="${problem}" role="alert"
-         class="mt-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+         class="mt-6 rounded-field border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
          th:text="${problem}">Something did not save.</div>
     <div th:if="${done}" role="status"
-         class="mt-6 rounded-md border border-bakery-200 bg-white px-4 py-3 text-sm text-bakery-800"
+         class="mt-6 rounded-field border border-bakery-200 bg-white px-4 py-3 text-sm text-bakery-800"
          th:text="${done}">Saved.</div>
 
     <div class="mt-6 space-y-6">

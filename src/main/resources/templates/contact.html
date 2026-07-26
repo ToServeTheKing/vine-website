@@ -38,17 +38,17 @@
         <div class="mb-4">
           <label class="block text-sm font-medium text-bakery-800 mb-2" for="name">Name</label>
           <input type="text" id="name" name="name" th:value="${name}" required
-                 class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500">
+                 class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-field focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-bakery-800 mb-2" for="email">Email</label>
           <input type="email" id="email" name="email" th:value="${email}" required
-                 class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500">
+                 class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-field focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-bakery-800 mb-2" for="message">Message</label>
           <textarea id="message" name="message" rows="5" required th:text="${message}"
-                    class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500"></textarea>
+                    class="w-full px-4 py-2.5 bg-bakery-50 border border-bakery-200 rounded-field focus:outline-none focus:ring-2 focus:ring-bakery-500 focus:border-bakery-500"></textarea>
         </div>
         <div class="flex flex-col items-center gap-4">
           <button type="submit"
@@ -81,7 +81,7 @@
           <div class="mt-4 text-bakery-800"
                th:replace="~{fragments/visit :: address('hover:text-bakery-600 underline underline-offset-4')}"></div>
         </div>
-        <div class="rounded-3xl border border-bakery-200 p-6 md:p-8">
+        <div class="rounded-panel border border-bakery-200 p-6 md:p-8">
           <h2 class="h4 text-bakery-900">Ordering for a crowd?</h2>
           <p class="mt-2 text-sm text-bakery-700 leading-relaxed">
             Goodie boxes, party packages and wedding desserts have their own page, with sizes and prices.
