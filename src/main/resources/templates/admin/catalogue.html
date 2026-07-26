@@ -126,7 +126,7 @@
             <div class="flex flex-wrap gap-3">
               <figure th:each="photo, p : ${item.photos}" class="w-28">
                 <img th:src="${photo.url}" alt="" loading="lazy"
-                     class="w-28 h-28 rounded-md object-cover border border-bakery-200 bg-bakery-100">
+                     class="w-28 h-28 rounded-field object-cover border border-bakery-200 bg-bakery-100">
                 <figcaption class="mt-1 flex items-center justify-between gap-1">
                   <div class="flex gap-1">
                     <button type="submit" name="do" th:value="|photo:${photo.key}:-1|" formnovalidate class="btn-icon"

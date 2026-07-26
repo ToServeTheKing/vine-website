@@ -70,7 +70,7 @@
  * `panel-lift` is one you can click, and it rises rather than just darkening.
  */
 @utility panel {
-  @apply bg-white rounded-3xl border border-bakery-200/70;
+  @apply bg-white rounded-panel border border-bakery-200/70;
   box-shadow: var(--shadow-card);
 }
 

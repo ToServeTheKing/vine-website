@@ -39,6 +39,16 @@
   --color-bakery-900: #232b1e;
 
   /*
+   * CORNERS. Two decisions, named, so "how round is a card" is answered once rather than per template.
+   *
+   * A card is 12px. It was 24px (Tailwind's rounded-3xl), which is the roundest thing on the page and
+   * reads as a phone app; a bakery's printed card has a corner you can see. Fields are tighter again, and
+   * buttons stay fully round — the pill is the brand's button shape and always was.
+   */
+  --radius-panel: 0.75rem;
+  --radius-field: 0.5rem;
+
+  /*
    * Shadows tinted with the darkest sage rather than black. A neutral grey shadow on a cream page reads
    * as a UI panel floating over a screen; a warm one reads as card stock lying on a counter, which is
    * what these are meant to be.
