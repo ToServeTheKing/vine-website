@@ -58,3 +58,67 @@ summary {
 summary::-webkit-details-marker {
   display: none;
 }
+
+/*
+ * SURFACES. Every white box on the site was "bg-white rounded-3xl shadow-xs" written out again, which is
+ * how two of them end up with different corners. `panel` is that box; `panel-lift` is one you can click
+ * or hover, and it lifts.
+ */
+@utility panel {
+  @apply bg-white rounded-3xl shadow-xs;
+}
+
+@utility panel-lift {
+  @apply panel transition duration-300 hover:shadow-lg;
+}
+
+/*
+ * BUTTONS. One shape — a full pill, generous, letterspaced — in four colourways, because the site puts
+ * buttons on cream and on sage and they cannot be the same colour on both.
+ *
+ *   pill-sage    filled, on a light background      pill-outline  quiet, on a light background
+ *   pill-cream   filled, on a sage background       pill-ghost    quiet, on a sage background
+ */
+@utility pill {
+  @apply inline-flex items-center justify-center gap-2 rounded-full
+         px-8 py-3.5 font-medium tracking-wide transition-colors;
+}
+
+@utility pill-sage {
+  @apply pill bg-bakery-600 text-white hover:bg-bakery-700;
+}
+
+@utility pill-cream {
+  @apply pill bg-bakery-50 text-bakery-900 hover:bg-white shadow-lg;
+}
+
+@utility pill-outline {
+  @apply pill border border-bakery-300 text-bakery-800 hover:bg-bakery-100;
+}
+
+@utility pill-ghost {
+  @apply pill border border-bakery-200/60 text-bakery-50 hover:bg-bakery-50/10;
+}
+
+/* Smaller, for a filter row rather than a call to action. */
+@utility chip {
+  @apply inline-flex items-center rounded-full border px-6 py-2 label
+         bg-white border-bakery-300 text-bakery-700 transition-colors hover:bg-bakery-100;
+}
+
+@utility chip-on {
+  @apply chip bg-bakery-600 border-bakery-600 text-white hover:bg-bakery-600;
+}
+
+/*
+ * RHYTHM. Two vertical sizes, so the page has a beat instead of nine hand-picked paddings: `section` for
+ * a block of content, `band` for a photographic or coloured strip, which sits tighter because its
+ * background is already doing the separating.
+ */
+@utility section {
+  @apply py-16 md:py-24;
+}
+
+@utility band {
+  @apply py-14 md:py-20;
+}

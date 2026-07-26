@@ -18,16 +18,16 @@
     <div class="relative container mx-auto px-4 w-full min-w-0">
       <div class="max-w-3xl mx-auto text-center">
         <div th:replace="~{fragments/lockup :: large('text-bakery-50 mb-10')}"></div>
-        <p class="text-lg sm:text-xl text-bakery-100 mb-10 text-balance leading-relaxed">
+        <p class="lede sm:text-xl text-bakery-100 mb-10">
           A coffeehouse and bakery in downtown Princeville, Illinois.
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <a href="/products"
-             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+             class="pill-cream">
             See the menu
           </a>
           <a href="#visit"
-             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+             class="pill-ghost">
             Visit us
           </a>
         </div>
@@ -36,28 +36,28 @@
   </section>
 
   <!--/* What people come in for */-->
-  <section class="py-16 md:py-24 bg-bakery-50">
+  <section class="section bg-bakery-50">
     <div class="container mx-auto px-4">
-      <h2 class="font-adbhashitha text-3xl md:text-4xl text-center text-bakery-900 mb-12">What people come in for</h2>
+      <h2 class="h2 text-center text-bakery-900 mb-12">What people come in for</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         <div th:each="item : ${ {'Cinnamon Rolls', 'Sugar Cookies', 'Cakes'} }"
-             class="group text-center bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition duration-300">
+             class="group panel-lift overflow-hidden text-center hover:-translate-y-1">
           <div class="overflow-hidden">
             <!--/* The filenames carry the spaces in these names; SitePhotos encodes them. */-->
             <img th:src="${photos.of('gallery/' + item + '.webp')}" th:alt="${item}" width="600" height="400" loading="lazy"
                  class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105">
           </div>
-          <h3 class="font-adbhashitha text-xl md:text-2xl text-bakery-800 py-6 tracking-wide" th:text="${item}">Cinnamon Rolls</h3>
+          <h3 class="h4 md:text-2xl text-bakery-800 py-6" th:text="${item}">Cinnamon Rolls</h3>
         </div>
       </div>
     </div>
   </section>
 
   <!--/* Our story */-->
-  <section class="py-16 md:py-24 bg-bakery-800 text-white">
+  <section class="section bg-bakery-800 text-white">
     <div class="container mx-auto px-4">
       <div class="max-w-3xl mx-auto text-center">
-        <h2 class="font-adbhashitha text-3xl md:text-4xl mb-8" style="letter-spacing: 0.01em">Our story</h2>
+        <h2 class="h2 mb-8" style="letter-spacing: 0.01em">Our story</h2>
         <p class="text-base md:text-lg text-bakery-100 mb-8 leading-relaxed">
           Morissa Bennett opened The Vine in 2024. We bake in our own kitchen on Main Street:
           cinnamon rolls, cookies, custom cakes, sandwiches, paninis, and coffee.
@@ -74,20 +74,20 @@
     found it by reading the nav. Photo on one side, the offer on the other, and the three tables named so
     the link is worth following.
   */-->
-  <section class="py-16 md:py-24 bg-bakery-50">
+  <section class="section bg-bakery-50">
     <div class="container mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-5xl mx-auto">
         <img th:src="${photos.of('gallery/Sugar Cookies.webp')}" alt="Iced sugar cookies from The Vine"
              width="800" height="600" loading="lazy"
              class="w-full h-64 md:h-80 object-cover rounded-3xl shadow-xs">
         <div>
-          <h2 class="font-adbhashitha text-3xl md:text-4xl text-bakery-900">Ordering for a crowd?</h2>
+          <h2 class="h2 text-bakery-900">Ordering for a crowd?</h2>
           <p class="mt-4 text-bakery-800 leading-relaxed">
             Goodie boxes for the office, packages for a party, and cakes and desserts for a wedding —
             with prices, sizes and what each one includes, so you can see where to start.
           </p>
           <a href="/catering"
-             class="mt-6 inline-block bg-bakery-600 hover:bg-bakery-700 text-white px-8 py-3.5 rounded-full font-medium tracking-wide transition">
+             class="pill-sage mt-6">
             Goodie boxes &amp; catering
           </a>
         </div>
@@ -96,16 +96,16 @@
   </section>
 
   <!--/* Visit us */-->
-  <section id="visit" class="py-16 md:py-24 bg-bakery-50 scroll-mt-24">
+  <section id="visit" class="section bg-bakery-50 scroll-mt-24">
     <div class="container mx-auto px-4">
-      <h2 class="font-adbhashitha text-3xl md:text-4xl text-center text-bakery-900 mb-12">Visit us</h2>
+      <h2 class="h2 text-center text-bakery-900 mb-12">Visit us</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
-        <div class="bg-white rounded-3xl p-6 md:p-8">
-          <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Our hours</h2>
+        <div class="panel p-6 md:p-8">
+          <h2 class="h3 text-bakery-900 mb-6">Our hours</h2>
           <div th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
         </div>
-        <div class="bg-white rounded-3xl p-6 md:p-8">
-          <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Find us</h2>
+        <div class="panel p-6 md:p-8">
+          <h2 class="h3 text-bakery-900 mb-6">Find us</h2>
           <div class="text-bakery-800"
                th:replace="~{fragments/visit :: address('hover:text-bakery-600 underline underline-offset-4')}"></div>
         </div>

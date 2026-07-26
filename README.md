@@ -18,6 +18,29 @@ there is no JavaScript framework in this repo. The look has not changed through 
 | Photos | public MinIO bucket `itsthevine` — **not** in the repo or the image |
 | Deploy | Gitea CI → image → Watchtower → Caddy |
 
+### The look, in one place
+
+`src/main/styles` is the whole of it — no bundler, no framework, one stylesheet:
+
+| file | what it holds |
+|---|---|
+| `theme.css` | the three typefaces and the sage-and-cream palette. Names, nothing drawn |
+| `base.css` | bare elements: page background, body type, the fade-in, the focus ring, the z-index scale |
+| `type.css` | the typographic ladder (below) |
+| `components.css` | `panel`, `pill-*`, `chip`, `section`/`band` — the site's own classes |
+| `admin.css` | the admin's controls, as `@utility` so `file:` variants work on the photo pickers |
+
+**The type ladder comes out of the logo.** The lockup is "The Vine" in LeJour Script over COFFEEHOUSE +
+BAKERY in AdBhashitha, letterspaced — and everything below is that idea made progressively more readable:
+the script stays in the wordmark and nowhere else; AdBhashitha carries `h1`–`h4` and `price`, keeping the
+wordmark's 0.01em letter-spacing so a heading sits on the same rhythm as the logo above it; `eyebrow` and
+`label` are the hinge, sans but letterspaced like the tagline; then plain Raleway for anything you have to
+read a paragraph of. None of the type classes set a colour — the same heading appears in sage on cream and
+cream on sage.
+
+Write those class names in templates rather than the utilities behind them: a button is `pill-sage`, and
+the four colourways exist because the site puts buttons on cream *and* on sage.
+
 ### Why server-rendered
 
 The pages are content: a menu, a story, opening hours, a price list. Rendering them in the browser meant

@@ -8,7 +8,7 @@
     that is selling something, and the same treatment as the homepage hero — blurred photo, sage wash —
     carries the brand rather than inventing a new look for it.
   */-->
-  <section class="relative flex items-center py-14 md:py-20 bg-bakery-900 text-white overflow-hidden">
+  <section class="band relative flex items-center bg-bakery-900 text-white overflow-hidden">
     <img th:src="${photos.of('gallery/Cakes.webp')}" alt=""
          class="absolute inset-0 w-full h-full object-cover blur-[3px] scale-110">
     <div class="absolute inset-0 bg-bakery-900/80"></div>
@@ -16,9 +16,9 @@
 
     <div class="relative container mx-auto px-4 w-full min-w-0">
       <div class="max-w-3xl mx-auto text-center">
-        <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-bakery-200">Order ahead</p>
-        <h1 class="mt-3 font-adbhashitha text-4xl md:text-5xl text-bakery-50">Goodie boxes &amp; catering</h1>
-        <p class="mt-5 text-base sm:text-lg text-bakery-100 text-balance leading-relaxed">
+        <p class="eyebrow text-bakery-200">Order ahead</p>
+        <h1 class="h1 mt-3 text-bakery-50">Goodie boxes &amp; catering</h1>
+        <p class="lede mt-5 text-bakery-100">
           Boxes for the office, packages for a party, and cakes and desserts for a wedding.
         </p>
       </div>
@@ -55,7 +55,7 @@
         */-->
         <section th:each="table : ${menu.packages}">
           <header class="max-w-2xl mx-auto text-center">
-            <h2 class="font-adbhashitha text-3xl md:text-4xl text-bakery-900" th:text="${table.name}">Office boxes</h2>
+            <h2 class="h2 text-bakery-900" th:text="${table.name}">Office boxes</h2>
             <p th:if="${table.blurb}" class="mt-3 text-bakery-700 leading-relaxed" th:text="${table.blurb}">
               Mini pastries for a morning meeting.
             </p>
@@ -67,12 +67,11 @@
                              : (${#lists.size(table.tiers) == 2} ? 'sm:grid-cols-2 max-w-3xl mx-auto'
                              : 'sm:grid-cols-2 lg:grid-cols-3')">
             <article th:each="tier, t : ${table.tiers}"
-                     class="flex flex-col bg-white rounded-3xl shadow-xs p-6 md:p-8
-                            transition-shadow duration-300 hover:shadow-lg">
-              <p class="text-xs uppercase tracking-[0.15em] text-bakery-600" th:text="${tier.label}">Small</p>
-              <p th:if="${tier.price}" class="mt-2 font-adbhashitha text-4xl text-bakery-900" th:text="${tier.price}">$24</p>
+                     class="flex flex-col panel-lift p-6 md:p-8">
+              <p class="label text-bakery-600" th:text="${tier.label}">Small</p>
+              <p th:if="${tier.price}" class="price mt-2 text-bakery-900" th:text="${tier.price}">$24</p>
               <!--/* No price means "ask us" — say so rather than leaving a hole in the card. */-->
-              <p th:unless="${tier.price}" class="mt-2 font-adbhashitha text-2xl text-bakery-700">Ask us</p>
+              <p th:unless="${tier.price}" class="price mt-2 text-2xl text-bakery-700">Ask us</p>
               <!--/* "Small" doesn't tell anyone how many it feeds. A column whose heading is already a
                      head count leaves this blank rather than saying it twice. */-->
               <p th:if="${tier.serves}" class="mt-1 text-sm text-bakery-600" th:text="${tier.serves}">About 6–8 people</p>
@@ -107,14 +106,13 @@
           */-->
           <div class="mt-8 max-w-2xl mx-auto text-center">
             <div th:if="${!#lists.isEmpty(table.notes)}">
-              <h3 class="text-xs uppercase tracking-[0.15em] text-bakery-500 font-medium">Good to know</h3>
+              <h3 class="label text-bakery-500">Good to know</h3>
               <ul class="mt-3 space-y-2 text-sm text-bakery-700">
                 <li th:each="note : ${table.notes}" th:text="${note}">Everything is baked in sixes.</li>
               </ul>
             </div>
             <a th:href="|/contact?about=${#uris.escapeQueryParam(table.name)}|"
-               class="mt-6 inline-block border border-bakery-300 hover:bg-bakery-100 text-bakery-800
-                      px-7 py-3 rounded-full font-medium tracking-wide transition-colors"
+               class="pill-outline mt-6"
                th:text="|Ask about ${#strings.toLowerCase(table.name)}|">Ask about office boxes</a>
           </div>
         </section>
@@ -131,20 +129,20 @@
 
   <!--/* The terms that apply whichever table you were reading, and the one real call to action. On sage,
          like the homepage's story band, so the page ends rather than trailing off. */-->
-  <section class="bg-bakery-800 text-white py-16 md:py-20">
+  <section class="section bg-bakery-800 text-white">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="font-adbhashitha text-2xl md:text-3xl">Before you order</h2>
+        <h2 class="h3">Before you order</h2>
         <ul th:if="${!#lists.isEmpty(menu.notes)}" class="mt-6 space-y-3 text-bakery-100 leading-relaxed">
           <li th:each="note : ${menu.notes}" th:text="${note}">These are a guide rather than a menu.</li>
         </ul>
         <div class="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
           <a href="/contact"
-             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+             class="pill-cream">
             Tell us what you need
           </a>
           <a href="tel:+13097010660"
-             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+             class="pill-ghost">
             (309) 701-0660
           </a>
         </div>

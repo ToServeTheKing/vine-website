@@ -4,7 +4,7 @@
 <div th:fragment="content" class="min-h-screen bg-bakery-50">
 
   <header class="container mx-auto px-4 pt-14 pb-10 md:pt-20 md:pb-12 text-center">
-    <h1 class="font-adbhashitha text-4xl md:text-5xl text-bakery-900">Our products</h1>
+    <h1 class="h1 text-bakery-900">Our products</h1>
     <p class="mt-4 text-bakery-800 max-w-2xl mx-auto leading-relaxed">
       What comes out of the kitchen on Main Street. Cakes and decorated cookies are made to order, so
       most of what follows started as somebody describing what they wanted.
@@ -23,10 +23,7 @@
          th:href="${category == 'All' ? '/products' : '/products?category=' + #uris.escapeQueryParam(category)}"
          th:text="${category}"
          th:aria-current="${category == selected ? 'page' : null}"
-         th:class="'px-6 py-2 rounded-full border text-sm uppercase tracking-[0.12em] transition-colors '
-                 + (${category == selected}
-                     ? 'bg-bakery-600 text-white border-bakery-600'
-                     : 'bg-white border-bakery-300 text-bakery-700 hover:bg-bakery-100')">All</a>
+         th:class="${category == selected} ? 'chip-on' : 'chip'">All</a>
     </div>
 
     <!--/* Deliberately unanimated, as before: filtering used to run a layout reflow plus an enter/exit
@@ -34,13 +31,13 @@
            responding. The only motion left is the shadow on hover. */-->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div th:each="product : ${products}"
-           class="group bg-white rounded-3xl overflow-hidden shadow-xs transition-shadow duration-300 hover:shadow-lg">
+           class="group panel-lift overflow-hidden">
         <div class="relative w-full overflow-hidden">
           <div th:replace="~{:: gallery(${product})}"></div>
         </div>
         <div class="p-6 text-center">
-          <h3 class="font-adbhashitha text-xl text-bakery-900 mb-2 tracking-wide" th:text="${product.name}">Name</h3>
-          <span class="text-xs uppercase tracking-[0.15em] text-bakery-600" th:text="${product.category}">Category</span>
+          <h3 class="h4 text-bakery-900 mb-2" th:text="${product.name}">Name</h3>
+          <span class="label text-bakery-600" th:text="${product.category}">Category</span>
         </div>
       </div>
     </div>
@@ -52,21 +49,21 @@
   </div>
 
   <!--/* A catalogue with no way to order from it is a gallery. */-->
-  <section class="bg-bakery-800 text-white py-16 md:py-20">
+  <section class="section bg-bakery-800 text-white">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="font-adbhashitha text-2xl md:text-3xl">Want one of these, or something else?</h2>
+        <h2 class="h3">Want one of these, or something else?</h2>
         <p class="mt-4 text-bakery-100 leading-relaxed">
           Cakes and decorated cookies are made to order. Tell us the date and roughly what you have in
           mind — a tractor, a retirement, the class of 1964 — and we will work from there.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <a href="/contact"
-             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+             class="pill-cream">
             Ask about an order
           </a>
           <a href="/catering"
-             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+             class="pill-ghost">
             Ordering for a crowd
           </a>
         </div>
