@@ -1,75 +1,98 @@
 /*
  * The public site's own classes — the ones that would be unreadable as a string of utilities in every
- * template that needs them. The admin's controls are in admin.css.
+ * template that needs them. The admin's controls are in admin.css; the type ladder is in type.css.
+ *
+ * Almost everything here is @utility rather than a plain class in a layer, for two reasons Tailwind v4
+ * enforces: only a registered utility can be @applied by another rule (panel-mark builds on mark), and
+ * only a registered utility can take a variant (`hover:`, `md:`, `file:`).
  */
 
-/* In @layer components, matching the old site. That ordering matters: a utility like `px-4` — which
-   the markup applies alongside `container` on nearly every section — has to win over this, or every
-   gutter on the site silently widens. */
+/* The exception. In @layer components, matching the old site — and that ordering matters: a utility like
+   `px-4`, which the markup applies alongside `container` on nearly every section, has to win over this,
+   or every gutter on the site silently widens. */
 @layer components {
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+}
 
-  /*
-   * The two branch marks of the wordmark, as masks rather than inline SVG.
-   *
-   * They have to take their colour from the surrounding text — sage in the header, cream on the hero
-   * and in the footer — which an <img> cannot do. React solved that by inlining them through svgr,
-   * but these files are 31 KB each and the lockup appears up to three times on a page: inlining them
-   * in server-rendered HTML would add ~190 KB to every response. A mask over `currentColor` keeps the
-   * tinting, keeps the files cacheable, and costs two requests once.
-   */
-  .mark {
-    background-color: currentColor;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-  }
-  .mark-r {
-    -webkit-mask-image: url('/images/logo_R.svg');
-    mask-image: url('/images/logo_R.svg');
-  }
-  .mark-l {
-    -webkit-mask-image: url('/images/logo_L.svg');
-    mask-image: url('/images/logo_L.svg');
-  }
+/*
+ * THE BRANCH MARKS of the wordmark, as masks rather than inline SVG.
+ *
+ * They have to take their colour from the surrounding text — sage in the header, cream on the hero and in
+ * the footer — which an <img> cannot do. React solved that by inlining them through svgr, but these files
+ * are 31 KB each and the lockup appears up to three times on a page: inlining them in server-rendered
+ * HTML would add ~190 KB to every response. A mask over `currentColor` keeps the tinting, keeps the files
+ * cacheable, and costs two requests once.
+ */
+@utility mark {
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
 
-  /*
-   * The photo strip on a product card scrolls, but a scrollbar across the bottom of a photo is not part
-   * of the design. Hiding it is safe here because the strip is not the only way through the photos: it
-   * snaps, it takes arrow keys, and the arrows and dots are on top of it.
-   */
-  .no-scrollbar {
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
+@utility mark-r {
+  -webkit-mask-image: url('/images/logo_R.svg');
+  mask-image: url('/images/logo_R.svg');
+}
+
+@utility mark-l {
+  -webkit-mask-image: url('/images/logo_L.svg');
+  mask-image: url('/images/logo_L.svg');
+}
+
+/*
+ * The photo strip on a product card scrolls, but a scrollbar across the bottom of a photo is not part of
+ * the design. Hiding it is safe here because the strip is not the only way through the photos: it snaps,
+ * it takes arrow keys, and the arrows and dots are on top of it.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
     display: none;
   }
 }
 
-/* The mobile menu is a <details>; its default disclosure triangle would sit next to the hamburger. */
-summary {
-  list-style: none;
-}
-summary::-webkit-details-marker {
-  display: none;
-}
-
 /*
- * SURFACES. Every white box on the site was "bg-white rounded-3xl shadow-xs" written out again, which is
- * how two of them end up with different corners. `panel` is that box; `panel-lift` is one you can click
- * or hover, and it lifts.
+ * SURFACES.
+ *
+ * These were plain white boxes with a grey drop shadow — the default card of every web app, on a page
+ * that is otherwise cream, sage and a hand-drawn vine. Three things make them the shop's:
+ *
+ *   a warm hairline, so a card has an EDGE and reads as stock rather than as a floating panel;
+ *   a shadow tinted with the darkest sage instead of black (see theme.css);
+ *   a head that can be tinted cream, the way a printed menu separates the price from what you get.
+ *
+ * `panel-lift` is one you can click, and it rises rather than just darkening.
  */
 @utility panel {
-  @apply bg-white rounded-3xl shadow-xs;
+  @apply bg-white rounded-3xl border border-bakery-200/70;
+  box-shadow: var(--shadow-card);
 }
 
 @utility panel-lift {
-  @apply panel transition duration-300 hover:shadow-lg;
+  @apply panel transition duration-300;
+  &:hover {
+    box-shadow: var(--shadow-card-lift);
+    transform: translateY(-2px);
+  }
+}
+
+/* The cream band on a card: a size and its price, or a photo's caption. */
+@utility panel-head {
+  @apply bg-bakery-50/70 border-b border-bakery-200/70;
+}
+
+/*
+ * The branch, laid into a corner at the weight of a watermark. It is the one mark that is unmistakably
+ * this shop, and at this size and colour it is texture rather than decoration.
+ */
+@utility panel-mark {
+  @apply mark mark-l absolute pointer-events-none text-bakery-200/70;
 }
 
 /*

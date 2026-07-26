@@ -67,19 +67,24 @@
                              : (${#lists.size(table.tiers) == 2} ? 'sm:grid-cols-2 max-w-3xl mx-auto'
                              : 'sm:grid-cols-2 lg:grid-cols-3')">
             <article th:each="tier, t : ${table.tiers}"
-                     class="flex flex-col panel-lift p-6 md:p-8">
-              <p class="label text-bakery-600" th:text="${tier.label}">Small</p>
-              <p th:if="${tier.price}" class="price mt-2 text-bakery-900" th:text="${tier.price}">$24</p>
-              <!--/* No price means "ask us" — say so rather than leaving a hole in the card. */-->
-              <p th:unless="${tier.price}" class="price mt-2 text-2xl text-bakery-700">Ask us</p>
-              <!--/* "Small" doesn't tell anyone how many it feeds. A column whose heading is already a
-                     head count leaves this blank rather than saying it twice. */-->
-              <p th:if="${tier.serves}" class="mt-1 text-sm text-bakery-600" th:text="${tier.serves}">About 6–8 people</p>
+                     class="relative flex flex-col overflow-hidden panel-lift">
+              <!--/* The wordmark's branch, at watermark weight. */-->
+              <span class="panel-mark -top-3 -right-4 w-24 h-24 rotate-12" aria-hidden="true"></span>
 
-              <ul class="mt-6 space-y-3 text-bakery-800">
+              <div class="panel-head relative px-6 py-6 md:px-8">
+                <p class="label text-bakery-600" th:text="${tier.label}">Small</p>
+                <p th:if="${tier.price}" class="price mt-2 text-bakery-900" th:text="${tier.price}">$24</p>
+                <!--/* No price means "ask us" — say so rather than leaving a hole in the card. */-->
+                <p th:unless="${tier.price}" class="price mt-2 text-2xl text-bakery-700">Ask us</p>
+                <!--/* "Small" doesn't tell anyone how many it feeds. A column whose heading is already a
+                       head count leaves this blank rather than saying it twice. */-->
+                <p th:if="${tier.serves}" class="mt-1 text-sm text-bakery-600" th:text="${tier.serves}">About 6–8 people</p>
+              </div>
+
+              <ul class="px-6 py-6 md:px-8 space-y-3 text-bakery-800">
                 <li th:each="row : ${table.rows}" class="flex gap-3">
                   <!--/* A tick, not a bullet: this is a list of what you get, not prose. */-->
-                  <svg class="mt-1 h-4 w-4 shrink-0 text-bakery-400" viewBox="0 0 24 24" fill="none"
+                  <svg class="mt-1 h-4 w-4 shrink-0 text-bakery-500" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                        aria-hidden="true">
                     <path d="M20 6L9 17l-5-5" />
