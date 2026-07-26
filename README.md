@@ -38,8 +38,22 @@ wordmark's 0.01em letter-spacing so a heading sits on the same rhythm as the log
 read a paragraph of. None of the type classes set a colour — the same heading appears in sage on cream and
 cream on sage.
 
-Write those class names in templates rather than the utilities behind them: a button is `pill-sage`, and
-the four colourways exist because the site puts buttons on cream *and* on sage.
+Write those class names in templates rather than the utilities behind them. The full vocabulary:
+
+| | |
+|---|---|
+| surfaces | `panel`, `panel-lift`, `panel-head`, `panel-mark`, `photo` |
+| buttons | `pill-sage`, `pill-cream`, `pill-outline`, `pill-ghost`, `chip`/`chip-on` |
+| links | `link`, `link-plain`, `link-on-dark` |
+| type | `h1`–`h4`, `price`, `eyebrow`, `label`, `lede`, `wordmark` |
+| layout | `container`, `measure`, `measure-wide`, `section`, `band`, `page-head` |
+| forms | `field` — one input for the public form and the admin |
+
+Four colourways of one button exist because the site puts buttons on cream *and* on sage. Corners come
+from `--radius-panel` (12px) and `--radius-field` (8px), so "how round is a card" is one decision.
+
+If you find yourself writing `bg-white rounded-… shadow-…` or `underline underline-offset-4` in a
+template, there is already a name for it.
 
 ### Why server-rendered
 

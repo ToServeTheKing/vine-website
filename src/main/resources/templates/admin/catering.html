@@ -28,7 +28,7 @@
 
         <div class="flex-1 min-w-60">
           <a th:href="@{/admin/catering/tables/{id}(id=${table.id})}"
-             class="font-adbhashitha text-lg text-bakery-900 underline underline-offset-4"
+             class="link h4 text-bakery-900"
              th:text="${table.name}">Office</a>
           <p class="text-sm text-bakery-600">
             <span th:text="|${#lists.size(table.tiers)} column${#lists.size(table.tiers) == 1 ? '' : 's'}|">3 columns</span>,
