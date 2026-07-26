@@ -4,16 +4,16 @@
 <div th:fragment="content" class="bg-bakery-50">
 
   <!--/* The shop's own front, which is what the story is about. Same band as the catering page. */-->
-  <section class="relative flex items-center py-14 md:py-20 bg-bakery-900 text-white overflow-hidden">
+  <section class="band relative flex items-center bg-bakery-900 text-white overflow-hidden">
     <img th:src="${photos.of('gallery/Outside.webp')}" alt=""
          class="absolute inset-0 w-full h-full object-cover object-bottom blur-[3px] scale-110">
     <div class="absolute inset-0 bg-bakery-900/80"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
     <div class="relative container mx-auto px-4 w-full min-w-0">
       <div class="max-w-3xl mx-auto text-center">
-        <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-bakery-200">Since 2024</p>
-        <h1 class="mt-3 font-adbhashitha text-4xl md:text-5xl text-bakery-50">Our story</h1>
-        <p class="mt-5 text-base sm:text-lg text-bakery-100 text-balance leading-relaxed">
+        <p class="eyebrow text-bakery-200">Since 2024</p>
+        <h1 class="h1 mt-3 text-bakery-50">Our story</h1>
+        <p class="lede mt-5 text-bakery-100">
           215 E Main Street, in the middle of downtown Princeville.
         </p>
       </div>
@@ -25,7 +25,7 @@
   <div class="container mx-auto px-4 pb-16 md:pb-24">
     <div class="max-w-2xl mx-auto space-y-12">
       <section>
-        <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-4">How it started</h2>
+        <h2 class="h3 text-bakery-900 mb-4">How it started</h2>
         <p class="text-bakery-800 leading-relaxed">
           Morissa Bennett opened The Vine in 2024, at 215 E Main Street, in the middle of downtown
           Princeville. The plan was not complicated. Bake it ourselves, sell it ourselves, and keep
@@ -34,7 +34,7 @@
       </section>
 
       <section>
-        <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-4">What we make</h2>
+        <h2 class="h3 text-bakery-900 mb-4">What we make</h2>
         <p class="text-bakery-800 leading-relaxed">
           We opened with coffee and pastries. The menu kept growing. Now there are cinnamon rolls
           and caramel rolls, scones, cookie bars, macarons, brownies, and pies, plus sandwiches and
@@ -43,7 +43,7 @@
       </section>
 
       <section>
-        <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-4">The cakes are the fun part</h2>
+        <h2 class="h3 text-bakery-900 mb-4">The cakes are the fun part</h2>
         <p class="text-bakery-800 leading-relaxed">
           Cakes and decorated cookies are made to order, which means we mostly bake whatever
           Princeville is celebrating that week. We have done a tractor, a cow, a 76th birthday, a
@@ -54,7 +54,7 @@
       </section>
 
       <section>
-        <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-4">Around town</h2>
+        <h2 class="h3 text-bakery-900 mb-4">Around town</h2>
         <p class="text-bakery-800 leading-relaxed">
           We turn out for Christmas in the Village every year and for other civic events, and the
           Princeville Civic Association counts us among the town&apos;s small businesses. Enjoy
@@ -66,21 +66,21 @@
   </div>
 
   <!--/* Somewhere to go after reading: the story is a preamble to an order. */-->
-  <section class="bg-bakery-800 text-white py-16 md:py-20">
+  <section class="section bg-bakery-800 text-white">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="font-adbhashitha text-2xl md:text-3xl">Come and see us</h2>
+        <h2 class="h3">Come and see us</h2>
         <p class="mt-4 text-bakery-100 leading-relaxed">
           We open at 7:00am, Tuesday through Saturday. If you are after something for a date in the
           diary, it is worth asking early.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <a href="/products"
-             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+             class="pill-cream">
             See what we make
           </a>
           <a href="/contact"
-             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+             class="pill-ghost">
             Get in touch
           </a>
         </div>
