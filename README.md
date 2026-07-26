@@ -22,6 +22,14 @@ The SPA renders; it doesn't decide anything.
 - **`/api/products`**, **`/api/categories`** — the catalogue, its curated order, the category filter
   and the absolute image URLs. This was a TypeScript array shipped to every visitor; it's now a table
   (`V2__products.sql`) read through `ProductCatalog`.
+- **`/api/catering`** — the goodie box and catering price tables (Office, Parties, Weddings): the
+  columns, the prices already written the way they should be read, the entries under each column, and
+  the small print. These came from the bakery as a spreadsheet and are stored as one (`V4__catering.sql`,
+  read through `CateringMenu`) rather than as markup, because the prices move and the last line of that
+  spreadsheet says the tables are "mostly just an idea for people". `Money` is the only thing that
+  decides what a typed price means or how it prints. A table with no columns or no lines is left off the
+  public response — adding a table and filling it in are two separate acts in the admin, and the gap
+  between them shouldn't put a bare heading on the live page. *(No public page renders this yet.)*
 - **`/api/contact`** — validates, **records the enquiry**, emails it, then fans out to the n8n hub.
   Recorded before sending on purpose: a relay outage costs a notification, not the enquiry. Undelivered
   ones are `enquiry.delivered = false`. Validation and delivery come from `platform-starter-contact`,
@@ -39,8 +47,15 @@ Photos are resized, stripped of EXIF, converted to webp and put in the bucket on
 (`ProductPhotoService`, using `cwebp` from `libwebp-tools` — the pure-Java encoders either can't write
 webp or ship glibc natives that don't run on Alpine).
 
-**The admin only exists when `SECURITY_MODE=OIDC`.** `AdminProductController` and
-`AdminCategoryController` are `@ConditionalOnProperty` on it, so a deployment that forgets to configure
+The catering tables are editable there too, but a table at a time rather than a field at a time. That
+isn't a different taste in interfaces: a column heading, its price and the entries beneath it only mean
+anything together, so `CateringPackage#arrange` takes the whole table and refuses one whose lines and
+columns disagree. Drop the middle column on its own and every remaining entry shifts one place left —
+the Large box then advertises the Medium box's contents at the Large price, and nothing about the page
+looks broken.
+
+**The admin only exists when `SECURITY_MODE=OIDC`.** `AdminProductController`,
+`AdminCategoryController` and `AdminCateringController` are `@ConditionalOnProperty` on it, so a deployment that forgets to configure
 Authentik gets 404s rather than catalogue writes open to the internet. `/admin` and `/api/admin/**` are
 both authenticated paths: a browser opening the page is sent to Authentik first, while `fetch` calls get
 a bare 401 to handle.
