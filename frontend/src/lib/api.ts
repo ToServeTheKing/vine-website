@@ -124,3 +124,75 @@ export const reorderCategories = (ids: number[]) =>
 
 export const deleteCategory = (id: number) =>
   send<{ ok: boolean }>(`/api/admin/categories/${id}`, 'DELETE');
+
+// --- goodie boxes & catering ------------------------------------------------
+
+/**
+ * A column of a catering table. `price` is already written the way it should be read ("$24") — the
+ * server owns money, both what a typed price means and how it prints — and is null for a column that
+ * doesn't state one. `id` is null only for a column the editor has just added and not yet saved.
+ */
+export interface CateringTier {
+  id: number | null;
+  label: string;
+  price: string | null;
+}
+
+/** A line of a catering table, with one entry per column, in column order — blanks included. */
+export interface CateringRow {
+  id: number | null;
+  label: string;
+  values: string[];
+}
+
+/** One table: "Office", "Parties", "Weddings". */
+export interface CateringTable {
+  id: number;
+  name: string;
+  blurb: string | null;
+  tiers: CateringTier[];
+  rows: CateringRow[];
+  /** The rules under this table: minimums, what can't be mixed. */
+  notes: string[];
+}
+
+export interface CateringMenu {
+  packages: CateringTable[];
+  /** Terms that apply to the page rather than to any one table. */
+  notes: string[];
+}
+
+/**
+ * A table as the editor left it, sent whole. It has to be whole: a column and the values beneath it
+ * only mean anything together, so moving or removing one has to carry its entries with it. The
+ * server rejects any table whose lines and columns disagree.
+ */
+export interface CateringTableEdit {
+  name: string;
+  blurb: string | null;
+  tiers: { id: number | null; label: string; price: string }[];
+  rows: { id: number | null; label: string; values: string[] }[];
+  notes: string[];
+}
+
+/** What a customer sees: finished tables only. */
+export const fetchCatering = () => get<CateringMenu>('/api/catering');
+
+/** What the editor sees: the same tables, including any they haven't finished filling in. */
+export const adminCatering = () => get<CateringMenu>('/api/admin/catering');
+
+export const addCateringTable = (name: string) =>
+  send<CateringTable>('/api/admin/catering/packages', 'POST', { name });
+
+export const saveCateringTable = (id: number, table: CateringTableEdit) =>
+  send<CateringTable>(`/api/admin/catering/packages/${id}`, 'PUT', table);
+
+export const deleteCateringTable = (id: number) =>
+  send<{ ok: boolean }>(`/api/admin/catering/packages/${id}`, 'DELETE');
+
+export const reorderCateringTables = (ids: number[]) =>
+  send<CateringTable[]>('/api/admin/catering/packages/order', 'PUT', { ids });
+
+/** The page's own footnotes: the full list, so removing one is an omission. */
+export const saveCateringNotes = (notes: string[]) =>
+  send<string[]>('/api/admin/catering/notes', 'PUT', notes);

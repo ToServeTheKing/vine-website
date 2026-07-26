@@ -15,6 +15,24 @@ import {
   type AdminCategory,
   type AdminProduct,
 } from '@/lib/api';
+import Catering from '@/components/admin/Catering';
+import {
+  ARROW_DOWN,
+  ARROW_LEFT,
+  ARROW_RIGHT,
+  ARROW_UP,
+  CHECK,
+  Icon,
+  PLUS,
+  TRASH,
+  X,
+  danger,
+  field,
+  iconButton,
+  primary,
+  secondary,
+  shift,
+} from '@/components/admin/ui';
 
 /**
  * The catalogue, editable by the person who bakes it.
@@ -27,54 +45,6 @@ import {
  * Getting here at all means signing in: /admin is an authenticated path, so an unknown visitor is
  * sent to the identity provider before this ever loads.
  */
-
-// --- little pieces ----------------------------------------------------------
-
-const Icon = ({ d, className = '' }: { d: string; className?: string }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`w-4 h-4 ${className}`}
-    aria-hidden="true"
-  >
-    <path d={d} />
-  </svg>
-);
-
-const ARROW_UP = 'M12 19V5M5 12l7-7 7 7';
-const ARROW_DOWN = 'M12 5v14M19 12l-7 7-7-7';
-const ARROW_LEFT = 'M19 12H5M12 19l-7-7 7-7';
-const ARROW_RIGHT = 'M5 12h14M12 5l7 7-7 7';
-const TRASH = 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6';
-const PLUS = 'M12 5v14M5 12h14';
-const CHECK = 'M20 6L9 17l-5-5';
-const X = 'M18 6L6 18M6 6l12 12';
-
-const button =
-  'inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium ' +
-  'transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
-const primary = `${button} bg-bakery-600 text-white hover:bg-bakery-700`;
-const secondary = `${button} border border-bakery-300 text-bakery-800 hover:bg-bakery-100`;
-const danger = `${button} text-red-700 hover:bg-red-50`;
-const iconButton =
-  'inline-flex items-center justify-center w-7 h-7 rounded-md border border-bakery-300 ' +
-  'text-bakery-700 hover:bg-bakery-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
-const field =
-  'w-full rounded-md border border-bakery-300 bg-white px-3 py-2 text-sm ' +
-  'focus:border-bakery-500 focus:outline-none focus:ring-1 focus:ring-bakery-500';
-
-/** Moves one entry of a list by `delta`, or returns the list untouched if that would fall off an end. */
-function shift<T>(items: T[], index: number, delta: number): T[] {
-  const target = index + delta;
-  if (target < 0 || target >= items.length) return items;
-  const next = [...items];
-  [next[index], next[target]] = [next[target], next[index]];
-  return next;
-}
 
 // --- photos -----------------------------------------------------------------
 
@@ -628,7 +598,7 @@ const AdminPage = () => {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-lejour text-4xl text-bakery-700">The Vine</h1>
-          <p className="text-bakery-600">Everything on the products page lives here.</p>
+          <p className="text-bakery-600">Everything on the products and catering pages lives here.</p>
         </div>
         <div className="flex items-center gap-2">
           <a href="/products" className={secondary}>
@@ -707,6 +677,10 @@ const AdminPage = () => {
               <p className="mt-3 text-bakery-600">Nothing here yet — add something above.</p>
             )}
           </section>
+
+          {/* A different page, and a different shape of editing — see the note at the top of Catering. */}
+          <hr className="border-bakery-200" />
+          <Catering onError={setError} />
         </div>
       )}
     </div>

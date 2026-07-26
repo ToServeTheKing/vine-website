@@ -3,6 +3,7 @@ package com.itsthevine.web;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,9 +74,17 @@ class AdminSecurityTest {
         // csrf() on the writes, so these assert AUTHORIZATION (401), not a missing token.
         mvc.perform(get("/api/admin/products")).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/admin/categories")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/admin/catering")).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/admin/products").with(csrf())).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/admin/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"x\"}"))
+                .andExpect(status().isUnauthorized());
+        // The prices are the one thing on this site a stranger would most enjoy editing.
+        mvc.perform(put("/api/admin/catering/packages/1").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Free\",\"tiers\":[],\"rows\":[],\"notes\":[]}"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/admin/catering/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("[\"anything\"]"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -94,6 +103,7 @@ class AdminSecurityTest {
         // Locking the admin must not lock the menu.
         mvc.perform(get("/api/products")).andExpect(status().isOk());
         mvc.perform(get("/api/categories")).andExpect(status().isOk());
+        mvc.perform(get("/api/catering")).andExpect(status().isOk());
     }
 
     @Test
