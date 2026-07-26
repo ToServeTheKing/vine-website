@@ -58,14 +58,51 @@ public class AdminController {
         });
     }
 
+    /**
+     * Everything you can do to one item, from one form.
+     *
+     * <p>One form per item rather than one per button: the page carries forty items, and a separate form
+     * for each control meant 467 forms and 464 CSRF tokens — 317 KB of HTML for a screen that is opened
+     * on a phone, in a bakery. {@code name="do"} says which button was pressed and its value carries the
+     * argument, exactly as the catering table editor does.
+     *
+     * <p>Only {@code save} looks at the name and category boxes. The other actions deliberately ignore
+     * them, so pressing "move down" halfway through retyping a name doesn't save the half-typed name.
+     *
+     * @param action {@code save}, {@code move:-1}, {@code move:1}, {@code delete}, or
+     *               {@code photo:<key>:<-1|1|0>} — earlier, later, or remove
+     */
     @PostMapping("/items/{id}")
-    public String describe(@PathVariable Long id,
-                           @RequestParam String name,
-                           @RequestParam String category,
-                           RedirectAttributes flash) {
+    public String item(@PathVariable Long id,
+                       @RequestParam(name = "do", defaultValue = "save") String action,
+                       @RequestParam(required = false) String name,
+                       @RequestParam(required = false) String category,
+                       RedirectAttributes flash) {
+        String[] parts = action.split(":");
         return run(flash, () -> {
-            catalogue.describeItem(id, name, category);
-            flash.addFlashAttribute("done", "Saved " + name.trim() + ".");
+            switch (parts[0]) {
+                case "save" -> {
+                    catalogue.describeItem(id, name, category);
+                    flash.addFlashAttribute("done", "Saved " + name.trim() + ".");
+                }
+                case "move" -> catalogue.moveItem(id, Integer.parseInt(parts[1]));
+                case "delete" -> {
+                    catalogue.removeItem(id);
+                    flash.addFlashAttribute("done", "Removed from the products page.");
+                }
+                case "photo" -> {
+                    // The key is the middle field; it can contain slashes and dots but never a colon.
+                    String key = parts[1];
+                    int move = Integer.parseInt(parts[2]);
+                    if (move == 0) {
+                        catalogue.removePhoto(id, key);
+                    } else {
+                        catalogue.movePhoto(id, key, move);
+                    }
+                }
+                // A stale page, or a hand-edited form. Do nothing rather than guess.
+                default -> { }
+            }
         });
     }
 
@@ -79,38 +116,6 @@ public class AdminController {
         });
     }
 
-    /**
-     * @param move {@code -1} or {@code 1} to shuffle the photo along, {@code 0} to remove it. One
-     *             endpoint for the three buttons under a photo, because they are the same edit — which
-     *             photos, in which order — and the server is what decides the resulting list.
-     */
-    @PostMapping("/items/{id}/photos/arrange")
-    public String arrangePhoto(@PathVariable Long id,
-                               @RequestParam String key,
-                               @RequestParam int move,
-                               RedirectAttributes flash) {
-        return run(flash, () -> {
-            if (move == 0) {
-                catalogue.removePhoto(id, key);
-            } else {
-                catalogue.movePhoto(id, key, move);
-            }
-        });
-    }
-
-    @PostMapping("/items/{id}/move")
-    public String move(@PathVariable Long id, @RequestParam int by, RedirectAttributes flash) {
-        return run(flash, () -> catalogue.moveItem(id, by));
-    }
-
-    @PostMapping("/items/{id}/delete")
-    public String remove(@PathVariable Long id, RedirectAttributes flash) {
-        return run(flash, () -> {
-            catalogue.removeItem(id);
-            flash.addFlashAttribute("done", "Removed from the products page.");
-        });
-    }
-
     // --- filters -------------------------------------------------------------
 
     @PostMapping("/categories")
@@ -121,24 +126,31 @@ public class AdminController {
         });
     }
 
+    /**
+     * Everything you can do to one filter, from one form — same shape as an item.
+     *
+     * @param action {@code save}, {@code move:-1}, {@code move:1} or {@code delete}
+     */
     @PostMapping("/categories/{id}")
-    public String renameFilter(@PathVariable Long id, @RequestParam String name, RedirectAttributes flash) {
+    public String filter(@PathVariable Long id,
+                         @RequestParam(name = "do", defaultValue = "save") String action,
+                         @RequestParam(required = false) String name,
+                         RedirectAttributes flash) {
+        String[] parts = action.split(":");
         return run(flash, () -> {
-            catalogue.renameFilter(id, name);
-            flash.addFlashAttribute("done", "Renamed to " + name.trim() + ", and everything filed under it moved too.");
-        });
-    }
-
-    @PostMapping("/categories/{id}/move")
-    public String moveFilter(@PathVariable Long id, @RequestParam int by, RedirectAttributes flash) {
-        return run(flash, () -> catalogue.moveFilter(id, by));
-    }
-
-    @PostMapping("/categories/{id}/delete")
-    public String removeFilter(@PathVariable Long id, RedirectAttributes flash) {
-        return run(flash, () -> {
-            catalogue.removeFilter(id);
-            flash.addFlashAttribute("done", "Category deleted.");
+            switch (parts[0]) {
+                case "save" -> {
+                    catalogue.renameFilter(id, name);
+                    flash.addFlashAttribute("done",
+                            "Renamed to " + name.trim() + ", and everything filed under it moved too.");
+                }
+                case "move" -> catalogue.moveFilter(id, Integer.parseInt(parts[1]));
+                case "delete" -> {
+                    catalogue.removeFilter(id);
+                    flash.addFlashAttribute("done", "Category deleted.");
+                }
+                default -> { }
+            }
         });
     }
 

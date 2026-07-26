@@ -3,7 +3,6 @@ package com.itsthevine.web;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +77,8 @@ class AdminSecurityTest {
         mvc.perform(get("/admin/catering/tables/1")).andExpect(status().isUnauthorized());
         mvc.perform(post("/admin/items").with(csrf()).param("name", "Free cake").param("category", "Cakes"))
                 .andExpect(status().isUnauthorized());
-        mvc.perform(post("/admin/items/1/delete").with(csrf())).andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/items/1").with(csrf()).param("do", "delete"))
+                .andExpect(status().isUnauthorized());
         mvc.perform(post("/admin/categories").with(csrf()).param("name", "x"))
                 .andExpect(status().isUnauthorized());
         // The prices are the one thing on this site a stranger would most enjoy editing.
@@ -113,8 +113,9 @@ class AdminSecurityTest {
 
     @Test
     void theContactFormStillNeedsItsCsrfToken() throws Exception {
-        // Enabling the security starter enables CSRF for the PUBLIC contact form too. Without the token
-        // it 403s; the SPA reads the XSRF-TOKEN cookie and sends X-XSRF-TOKEN.
+        // Enabling the security starter enables CSRF for the PUBLIC contact form too. Without a token it
+        // 403s. The page's own form carries a hidden field (Spring Security fills it in for any th:action
+        // form); this JSON endpoint needs the X-XSRF-TOKEN header from the cookie.
         mvc.perform(post("/api/contact").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Ada\",\"email\":\"ada@example.com\",\"message\":\"hi\"}"))
                 .andExpect(status().isForbidden());

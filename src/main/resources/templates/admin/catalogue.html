@@ -4,8 +4,18 @@
 <body>
 <div th:fragment="content">
 
-  <!--/* The filter buttons. Renaming one carries everything filed under it, which is why the rename is a
-         form of its own rather than an inline edit that might get half-submitted. */-->
+<!--/*
+  One form per row, not one per button.
+
+  Every control in a row submits that row's form, and `name="do"` says which was pressed — `move:-1`,
+  `photo:<key>:0`, `delete`. Forty items with a form per control came to 467 forms and 464 CSRF tokens,
+  which is 317 KB of HTML for a screen that gets opened on a phone in a bakery; this is 89 forms.
+
+  Only `save` reads the text boxes, so moving a row never saves a half-typed name. Those buttons also
+  carry `formnovalidate`: the name box is `required`, and without it a browser would refuse to submit
+  "move down" while the box was empty — which is nothing to do with moving the row.
+*/-->
+
   <section class="card">
     <h2 class="card-heading">Categories</h2>
     <p class="mt-1 text-sm text-bakery-600">
@@ -14,34 +24,26 @@
     </p>
 
     <ul class="mt-3 divide-y divide-bakery-100">
-      <li th:each="filter, f : ${filters}" class="flex flex-wrap items-center gap-2 py-2">
-        <div class="flex gap-1">
-          <form method="post" th:action="@{/admin/categories/{id}/move(id=${filter.id})}">
-            <input type="hidden" name="by" value="-1">
-            <button type="submit" class="btn-icon" th:disabled="${f.first}"
-                    th:aria-label="|Move ${filter.name} up|">&uarr;</button>
-          </form>
-          <form method="post" th:action="@{/admin/categories/{id}/move(id=${filter.id})}">
-            <input type="hidden" name="by" value="1">
-            <button type="submit" class="btn-icon" th:disabled="${f.last}"
-                    th:aria-label="|Move ${filter.name} down|">&darr;</button>
-          </form>
-        </div>
-
+      <li th:each="filter, f : ${filters}">
         <form method="post" th:action="@{/admin/categories/{id}(id=${filter.id})}"
-              class="flex flex-1 min-w-60 items-center gap-2">
-          <label class="flex-1">
+              class="flex flex-wrap items-center gap-2 py-2">
+          <div class="flex gap-1">
+            <button type="submit" name="do" value="move:-1" formnovalidate class="btn-icon" th:disabled="${f.first}"
+                    th:aria-label="|Move ${filter.name} up|">&uarr;</button>
+            <button type="submit" name="do" value="move:1" formnovalidate class="btn-icon" th:disabled="${f.last}"
+                    th:aria-label="|Move ${filter.name} down|">&darr;</button>
+          </div>
+
+          <label class="flex-1 min-w-52">
             <span class="sr-only" th:text="|Name of the ${filter.name} category|">Name</span>
             <input class="field" name="name" th:value="${filter.name}" required>
           </label>
-          <button type="submit" class="btn-secondary">Rename</button>
-        </form>
+          <button type="submit" name="do" value="save" class="btn-secondary">Rename</button>
 
-        <span class="text-sm text-bakery-500 whitespace-nowrap"
-              th:text="|${filter.used} item${filter.used == 1 ? '' : 's'}|">0 items</span>
+          <span class="text-sm text-bakery-500 whitespace-nowrap"
+                th:text="|${filter.used} item${filter.used == 1 ? '' : 's'}|">0 items</span>
 
-        <form method="post" th:action="@{/admin/categories/{id}/delete(id=${filter.id})}">
-          <button type="submit" class="btn-danger" th:disabled="${filter.used > 0}"
+          <button type="submit" name="do" value="delete" formnovalidate class="btn-danger" th:disabled="${filter.used > 0}"
                   th:title="${filter.used > 0} ? 'Move its items somewhere else first' : 'Delete'"
                   th:aria-label="|Delete the ${filter.name} category|">Delete</button>
         </form>
@@ -86,30 +88,22 @@
     </form>
   </section>
 
-  <!--/* The catalogue itself. One card per item, and every control on it is a form: there is no
-         client-side state here, so a reload is always the truth. */-->
   <section>
     <h2 class="card-heading" th:text="|On the page (${#lists.size(items)})|">On the page</h2>
 
     <ul class="mt-3 space-y-3">
       <li th:each="item, i : ${items}" class="card">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <form method="post" th:action="@{/admin/items/{id}(id=${item.id})}"
+              class="flex flex-col gap-4 sm:flex-row sm:items-start">
           <div class="flex sm:flex-col gap-1 sm:pt-1">
-            <form method="post" th:action="@{/admin/items/{id}/move(id=${item.id})}">
-              <input type="hidden" name="by" value="-1">
-              <button type="submit" class="btn-icon" th:disabled="${i.first}"
-                      th:aria-label="|Move ${item.name} up|">&uarr;</button>
-            </form>
-            <form method="post" th:action="@{/admin/items/{id}/move(id=${item.id})}">
-              <input type="hidden" name="by" value="1">
-              <button type="submit" class="btn-icon" th:disabled="${i.last}"
-                      th:aria-label="|Move ${item.name} down|">&darr;</button>
-            </form>
+            <button type="submit" name="do" value="move:-1" formnovalidate class="btn-icon" th:disabled="${i.first}"
+                    th:aria-label="|Move ${item.name} up|">&uarr;</button>
+            <button type="submit" name="do" value="move:1" formnovalidate class="btn-icon" th:disabled="${i.last}"
+                    th:aria-label="|Move ${item.name} down|">&darr;</button>
           </div>
 
           <div class="flex-1 min-w-0 space-y-3">
-            <form method="post" th:action="@{/admin/items/{id}(id=${item.id})}"
-                  class="grid gap-2 sm:grid-cols-[1fr_12rem_auto]">
+            <div class="grid gap-2 sm:grid-cols-[1fr_12rem_auto]">
               <label class="block">
                 <span class="sr-only">Name</span>
                 <input class="field" name="name" th:value="${item.name}" required>
@@ -124,58 +118,47 @@
                           th:selected="${filter.name == item.category}">Cakes</option>
                 </select>
               </label>
-              <button type="submit" class="btn-secondary">Save</button>
-            </form>
+              <button type="submit" name="do" value="save" class="btn-secondary">Save</button>
+            </div>
 
-            <!--/* Photos, in the order the products page shows them: the first is the one the card
-                   leads with. Left/right rather than a drag target, which is far easier to hit on a
-                   phone. */-->
+            <!--/* Photos, in the order the products page shows them: the first is the one the card leads
+                   with. Left/right rather than a drag target, which is far easier to hit on a phone. */-->
             <div class="flex flex-wrap gap-3">
               <figure th:each="photo, p : ${item.photos}" class="w-28">
                 <img th:src="${photo.url}" alt="" loading="lazy"
                      class="w-28 h-28 rounded-md object-cover border border-bakery-200 bg-bakery-100">
                 <figcaption class="mt-1 flex items-center justify-between gap-1">
                   <div class="flex gap-1">
-                    <form method="post" th:action="@{/admin/items/{id}/photos/arrange(id=${item.id})}">
-                      <input type="hidden" name="key" th:value="${photo.key}">
-                      <input type="hidden" name="move" value="-1">
-                      <button type="submit" class="btn-icon" th:disabled="${p.first}"
-                              aria-label="Move photo earlier">&larr;</button>
-                    </form>
-                    <form method="post" th:action="@{/admin/items/{id}/photos/arrange(id=${item.id})}">
-                      <input type="hidden" name="key" th:value="${photo.key}">
-                      <input type="hidden" name="move" value="1">
-                      <button type="submit" class="btn-icon" th:disabled="${p.last}"
-                              aria-label="Move photo later">&rarr;</button>
-                    </form>
+                    <button type="submit" name="do" th:value="|photo:${photo.key}:-1|" formnovalidate class="btn-icon"
+                            th:disabled="${p.first}" aria-label="Move photo earlier">&larr;</button>
+                    <button type="submit" name="do" th:value="|photo:${photo.key}:1|" formnovalidate class="btn-icon"
+                            th:disabled="${p.last}" aria-label="Move photo later">&rarr;</button>
                   </div>
-                  <form method="post" th:action="@{/admin/items/{id}/photos/arrange(id=${item.id})}">
-                    <input type="hidden" name="key" th:value="${photo.key}">
-                    <input type="hidden" name="move" value="0">
-                    <!--/* The server refuses to leave an item with no photos; saying so up front beats an
-                           error message. */-->
-                    <button type="submit" class="btn-icon" th:disabled="${#lists.size(item.photos) == 1}"
-                            th:title="${#lists.size(item.photos) == 1} ? 'An item needs at least one photo' : 'Remove photo'"
-                            aria-label="Remove photo">&times;</button>
-                  </form>
+                  <!--/* The server refuses to leave an item with no photos; saying so up front beats an
+                         error message. */-->
+                  <button type="submit" name="do" th:value="|photo:${photo.key}:0|" formnovalidate class="btn-icon"
+                          th:disabled="${#lists.size(item.photos) == 1}"
+                          th:title="${#lists.size(item.photos) == 1} ? 'An item needs at least one photo' : 'Remove photo'"
+                          aria-label="Remove photo">&times;</button>
                 </figcaption>
               </figure>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <form method="post" th:action="@{/admin/items/{id}/photos(id=${item.id})}"
-                    enctype="multipart/form-data" class="flex flex-wrap items-center gap-2">
-                <input type="file" name="photos" accept="image/*" multiple required
-                       class="text-sm text-bakery-800 file:btn file:btn-secondary file:mr-3">
-                <button type="submit" class="btn-secondary">Add photos</button>
-              </form>
-              <form method="post" th:action="@{/admin/items/{id}/delete(id=${item.id})}" class="ml-auto">
-                <button type="submit" class="btn-danger"
-                        th:aria-label="|Remove ${item.name} from the products page|">Delete</button>
-              </form>
+              <button type="submit" name="do" value="delete" formnovalidate class="btn-danger ml-auto"
+                      th:aria-label="|Remove ${item.name} from the products page|">Delete item</button>
             </div>
           </div>
-        </div>
+        </form>
+
+        <!--/* Its own form, because a file input needs a multipart encoding and the rest of the row
+               doesn't. */-->
+        <form method="post" th:action="@{/admin/items/{id}/photos(id=${item.id})}"
+              enctype="multipart/form-data" class="mt-2 flex flex-wrap items-center gap-2 sm:pl-12">
+          <input type="file" name="photos" accept="image/*" multiple required
+                 class="text-sm text-bakery-800 file:btn file:btn-secondary file:mr-3">
+          <button type="submit" class="btn-secondary">Add photos</button>
+        </form>
       </li>
     </ul>
 
