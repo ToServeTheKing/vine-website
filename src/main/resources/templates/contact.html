@@ -5,10 +5,19 @@
 
   <header class="container mx-auto px-4 pt-14 pb-10 md:pt-20 md:pb-12 text-center">
     <h1 class="font-adbhashitha text-4xl md:text-5xl text-bakery-900">Contact us</h1>
+    <p class="mt-4 text-bakery-800 max-w-xl mx-auto leading-relaxed">
+      Ask about a cake, a date, or an order for a crowd. We read everything that comes in.
+    </p>
   </header>
 
+  <!--/*
+    The form, and beside it the things somebody on this page is usually actually after: when we are open,
+    where we are, and the phone number. They were on the homepage and in the footer but not here, which
+    made this page a form and nothing else.
+  */-->
   <div class="container mx-auto px-4 pb-16 md:pb-24">
-    <div class="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-xs">
+    <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] max-w-5xl mx-auto items-start">
+      <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xs">
       <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-2">Get in touch</h2>
       <p class="text-bakery-700 mb-8">
         Or call us: <a href="tel:+13097010660" class="underline underline-offset-4 hover:text-bakery-600">(309) 701-0660</a>
@@ -59,6 +68,30 @@
       <p th:if="${sent}" role="status" class="text-bakery-700">
         Thanks. Your message is on its way, and we will get back to you.
       </p>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xs">
+          <h2 class="font-adbhashitha text-xl text-bakery-900">Our hours</h2>
+          <div class="mt-4 text-bakery-800"
+               th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xs">
+          <h2 class="font-adbhashitha text-xl text-bakery-900">Find us</h2>
+          <div class="mt-4 text-bakery-800"
+               th:replace="~{fragments/visit :: address('hover:text-bakery-600 underline underline-offset-4')}"></div>
+        </div>
+        <div class="rounded-3xl border border-bakery-200 p-6 md:p-8">
+          <h2 class="font-adbhashitha text-xl text-bakery-900">Ordering for a crowd?</h2>
+          <p class="mt-2 text-sm text-bakery-700 leading-relaxed">
+            Goodie boxes, party packages and wedding desserts have their own page, with sizes and prices.
+          </p>
+          <a href="/catering" class="mt-4 inline-block text-bakery-700 hover:text-bakery-900 font-medium
+                                     underline underline-offset-4 transition-colors">
+            Goodie boxes &amp; catering
+          </a>
+        </div>
+      </aside>
     </div>
   </div>
 </div>

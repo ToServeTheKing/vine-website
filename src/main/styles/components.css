@@ -1,0 +1,60 @@
+/*
+ * The public site's own classes — the ones that would be unreadable as a string of utilities in every
+ * template that needs them. The admin's controls are in admin.css.
+ */
+
+/* In @layer components, matching the old site. That ordering matters: a utility like `px-4` — which
+   the markup applies alongside `container` on nearly every section — has to win over this, or every
+   gutter on the site silently widens. */
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /*
+   * The two branch marks of the wordmark, as masks rather than inline SVG.
+   *
+   * They have to take their colour from the surrounding text — sage in the header, cream on the hero
+   * and in the footer — which an <img> cannot do. React solved that by inlining them through svgr,
+   * but these files are 31 KB each and the lockup appears up to three times on a page: inlining them
+   * in server-rendered HTML would add ~190 KB to every response. A mask over `currentColor` keeps the
+   * tinting, keeps the files cacheable, and costs two requests once.
+   */
+  .mark {
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
+  .mark-r {
+    -webkit-mask-image: url('/images/logo_R.svg');
+    mask-image: url('/images/logo_R.svg');
+  }
+  .mark-l {
+    -webkit-mask-image: url('/images/logo_L.svg');
+    mask-image: url('/images/logo_L.svg');
+  }
+
+  /*
+   * The photo strip on a product card scrolls, but a scrollbar across the bottom of a photo is not part
+   * of the design. Hiding it is safe here because the strip is not the only way through the photos: it
+   * snaps, it takes arrow keys, and the arrows and dots are on top of it.
+   */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* The mobile menu is a <details>; its default disclosure triangle would sit next to the hamburger. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}

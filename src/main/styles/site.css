@@ -1,0 +1,25 @@
+/*
+ * The site's one stylesheet, compiled by the Tailwind CLI into target/classes/static/css.
+ *
+ * It lives under src/main with the rest of the app's source, and it has to stay in the same directory as
+ * package.json: Tailwind resolves `@import "tailwindcss"` by walking up from the CSS file looking for
+ * node_modules. There is no bundler and no framework here — the site and the admin are both
+ * server-rendered HTML, and this is the whole of the asset pipeline.
+ *
+ * Imported in cascade order: names, then bare elements, then classes.
+ */
+@import "tailwindcss";
+
+@import "./theme.css";
+@import "./base.css";
+@import "./components.css";
+@import "./admin.css";
+
+/*
+ * Where Tailwind looks for class names. Every template, and gallery.js — the product-card arrows are
+ * created in script, so their classes are only written down there. A utility exists in the output only if
+ * Tailwind saw it in one of these files, which is why a class name must never be assembled from pieces at
+ * runtime.
+ */
+@source "../resources/templates";
+@source "../resources/static/js";

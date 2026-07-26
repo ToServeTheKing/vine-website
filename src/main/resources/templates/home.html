@@ -69,6 +69,32 @@
     </div>
   </section>
 
+  <!--/*
+    Ordering ahead. The catering page exists and the homepage said nothing about it — a customer only
+    found it by reading the nav. Photo on one side, the offer on the other, and the three tables named so
+    the link is worth following.
+  */-->
+  <section class="py-16 md:py-24 bg-bakery-50">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-5xl mx-auto">
+        <img th:src="${photos.of('gallery/Sugar Cookies.webp')}" alt="Iced sugar cookies from The Vine"
+             width="800" height="600" loading="lazy"
+             class="w-full h-64 md:h-80 object-cover rounded-3xl shadow-xs">
+        <div>
+          <h2 class="font-adbhashitha text-3xl md:text-4xl text-bakery-900">Ordering for a crowd?</h2>
+          <p class="mt-4 text-bakery-800 leading-relaxed">
+            Goodie boxes for the office, packages for a party, and cakes and desserts for a wedding —
+            with prices, sizes and what each one includes, so you can see where to start.
+          </p>
+          <a href="/catering"
+             class="mt-6 inline-block bg-bakery-600 hover:bg-bakery-700 text-white px-8 py-3.5 rounded-full font-medium tracking-wide transition">
+            Goodie boxes &amp; catering
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!--/* Visit us */-->
   <section id="visit" class="py-16 md:py-24 bg-bakery-50 scroll-mt-24">
     <div class="container mx-auto px-4">
@@ -76,32 +102,12 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
         <div class="bg-white rounded-3xl p-6 md:p-8">
           <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Our hours</h2>
-          <ul class="space-y-3 text-bakery-800">
-            <li class="flex justify-between gap-4">
-              <span>Tuesday &ndash; Friday</span>
-              <span class="font-medium whitespace-nowrap">7:00am &ndash; 2:00pm</span>
-            </li>
-            <li class="flex justify-between gap-4">
-              <span>Saturday</span>
-              <span class="font-medium whitespace-nowrap">7:00am &ndash; 12:00pm</span>
-            </li>
-            <li class="flex justify-between gap-4">
-              <span>Sunday &ndash; Monday</span>
-              <span class="font-medium">Closed</span>
-            </li>
-          </ul>
+          <div th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
         </div>
         <div class="bg-white rounded-3xl p-6 md:p-8">
           <h2 class="font-adbhashitha text-2xl md:text-3xl text-bakery-900 mb-6">Find us</h2>
-          <address class="not-italic space-y-3 text-bakery-800">
-            <p>215 E Main Street<br>Princeville, IL 61559</p>
-            <p>
-              <a href="tel:+13097010660" class="hover:text-bakery-600 underline underline-offset-4">(309) 701-0660</a>
-            </p>
-            <p class="break-words">
-              <a href="mailto:contact@itsthevine.com" class="hover:text-bakery-600 underline underline-offset-4">contact@itsthevine.com</a>
-            </p>
-          </address>
+          <div class="text-bakery-800"
+               th:replace="~{fragments/visit :: address('hover:text-bakery-600 underline underline-offset-4')}"></div>
         </div>
       </div>
     </div>

@@ -3,9 +3,24 @@
 <body>
 <div th:fragment="content" class="bg-bakery-50">
 
-  <header class="container mx-auto px-4 pt-14 pb-10 md:pt-20 md:pb-12 text-center">
-    <h1 class="font-adbhashitha text-4xl md:text-5xl text-bakery-900">Our story</h1>
-  </header>
+  <!--/* The shop's own front, which is what the story is about. Same band as the catering page. */-->
+  <section class="relative flex items-center py-14 md:py-20 bg-bakery-900 text-white overflow-hidden">
+    <img th:src="${photos.of('gallery/Outside.webp')}" alt=""
+         class="absolute inset-0 w-full h-full object-cover object-bottom blur-[3px] scale-110">
+    <div class="absolute inset-0 bg-bakery-900/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
+    <div class="relative container mx-auto px-4 w-full min-w-0">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-bakery-200">Since 2024</p>
+        <h1 class="mt-3 font-adbhashitha text-4xl md:text-5xl text-bakery-50">Our story</h1>
+        <p class="mt-5 text-base sm:text-lg text-bakery-100 text-balance leading-relaxed">
+          215 E Main Street, in the middle of downtown Princeville.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <header class="container mx-auto px-4 pt-14 pb-2 md:pt-16 text-center"></header>
 
   <div class="container mx-auto px-4 pb-16 md:pb-24">
     <div class="max-w-2xl mx-auto space-y-12">
@@ -49,6 +64,29 @@
       </section>
     </div>
   </div>
+
+  <!--/* Somewhere to go after reading: the story is a preamble to an order. */-->
+  <section class="bg-bakery-800 text-white py-16 md:py-20">
+    <div class="container mx-auto px-4">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="font-adbhashitha text-2xl md:text-3xl">Come and see us</h2>
+        <p class="mt-4 text-bakery-100 leading-relaxed">
+          We open at 7:00am, Tuesday through Saturday. If you are after something for a date in the
+          diary, it is worth asking early.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/products"
+             class="bg-bakery-50 hover:bg-white text-bakery-900 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition shadow-lg">
+            See what we make
+          </a>
+          <a href="/contact"
+             class="border border-bakery-200/60 hover:bg-bakery-50/10 text-bakery-50 px-8 py-3.5 rounded-full font-medium tracking-wide inline-block transition">
+            Get in touch
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 </body>
 </html>
