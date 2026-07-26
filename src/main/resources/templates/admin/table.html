@@ -47,6 +47,9 @@
                        th:aria-label="|Heading for column ${c.count}|">
                 <input class="field mt-1" th:field="*{columns[__${c.index}__].price}"
                        placeholder="$24 — leave empty to ask" th:aria-label="|Price for column ${c.count}|">
+                <!--/* Optional: only worth filling in when the heading isn't already a head count. */-->
+                <input class="field mt-1" th:field="*{columns[__${c.index}__].serves}"
+                       placeholder="Serves — optional" th:aria-label="|How many people column ${c.count} feeds|">
                 <div class="mt-1 flex justify-center gap-1">
                   <button type="submit" name="do" th:value="|move-column:${c.index}:-1|" class="btn-icon"
                           th:disabled="${c.first}" aria-label="Move this column left">&larr;</button>

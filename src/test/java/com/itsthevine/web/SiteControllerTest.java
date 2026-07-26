@@ -102,8 +102,11 @@ class SiteControllerTest {
                 .andExpect(content().string(containsString("$24")))
                 .andExpect(content().string(containsString("$236")))
                 // A cell and a note, in the wording a customer reads rather than the spreadsheet's.
-                .andExpect(content().string(containsString("Eighteen, in two or three flavors")))
-                .andExpect(content().string(containsString("baked in sixes")))
+                // The office box is a total mixed in sixes, not three separate things.
+                .andExpect(content().string(containsString("Any mix of mini muffins")))
+                .andExpect(content().string(containsString("18 items")))
+                .andExpect(content().string(containsString("About 6–8 people")))
+                .andExpect(content().string(containsString("Baked in sixes")))
                 // One card per size, and one enquiry link per table — not one per card, which would have
                 // read "Ask about the 15–20 people".
                 // The size label is in the HTML as written; the small caps are CSS.

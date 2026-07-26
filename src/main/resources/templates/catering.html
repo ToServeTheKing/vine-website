@@ -73,6 +73,9 @@
               <p th:if="${tier.price}" class="mt-2 font-adbhashitha text-4xl text-bakery-900" th:text="${tier.price}">$24</p>
               <!--/* No price means "ask us" — say so rather than leaving a hole in the card. */-->
               <p th:unless="${tier.price}" class="mt-2 font-adbhashitha text-2xl text-bakery-700">Ask us</p>
+              <!--/* "Small" doesn't tell anyone how many it feeds. A column whose heading is already a
+                     head count leaves this blank rather than saying it twice. */-->
+              <p th:if="${tier.serves}" class="mt-1 text-sm text-bakery-600" th:text="${tier.serves}">About 6–8 people</p>
 
               <ul class="mt-6 space-y-3 text-bakery-800">
                 <li th:each="row : ${table.rows}" class="flex gap-3">

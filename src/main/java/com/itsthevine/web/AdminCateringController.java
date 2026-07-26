@@ -78,6 +78,7 @@ public class AdminCateringController {
         private Long id;
         private String label = "";
         private String price = "";
+        private String serves = "";
 
         public Long getId() { return id; }
         public void setId(Long id) { this.id = id; }
@@ -87,6 +88,9 @@ public class AdminCateringController {
 
         public String getPrice() { return price; }
         public void setPrice(String price) { this.price = price; }
+
+        public String getServes() { return serves; }
+        public void setServes(String serves) { this.serves = serves; }
     }
 
     public static class LineForm {
@@ -172,7 +176,7 @@ public class AdminCateringController {
                     form.getName(),
                     form.getBlurb(),
                     form.getColumns().stream()
-                            .map(c -> new CateringMenu.TierEdit(c.getId(), c.getLabel(), c.getPrice()))
+                            .map(c -> new CateringMenu.TierEdit(c.getId(), c.getLabel(), c.getPrice(), c.getServes()))
                             .toList(),
                     form.getLines().stream()
                             .map(l -> new CateringMenu.RowEdit(l.getId(), l.getLabel(), l.getValues()))
@@ -302,6 +306,7 @@ public class AdminCateringController {
             // The price comes back written out ("$24") and goes out again as whatever is left in the box;
             // Money reads either.
             column.setPrice(tier.price() == null ? "" : tier.price());
+            column.setServes(tier.serves() == null ? "" : tier.serves());
             return column;
         }).collect(Collectors.toCollection(ArrayList::new)));
         form.setLines(table.rows().stream().map(row -> {

@@ -78,7 +78,7 @@ public class CateringPackage extends BaseEntity {
      * A column as the editor left it — its heading and its price. A null {@code id} is one they just
      * added. (Named for the heading rather than the column so as not to shadow {@code @Column}.)
      */
-    public record Heading(Long id, String label, String price) {}
+    public record Heading(Long id, String label, String price, String serves) {}
 
     /** A line as the editor left it, with one value per column — blanks included. */
     public record Line(Long id, String label, List<String> values) {}
@@ -136,7 +136,7 @@ public class CateringPackage extends BaseEntity {
         int columnNumber = 1;
         for (Heading column : columns) {
             CateringTier tier = column.id() == null ? new CateringTier(this) : tier(column.id());
-            tier.describe(column.label(), column.price());
+            tier.describe(column.label(), column.price(), column.serves());
             tier.moveTo(columnNumber++);
             arrangedTiers.add(tier);
         }

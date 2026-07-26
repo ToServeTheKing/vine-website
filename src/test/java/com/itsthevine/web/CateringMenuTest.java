@@ -69,12 +69,18 @@ class CateringMenuTest {
                 .containsExactly("Small", "Medium", "Large");
         assertThat(office.tiers()).extracting(CateringMenu.TierView::price)
                 .containsExactly("$24", "$32", "$40");
+        // One line, not three: a Small box is twelve items mixed in sixes, not twelve of each thing. The
+        // choice is written into the line's name, which is the same rule the other two tables follow.
         assertThat(office.rows()).extracting(CateringMenu.RowView::label)
-                .containsExactly("Mini muffins", "Mini scones", "Mini cinnamon rolls");
-        assertThat(office.rows().get(0).values()).containsExactly("A dozen", "Eighteen", "Two dozen");
-        assertThat(office.rows().get(1).values().get(2)).isEqualTo("Two dozen, in up to four flavors");
+                .containsExactly("Any mix of mini muffins, mini scones and mini cinnamon rolls");
+        assertThat(office.rows().get(0).values()).containsExactly("12 items", "18 items", "24 items");
+        // "Small" says nothing about how many it feeds; this does.
+        assertThat(office.tiers()).extracting(CateringMenu.TierView::serves)
+                .containsExactly("About 6–8 people", "About 10–12 people", "About 15–20 people");
+        // The party and wedding columns are named by head count already, so they don't repeat it.
+        assertThat(tables.get(1).tiers()).extracting(CateringMenu.TierView::serves).containsOnlyNulls();
         assertThat(office.blurb()).contains("morning meeting");
-        assertThat(office.notes()).anySatisfy(note -> assertThat(note).contains("baked in sixes"));
+        assertThat(office.notes()).anySatisfy(note -> assertThat(note).contains("Baked in sixes"));
 
         assertThat(tables.get(1).tiers()).extracting(CateringMenu.TierView::label)
                 .containsExactly("15–20 people", "20–30 people", "30–40 people");
@@ -129,11 +135,17 @@ class CateringMenuTest {
 
     @Test
     void keepsBlankCellsRatherThanCollapsingThem() {
-        // "Mini cinnamon rolls" is named but not quantified in the spreadsheet. Dropping its blanks
-        // would shorten the line and shift everything after it.
-        CateringMenu.RowView rolls = catering.menu().packages().get(0).rows().get(2);
-        assertThat(rolls.label()).isEqualTo("Mini cinnamon rolls");
-        assertThat(rolls.values()).containsExactly("", "", "");
+        // No seeded line is blank across any more, so this uses a table of its own making: a blank cell
+        // still has to survive a save, because dropping one would shorten the line and shift the rest.
+        CateringMenu.PackageView fresh = catering.add("Trays");
+        catering.save(fresh.id(), new CateringMenu.PackageEdit("Trays", null,
+                List.of(new CateringMenu.TierEdit(null, "Small", "10", null),
+                        new CateringMenu.TierEdit(null, "Large", "20", null)),
+                List.of(new CateringMenu.RowEdit(null, "Seasonal extras", List.of("", "A dozen"))),
+                List.of()));
+
+        CateringMenu.RowView row = catering.everything().packages().getLast().rows().getFirst();
+        assertThat(row.values()).containsExactly("", "A dozen");
     }
 
     @Test
@@ -185,7 +197,7 @@ class CateringMenuTest {
         CateringMenu.PackageView saved = catering.everything().packages().get(0);
         assertThat(saved.tiers()).extracting(CateringMenu.TierView::label).containsExactly("Small", "Large");
         assertThat(saved.tiers()).extracting(CateringMenu.TierView::id).doesNotContain(medium);
-        assertThat(saved.rows().get(0).values()).containsExactly("A dozen", "Two dozen");
+        assertThat(saved.rows().get(0).values()).containsExactly("12 items", "24 items");
         assertThat(saved.rows()).allSatisfy(row -> assertThat(row.values()).hasSize(2));
     }
 
@@ -201,7 +213,7 @@ class CateringMenuTest {
 
         assertThatThrownBy(() -> catering.save(office.id(), half))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Mini muffins")
+                .hasMessageContaining("Any mix of mini muffins")
                 .hasMessageContaining("3 entries but the table has 2 columns");
     }
 
@@ -211,7 +223,7 @@ class CateringMenuTest {
         Long muffins = office.rows().get(0).id();
 
         List<CateringMenu.RowEdit> rows = new ArrayList<>(asLines(office));
-        rows.set(0, new CateringMenu.RowEdit(muffins, "Mini muffins", List.of("A dozen", "Twenty", "Two dozen")));
+        rows.set(0, new CateringMenu.RowEdit(muffins, "Mini muffins", List.of("12 items", "20 items", "24 items")));
         catering.save(office.id(), new CateringMenu.PackageEdit(
                 "Office boxes", "For meetings and staff mornings.", asEdits(office), rows, office.notes()));
 
@@ -220,7 +232,7 @@ class CateringMenuTest {
         assertThat(saved.blurb()).isEqualTo("For meetings and staff mornings.");
         // Same line, edited — not a new line that happens to read the same.
         assertThat(saved.rows().get(0).id()).isEqualTo(muffins);
-        assertThat(saved.rows().get(0).values()).containsExactly("A dozen", "Twenty", "Two dozen");
+        assertThat(saved.rows().get(0).values()).containsExactly("12 items", "20 items", "24 items");
     }
 
     @Test
@@ -234,7 +246,7 @@ class CateringMenuTest {
 
         // Once it has a column and a line, it's a price table and it belongs on the page.
         catering.save(fresh.id(), new CateringMenu.PackageEdit("Holiday boxes", null,
-                List.of(new CateringMenu.TierEdit(null, "Dozen", "18")),
+                List.of(new CateringMenu.TierEdit(null, "Dozen", "18", "About 6 people")),
                 List.of(new CateringMenu.RowEdit(null, "Frosted cut-outs", List.of("12 items"))),
                 List.of()));
         assertThat(catering.menu().packages()).extracting(CateringMenu.PackageView::name)
@@ -304,7 +316,7 @@ class CateringMenuTest {
     /** Note the round trip: what came back as "$24" goes out again as "$24" and must still mean 2400. */
     private static List<CateringMenu.TierEdit> asEdits(CateringMenu.PackageView table) {
         return table.tiers().stream()
-                .map(t -> new CateringMenu.TierEdit(t.id(), t.label(), t.price()))
+                .map(t -> new CateringMenu.TierEdit(t.id(), t.label(), t.price(), t.serves()))
                 .toList();
     }
 
@@ -328,13 +340,13 @@ class CateringMenuTest {
 
     private static CateringMenu.PackageEdit withColumnPrice(CateringMenu.PackageView table, String price) {
         List<CateringMenu.TierEdit> tiers = new ArrayList<>(asEdits(table));
-        tiers.set(0, new CateringMenu.TierEdit(tiers.get(0).id(), tiers.get(0).label(), price));
+        tiers.set(0, new CateringMenu.TierEdit(tiers.get(0).id(), tiers.get(0).label(), price, null));
         return new CateringMenu.PackageEdit(table.name(), table.blurb(), tiers, asLines(table), table.notes());
     }
 
     private static CateringMenu.PackageEdit withColumnLabel(CateringMenu.PackageView table, String label) {
         List<CateringMenu.TierEdit> tiers = new ArrayList<>(asEdits(table));
-        tiers.set(0, new CateringMenu.TierEdit(tiers.get(0).id(), label, tiers.get(0).price()));
+        tiers.set(0, new CateringMenu.TierEdit(tiers.get(0).id(), label, tiers.get(0).price(), null));
         return new CateringMenu.PackageEdit(table.name(), table.blurb(), tiers, asLines(table), table.notes());
     }
 
