@@ -82,6 +82,24 @@ class CateringMenuTest {
     }
 
     @Test
+    void theWeddingLinesEachSaySomething() {
+        // The source spreadsheet is offset — the prices sit on its "cupcakes" line — and V4 carried that
+        // over literally, which left two lines with no quantity in any column: a row of dashes on the
+        // page. V5 reads it as a baker would (a 12x17 pan is the sheet pan; "cc or sc" is what the dozens
+        // count) and the guards in it mean an edit made in the admin since would have survived instead.
+        CateringMenu.PackageView weddings = catering.menu().packages().get(2);
+
+        assertThat(weddings.rows()).extracting(CateringMenu.RowView::label)
+                .containsExactly("Bride & groom cake (8 in)", "Sheet cakes or 12x17 bars",
+                        "Cupcakes or sugar cookies");
+        assertThat(weddings.rows().get(1).values()).containsExactly("2 pans", "3 pans", "4 pans");
+        assertThat(weddings.rows().get(2).values()).containsExactly("4 dz", "5 dz", "6 dz");
+        // Nothing left that is blank the whole way across.
+        assertThat(weddings.rows())
+                .noneMatch(row -> row.values().stream().allMatch(String::isEmpty));
+    }
+
+    @Test
     void everyLineCarriesOneEntryPerColumn() {
         // The invariant the whole aggregate exists to hold: if these ever fall out of step, a box is
         // advertised at another box's price.
