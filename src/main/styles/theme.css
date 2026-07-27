@@ -1,0 +1,72 @@
+/*
+ * The brand: three typefaces and the sage-and-cream palette. Nothing here draws anything — these are the
+ * names the rest of the CSS and every template are written in.
+ *
+ * Fonts are served by Spring from /fonts rather than bundled, so the stylesheet can name a stable URL and
+ * the browser caches one copy across the whole site.
+ */
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/raleway-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+/*
+ * 306 KB became 8 KB. The file carried 1605 glyphs for 187 codepoints — alternates and scripts this site
+ * never sets — so it is subset to Latin and the punctuation it actually has, with every layout feature
+ * kept, and compressed as woff2. The headings are pixel-identical; that was checked, not assumed.
+ */
+@font-face {
+  font-family: 'AdBhashitha';
+  src: url('/fonts/AdBhashitha.woff2') format('woff2');
+  font-display: swap;
+}
+/*
+ * Recompressed, never subset: the wordmark's swashes come out of this font's alternates, and the logo is
+ * the one thing on the site that must not change shape.
+ */
+@font-face {
+  font-family: 'LeJour Script';
+  src: url('/fonts/LeJour-Script.woff2') format('woff2');
+  font-display: swap;
+}
+
+@theme {
+  /* Sage & Cream. 500 is the signature sage; 600+ are the darker tones that white text can actually
+     sit on (500 on white is only 3.6:1 — too low). */
+  --color-bakery-50: #faf7f0;
+  --color-bakery-100: #f0efe3;
+  --color-bakery-200: #dde0cc;
+  --color-bakery-300: #c3cbae;
+  --color-bakery-400: #a2ae8b;
+  --color-bakery-500: #7c8b6b;
+  --color-bakery-600: #5f6f52;
+  --color-bakery-700: #4a5740;
+  --color-bakery-800: #37412f;
+  --color-bakery-900: #232b1e;
+
+  /*
+   * CORNERS. Two decisions, named, so "how round is a card" is answered once rather than per template.
+   *
+   * A card is 12px. It was 24px (Tailwind's rounded-3xl), which is the roundest thing on the page and
+   * reads as a phone app; a bakery's printed card has a corner you can see. Fields are tighter again, and
+   * buttons stay fully round — the pill is the brand's button shape and always was.
+   */
+  --radius-panel: 0.75rem;
+  --radius-field: 0.5rem;
+
+  /*
+   * Shadows tinted with the darkest sage rather than black. A neutral grey shadow on a cream page reads
+   * as a UI panel floating over a screen; a warm one reads as card stock lying on a counter, which is
+   * what these are meant to be.
+   */
+  --shadow-card: 0 1px 2px rgba(35, 43, 30, 0.04), 0 10px 30px -18px rgba(35, 43, 30, 0.28);
+  --shadow-card-lift: 0 2px 6px rgba(35, 43, 30, 0.06), 0 20px 44px -22px rgba(35, 43, 30, 0.4);
+
+  --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+  --font-adbhashitha: 'AdBhashitha', ui-serif, Georgia, serif;
+  --font-lejour: 'LeJour Script', ui-serif, Georgia, cursive;
+}
+

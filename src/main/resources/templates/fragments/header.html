@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  The sticky bar, and the mobile menu.
+
+  The menu is a <details> element. That is not a trick to avoid writing JavaScript for its own sake —
+  the React version needed an effect to close the panel on navigation, another to close it on Escape,
+  another to stop the page behind it scrolling, and a third to unmount it (a panel parked off-screen
+  still extends the scrollable area, which is how you used to be able to scroll sideways and find the
+  menu). A <details> closes on Escape by itself, and navigation is a new document, so it cannot survive
+  it. Nothing to remember, nothing to clean up.
+
+  The panel is `absolute` and starts below the bar (`top-full`), so the logo and the toggle stay put and
+  the panel needs no second copy of either. It must not be `fixed`: the header carries `backdrop-blur`,
+  and a backdrop-filter makes an element a containing block for fixed descendants — a fixed panel in
+  here would resolve against the 80px header box and get clipped to a sliver.
+*/-->
+<header th:fragment="header" class="sticky top-0 z-40 bg-bakery-50/90 backdrop-blur border-b border-bakery-200">
+  <div class="container">
+    <div class="flex items-center justify-between gap-2 h-20 md:h-24">
+      <div th:replace="~{fragments/lockup :: small('text-bakery-700')}"></div>
+
+      <!--/*
+        The status line is the first thing to go when the bar gets tight: at the width of a small laptop
+        the wordmark and the nav were overlapping, because "Closed · opens Tuesday at 7:00am" is as wide as
+        two nav items. It comes back at lg, and the mobile menu carries it at every width below md.
+      */-->
+      <div class="hidden md:flex items-center gap-6 xl:gap-8">
+        <nav class="flex items-center gap-6 xl:gap-8">
+          <th:block th:replace="~{:: links('label text-bakery-700 hover:text-bakery-900 transition-colors')}"></th:block>
+        </nav>
+        <!--/* Worked out on the server from the same opening times the footer prints. */-->
+        <p th:replace="~{fragments/visit :: open-now(
+               ${openNow.open} ? 'bg-bakery-500' : 'bg-bakery-300',
+               'hidden xl:inline-flex text-sm text-bakery-600 whitespace-nowrap')}"></p>
+      </div>
+
+      <details class="group md:hidden shrink-0">
+        <summary class="p-2 cursor-pointer list-none" aria-label="Menu">
+          <svg class="h-6 w-6 text-bakery-700 group-open:hidden" fill="none" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg class="h-6 w-6 text-bakery-700 hidden group-open:block" fill="none" stroke-linecap="round"
+               stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </summary>
+        <div class="absolute inset-x-0 top-full z-30 h-[calc(100dvh-5rem)] bg-bakery-50">
+          <nav class="container flex flex-col">
+            <th:block th:replace="~{:: links('text-bakery-800 hover:text-bakery-600 transition-colors py-4 text-lg border-b border-bakery-100')}"></th:block>
+            <p th:replace="~{fragments/visit :: open-now(
+                   ${openNow.open} ? 'bg-bakery-500' : 'bg-bakery-300',
+                   'inline-flex text-sm text-bakery-600 py-4')}"></p>
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<!--/*
+  One list of links, worn two ways — so the phone and the desktop can't end up offering different pages.
+
+  The page you are on is marked: aria-current for a screen reader, and a sage rule under the word for
+  everyone else. A four-page site can get away without it, right up until someone clicks Catering, lands
+  on a page of prices, and has no idea whether the click worked.
+*/-->
+<th:block th:fragment="links(itemClass)">
+  <a th:each="item : ${ {{'/products','Our Products'},{'/catering','Catering'},{'/history','Our Story'},{'/contact','Contact'}} }"
+     th:href="${item[0]}" th:text="${item[1]}"
+     th:aria-current="${path == item[0] ? 'page' : null}"
+     th:class="${itemClass} + (${path == item[0]} ? ' is-here' : '')">Our Products</a>
+</th:block>
+</body>
+</html>

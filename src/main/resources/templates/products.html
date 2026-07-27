@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content" class="min-h-screen bg-bakery-50">
+
+  <div th:replace="~{fragments/opening :: plain(
+      'From the counter',
+      'Our products',
+      'What comes out of the kitchen on Main Street. Cakes and decorated cookies are made to order, so most of what follows started as somebody describing what they wanted.')}"></div>
+
+  <div class="container pb-16">
+    <!--/*
+      The category filter: links, not buttons. Each filtered view is now a URL you can bookmark or send
+      to somebody, the browser's back button does what it looks like it does, and a crawler can see all
+      forty items instead of whichever twelve the default filter showed. The filtering itself has always
+      been the server's job — this just stopped pretending otherwise.
+    */-->
+    <div class="filter-row mb-12">
+      <a th:each="category : ${categories}"
+         th:href="${category == 'All' ? '/products' : '/products?category=' + #uris.escapeQueryParam(category)}"
+         th:text="${category}"
+         th:aria-current="${category == selected ? 'page' : null}"
+         th:class="${category == selected} ? 'chip-on' : 'chip'">All</a>
+    </div>
+
+    <!--/* Deliberately unanimated, as before: filtering used to run a layout reflow plus an enter/exit
+           fade on every card, which on a 40-card grid reads as the page lurching rather than
+           responding. The only motion left is the shadow on hover. */-->
+    <div class="card-grid">
+      <div th:each="product : ${products}"
+           class="panel overflow-hidden">
+        <div class="relative w-full overflow-hidden">
+          <div th:replace="~{:: gallery(${product})}"></div>
+        </div>
+        <!--/* The caption sits on the cream, so the photo reads as mounted on the card rather than as
+               the card itself. */-->
+        <div class="panel-head border-b-0 border-t px-6 py-5 text-center">
+          <h3 class="h4 text-bakery-900" th:text="${product.name}">Name</h3>
+          <span class="label text-bakery-600" th:text="${product.category}">Category</span>
+        </div>
+      </div>
+    </div>
+
+    <p th:if="${#lists.isEmpty(products)}" class="text-center text-bakery-800">
+      Nothing in that category just now.
+      <a href="/products" class="link-plain">See everything</a>.
+    </p>
+  </div>
+
+  <!--/* A catalogue with no way to order from it is a gallery. */-->
+  <section class="section bg-bakery-800 text-white no-print">
+    <div class="container">
+      <div class="measure text-center">
+        <h2 class="h3">Want one of these, or something else?</h2>
+        <p class="mt-4 text-bakery-100 leading-relaxed">
+          Cakes and decorated cookies are made to order. Tell us the date and roughly what you have in
+          mind — a tractor, a retirement, the class of 1964 — and we will work from there.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/contact"
+             class="pill-cream">
+            Ask about an order
+          </a>
+          <a href="/catering"
+             class="pill-ghost">
+            Ordering for a crowd
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!--/*
+  The photo on a card.
+
+  A scroll-snap strip rather than a stack of absolutely positioned images cross-fading: it is one square
+  photo at a time either way, but this version swipes on a phone and scrolls with a trackpad with no
+  script at all. /js/gallery.js adds the arrows and the dots on top. They are created there rather than
+  rendered here on purpose — a control that does nothing without JavaScript is worse than no control.
+*/-->
+<div th:fragment="gallery(product)" class="relative aspect-square bg-bakery-100">
+  <div class="gallery flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
+       th:attr="aria-label=${#lists.size(product.images) > 1 ? product.name + ' — ' + #lists.size(product.images) + ' photos' : null}"
+       th:aria-roledescription="${#lists.size(product.images) > 1 ? 'carousel' : null}">
+    <img th:each="image, i : ${product.images}" th:src="${image}"
+         th:alt="${i.index == 0 ? product.name : ''}"
+         th:aria-hidden="${i.index == 0 ? null : 'true'}"
+         loading="lazy" decoding="async"
+         class="snap-center shrink-0 h-full w-full object-cover">
+  </div>
+</div>
+</body>
+</html>

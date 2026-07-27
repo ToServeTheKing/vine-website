@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--/*
+  The site's own 404, in the site's own chrome.
+
+  Boot picks this up by name for any 404, which is why the SPA fallback is switched off in
+  application.yaml: while it was on, every mistyped URL was answered with the JavaScript shell and a
+  200 — and now that the shell only carries the admin, that would be a blank page.
+
+  Boot renders it through its own error controller, so SiteController's model isn't here — which is why
+  the layout takes the title and description as parameters and this page passes its own.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/page :: page(
+          'Page not found · The Vine Coffeehouse + Bakery',
+          'That page is not here. The menu, our catering list, our story and how to reach us are.',
+          '/', ~{::content})}">
+<body>
+<div th:fragment="content" class="bg-bakery-50">
+  <div class="container py-24 md:py-32 text-center">
+    <h1 class="h1 text-bakery-900 mb-6">
+      We could not find that page
+    </h1>
+    <p class="text-bakery-800 mb-10">
+      It may have moved. The menu, our story, and how to reach us are all still here.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="/"
+         class="pill-sage">
+        Back home
+      </a>
+      <a href="/products"
+         class="pill-outline">
+        See the menu
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

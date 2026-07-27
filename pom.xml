@@ -58,6 +58,13 @@
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-data</artifactId>
         </dependency>
+        <!-- The site is server-rendered: every public page is a Thymeleaf template in
+             src/main/resources/templates, and the only JavaScript left on it is a 100-line file that
+             gives the multi-photo product cards their arrows. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>net.thebennett.platform</groupId>
             <artifactId>platform-starter-contact</artifactId>
@@ -117,14 +124,55 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- SPA build inherited from platform-parent (node install + npm build + copy dist -> jar). -->
+            <!--
+              There is no JavaScript application here any more, so node is present for one reason:
+              Tailwind needs a compiler, and the alternative to it is a hand-written stylesheet.
+              src/main/styles is the whole asset pipeline (see its site.css).
+            -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Overrides platform-parent's `frontend`, which was where the SPA lived. The
+                         stylesheet sources live with the rest of the app's source; node_modules has to
+                         sit beside them, because that is where Tailwind resolves its own import from. -->
+                    <workingDirectory>src/main/styles</workingDirectory>
+                </configuration>
+                <executions>
+                    <!--
+                      Tailwind, over every template, straight into the build output.
+
+                      process-classes, not prepare-package: `mvn spring-boot:run` stops at
+                      process-classes, and bound any later a local run would serve an unstyled site. The
+                      output goes to target/classes/static/css so the generated file can never be
+                      mistaken for a source file.
+                    -->
+                    <execution>
+                        <id>npm-build-css</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration><arguments>run build:css</arguments></configuration>
+                    </execution>
+                    <!-- Inherited from platform-parent to build an SPA at prepare-package. There isn't
+                         one; the stylesheet is already built above. -->
+                    <execution>
+                        <id>npm-build</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <!-- Same: this copied frontend/dist into the jar's static/. No dist, nothing to
+                         copy — the pages are templates and the stylesheet is written straight to
+                         target/classes/static/css. -->
+                    <execution>
+                        <id>copy-frontend</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

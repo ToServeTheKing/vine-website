@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content" class="bg-bakery-50">
+
+  <div th:replace="~{fragments/opening :: photographed(
+      'Since 2024',
+      'Our story',
+      '215 E Main Street, in the middle of downtown Princeville.',
+      'gallery/Outside.webp')}"></div>
+
+  <div class="container pb-16 md:pb-24">
+    <div class="measure space-y-12">
+      <section>
+        <h2 class="h3 text-bakery-900 mb-4">How it started</h2>
+        <p class="opening-para text-bakery-800 leading-relaxed">
+          Morissa Bennett opened The Vine in 2024, at 215 E Main Street, in the middle of downtown
+          Princeville. The plan was not complicated. Bake it ourselves, sell it ourselves, and keep
+          enough tables that nobody feels rushed out the door.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="h3 text-bakery-900 mb-4">What we make</h2>
+        <p class="text-bakery-800 leading-relaxed">
+          We opened with coffee and pastries. The menu kept growing. Now there are cinnamon rolls
+          and caramel rolls, scones, cookie bars, macarons, brownies, and pies, plus sandwiches and
+          paninis once the lunch crowd shows up.
+        </p>
+      </section>
+
+      <figure>
+        <img th:src="${photos.of('gallery/Cinnamon Rolls.webp')}"
+             alt="Cinnamon rolls, iced, on the counter at The Vine"
+             width="1200" height="800" loading="lazy"
+             class="photo w-full h-64 md:h-80 object-cover">
+        <figcaption class="mt-3 label text-bakery-500 text-center">The cinnamon rolls, most mornings</figcaption>
+      </figure>
+
+      <section>
+        <h2 class="h3 text-bakery-900 mb-4">The cakes are the fun part</h2>
+        <p class="text-bakery-800 leading-relaxed">
+          Cakes and decorated cookies are made to order, which means we mostly bake whatever
+          Princeville is celebrating that week. We have done a tractor, a cow, a 76th birthday, a
+          retirement, a wedding, and a cake for the class of 1964. We have iced sugar cookies for
+          the cross country team and for a bridal party. If you can describe it, we will have a go
+          at it.
+        </p>
+      </section>
+
+      <figure>
+        <img th:src="${photos.of('gallery/Cakes.webp')}"
+             alt="A decorated cake made to order at The Vine"
+             width="1200" height="800" loading="lazy"
+             class="photo w-full h-64 md:h-80 object-cover">
+        <figcaption class="mt-3 label text-bakery-500 text-center">Made to order, whatever the week is celebrating</figcaption>
+      </figure>
+
+      <section>
+        <h2 class="h3 text-bakery-900 mb-4">Around town</h2>
+        <p class="text-bakery-800 leading-relaxed">
+          We turn out for Christmas in the Village every year and for other civic events, and the
+          Princeville Civic Association counts us among the town&apos;s small businesses. Enjoy
+          Illinois and Discover Peoria have both pointed travelers our way. If you are one of them,
+          we open at 7:00am, Tuesday through Saturday.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <!--/* Somewhere to go after reading: the story is a preamble to an order. */-->
+  <section class="section bg-bakery-800 text-white">
+    <div class="container">
+      <div class="measure text-center">
+        <h2 class="h3">Come and see us</h2>
+        <p class="mt-4 text-bakery-100 leading-relaxed">
+          We open at 7:00am, Tuesday through Saturday. If you are after something for a date in the
+          diary, it is worth asking early.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/products"
+             class="pill-cream">
+            See what we make
+          </a>
+          <a href="/contact"
+             class="pill-ghost">
+            Get in touch
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

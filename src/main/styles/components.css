@@ -1,0 +1,276 @@
+/*
+ * The public site's own classes — the ones that would be unreadable as a string of utilities in every
+ * template that needs them. The admin's controls are in admin.css; the type ladder is in type.css.
+ *
+ * Almost everything here is @utility rather than a plain class in a layer, for two reasons Tailwind v4
+ * enforces: only a registered utility can be @applied by another rule (panel-mark builds on mark), and
+ * only a registered utility can take a variant (`hover:`, `md:`, `file:`).
+ */
+
+/*
+ * The page gutter, and the only plain class left in a layer.
+ *
+ * Every section used to write `container mx-auto px-4`, carried over from the React site: `mx-auto` twice
+ * and a px-4 that beat the responsive padding below, so the gutter was 16px at every width including a
+ * 27-inch screen. The markup now says `container` and nothing else, which is why this can stay in the
+ * components layer — there is no longer a utility next to it that has to win.
+ */
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/*
+ * MEASURES. Text you read wants a narrow column and a grid of cards wants a wide one; those two numbers
+ * were seven different max-w-* classes chosen a template at a time.
+ */
+@utility measure {
+  @apply max-w-2xl mx-auto;
+}
+
+@utility measure-wide {
+  @apply max-w-5xl mx-auto;
+}
+
+/*
+ * LINKS in running text. Underlined, offset so the line clears the descenders, and colour-shifting on
+ * hover — three variants because a link in a paragraph, a link on a sage band and a quiet one in small
+ * print are the same idea in different rooms.
+ */
+@utility link {
+  @apply underline underline-offset-4 text-bakery-700 hover:text-bakery-900 transition-colors;
+}
+
+@utility link-on-dark {
+  @apply underline underline-offset-4 text-bakery-50 hover:text-white transition-colors;
+}
+
+/* Inherits its colour: for a link inside a coloured paragraph that already sets one. */
+@utility link-plain {
+  @apply underline underline-offset-4 hover:text-bakery-600 transition-colors;
+}
+
+/*
+ * FIELDS. One input, everywhere. The public form had its own (cream, ring-2, py-2.5) and the admin had
+ * another (white, ring-1, py-2, text-sm), which is what happens when a form gets written twice.
+ */
+/*
+ * text-base on a phone, not text-sm: Safari zooms the whole page in when you focus an input smaller than
+ * 16px, which on the contact form means every enquiry typed on a phone starts by throwing the layout
+ * sideways. The denser size comes back at sm, where no browser does that.
+ */
+@utility field {
+  @apply w-full rounded-field border border-bakery-300 bg-white px-3.5 py-2.5 text-base sm:text-sm
+         focus:border-bakery-500 focus:outline-none focus:ring-1 focus:ring-bakery-500;
+}
+
+/* A photograph standing on the page rather than inside a card: same edge and shadow as one. */
+@utility photo {
+  @apply rounded-panel border border-bakery-200/70;
+  box-shadow: var(--shadow-card);
+}
+
+/* The cream header at the top of a page that has no photographic band. */
+@utility page-head {
+  @apply container pt-14 pb-10 md:pt-20 md:pb-12 text-center;
+}
+
+/*
+ * THE BRANCH MARKS of the wordmark, as masks rather than inline SVG.
+ *
+ * They have to take their colour from the surrounding text — sage in the header, cream on the hero and in
+ * the footer — which an <img> cannot do. React solved that by inlining them through svgr, but these files
+ * are 31 KB each and the lockup appears up to three times on a page: inlining them in server-rendered
+ * HTML would add ~190 KB to every response. A mask over `currentColor` keeps the tinting, keeps the files
+ * cacheable, and costs two requests once.
+ */
+@utility mark {
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@utility mark-r {
+  -webkit-mask-image: url('/images/logo_R.svg');
+  mask-image: url('/images/logo_R.svg');
+}
+
+@utility mark-l {
+  -webkit-mask-image: url('/images/logo_L.svg');
+  mask-image: url('/images/logo_L.svg');
+}
+
+/*
+ * The photo strip on a product card scrolls, but a scrollbar across the bottom of a photo is not part of
+ * the design. Hiding it is safe here because the strip is not the only way through the photos: it snaps,
+ * it takes arrow keys, and the arrows and dots are on top of it.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * SURFACES.
+ *
+ * These were plain white boxes with a grey drop shadow — the default card of every web app, on a page
+ * that is otherwise cream, sage and a hand-drawn vine. Three things make them the shop's:
+ *
+ *   a warm hairline, so a card has an EDGE and reads as stock rather than as a floating panel;
+ *   a shadow tinted with the darkest sage instead of black (see theme.css);
+ *   a head that can be tinted cream, the way a printed menu separates the price from what you get.
+ *
+ * `panel-lift` is one you can click, and it rises rather than just darkening.
+ */
+@utility panel {
+  @apply bg-white rounded-panel border border-bakery-200/70;
+  box-shadow: var(--shadow-card);
+}
+
+@utility panel-lift {
+  @apply panel transition duration-300;
+  &:hover {
+    box-shadow: var(--shadow-card-lift);
+    transform: translateY(-2px);
+  }
+}
+
+/* The cream band on a card: a size and its price, or a photo's caption. */
+@utility panel-head {
+  @apply bg-bakery-50/70 border-b border-bakery-200/70;
+}
+
+/*
+ * A card that is holding an aside rather than the thing you came for: the small print under a price
+ * table, a pointer to another page. Tinted and bordered, no shadow, so it sits ON the page instead of
+ * above it and does not compete with the cards it follows. There were two hand-rolled versions of this
+ * before it had a name, and they had different borders.
+ */
+@utility panel-quiet {
+  @apply rounded-panel border border-bakery-200/70 bg-bakery-50/60;
+}
+
+/*
+ * A grid of cards. It was written three times with three different sets of breakpoints and gaps — the
+ * homepage went to three columns at md, the catering tables at lg, the catalogue at lg with a wider gap —
+ * so cards on different pages lined up differently for no reason anyone chose.
+ */
+@utility card-grid {
+  @apply grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+/*
+ * The branch, laid into a corner at the weight of a watermark. It is the one mark that is unmistakably
+ * this shop, and at this size and colour it is texture rather than decoration.
+ */
+@utility panel-mark {
+  @apply mark mark-l absolute pointer-events-none text-bakery-200/70;
+}
+
+/*
+ * BUTTONS. One shape — a full pill, generous, letterspaced — in four colourways, because the site puts
+ * buttons on cream and on sage and they cannot be the same colour on both.
+ *
+ *   pill-sage    filled, on a light background      pill-outline  quiet, on a light background
+ *   pill-cream   filled, on a sage background       pill-ghost    quiet, on a sage background
+ */
+@utility pill {
+  @apply inline-flex items-center justify-center gap-2 rounded-full
+         px-8 py-3.5 font-medium tracking-wide transition-colors;
+}
+
+@utility pill-sage {
+  @apply pill bg-bakery-600 text-white hover:bg-bakery-700;
+}
+
+@utility pill-cream {
+  @apply pill bg-bakery-50 text-bakery-900 hover:bg-white shadow-lg;
+}
+
+@utility pill-outline {
+  @apply pill border border-bakery-300 text-bakery-800 hover:bg-bakery-100;
+}
+
+@utility pill-ghost {
+  @apply pill border border-bakery-200/60 text-bakery-50 hover:bg-bakery-50/10;
+}
+
+/*
+ * Smaller than a pill, for a filter row rather than a call to action — but still 44px tall, which is the
+ * smallest thing a thumb should be asked to hit.
+ */
+@utility chip {
+  @apply inline-flex items-center justify-center rounded-full border px-5 sm:px-6 min-h-11 label
+         whitespace-nowrap bg-white border-bakery-300 text-bakery-700 transition-colors hover:bg-bakery-100;
+}
+
+@utility chip-on {
+  @apply chip bg-bakery-600 border-bakery-600 text-white hover:bg-bakery-600;
+}
+
+/*
+ * RHYTHM. Two vertical sizes, so the page has a beat instead of nine hand-picked paddings: `section` for
+ * a block of content, `band` for a photographic or coloured strip, which sits tighter because its
+ * background is already doing the separating.
+ */
+@utility section {
+  @apply py-16 md:py-24;
+}
+
+@utility band {
+  @apply py-14 md:py-20;
+}
+
+/*
+ * A row of filters that scrolls sideways on a phone instead of wrapping onto three lines with one item
+ * stranded on the last. It wraps and centres from sm, where there is room. The negative margin lets the
+ * strip bleed to the screen edge so a half-visible chip shows there is more.
+ */
+@utility filter-row {
+  @apply flex gap-3 overflow-x-auto no-scrollbar snap-x -mx-4 px-4
+         sm:flex-wrap sm:justify-center sm:gap-4 sm:overflow-visible sm:mx-0 sm:px-0;
+  & > * {
+    @apply snap-start;
+  }
+}
+
+/*
+ * THE PAGE YOU ARE ON, in the nav. A rule under the word rather than a colour change: the nav is already
+ * sage on cream, and darkening it further reads as a hover, not as "you are here".
+ */
+@utility is-here {
+  @apply text-bakery-900;
+  text-decoration: underline;
+  text-decoration-color: var(--color-bakery-500);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+
+/*
+ * The keyboard's way past the nav. Off-screen until focused, then a normal-looking button in the corner —
+ * the pattern only works if it becomes visible, which is the half everyone forgets.
+ */
+@utility skip-link {
+  @apply sr-only;
+  &:focus {
+    @apply not-sr-only fixed left-4 top-4 z-50 pill-sage;
+  }
+}
+
+/*
+ * An opening paragraph set like a printed one. Used once, on the story — a drop cap on every page would
+ * be a costume rather than a voice.
+ */
+@utility opening-para {
+  &::first-letter {
+    @apply font-adbhashitha text-6xl text-bakery-700 float-left mr-3 mt-1;
+    line-height: 0.75;
+  }
+}

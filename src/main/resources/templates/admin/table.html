@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: page(${table.name} + ' table', ~{::content})}">
+<body>
+<div th:fragment="content">
+<!--/*
+  One price table, in one form.
+
+  Every button in here submits this form. `name="do"` says which was pressed, and its value carries the
+  position it applies to (`remove-column:2`, `move-line:0:1`) — a button can only send its own name and
+  value, so that is where the argument goes.
+
+  Only "Save" writes anything. The structural buttons come back with the table you were looking at, plus
+  or minus a column or a line, and every cell you had typed still in it: adding a column adds an empty
+  entry to every line, and removing one takes its entries with it, so the grid stays square. That
+  alignment is the invariant CateringPackage#arrange refuses to break, and doing it on the server means
+  there is one implementation of it rather than one here and one in a browser.
+*/-->
+  <form method="post" th:action="@{/admin/catering/tables/{id}(id=${tableId})}" th:object="${table}">
+
+    <div class="card">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 class="card-heading">This table</h2>
+        <a href="/admin/catering" class="link text-sm">All tables</a>
+      </div>
+
+      <div class="mt-3 grid gap-2 sm:grid-cols-[14rem_1fr]">
+        <label class="block">
+          <span class="sr-only">Table name</span>
+          <input class="field" th:field="*{name}" placeholder="Weddings" required>
+        </label>
+        <label class="block">
+          <span class="sr-only">A line under the heading</span>
+          <input class="field" th:field="*{blurb}" placeholder="Optional — a line under the heading">
+        </label>
+      </div>
+
+      <!--/* Wide tables scroll here rather than making the page scroll sideways. */-->
+      <div class="mt-4 -mx-4 overflow-x-auto px-4">
+        <table class="w-full border-separate border-spacing-1">
+          <thead>
+            <tr>
+              <th scope="col" class="w-48 text-left text-sm font-medium text-bakery-600">What they get</th>
+              <th th:each="column, c : *{columns}" scope="col" class="min-w-44 align-top">
+                <input type="hidden" th:field="*{columns[__${c.index}__].id}">
+                <input class="field" th:field="*{columns[__${c.index}__].label}" placeholder="Small"
+                       th:aria-label="|Heading for column ${c.count}|">
+                <input class="field mt-1" th:field="*{columns[__${c.index}__].price}"
+                       placeholder="$24 — leave empty to ask" th:aria-label="|Price for column ${c.count}|">
+                <!--/* Optional: only worth filling in when the heading isn't already a head count. */-->
+                <input class="field mt-1" th:field="*{columns[__${c.index}__].serves}"
+                       placeholder="Serves — optional" th:aria-label="|How many people column ${c.count} feeds|">
+                <div class="mt-1 flex justify-center gap-1">
+                  <button type="submit" name="do" th:value="|move-column:${c.index}:-1|" class="btn-icon"
+                          th:disabled="${c.first}" aria-label="Move this column left">&larr;</button>
+                  <button type="submit" name="do" th:value="|move-column:${c.index}:1|" class="btn-icon"
+                          th:disabled="${c.last}" aria-label="Move this column right">&rarr;</button>
+                  <button type="submit" name="do" th:value="|remove-column:${c.index}|" class="btn-icon"
+                          title="Removes this column and its entries on every line"
+                          aria-label="Remove this column">&times;</button>
+                </div>
+              </th>
+              <th scope="col" class="w-28 align-top">
+                <button type="submit" name="do" value="add-column" class="btn-secondary">+ Column</button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="line, l : *{lines}">
+              <th scope="row" class="text-left align-top">
+                <input type="hidden" th:field="*{lines[__${l.index}__].id}">
+                <input class="field" th:field="*{lines[__${l.index}__].label}" placeholder="Mini muffins"
+                       th:aria-label="|Name of line ${l.count}|">
+              </th>
+              <td th:each="value, v : ${line.values}" class="align-top">
+                <input class="field" th:field="*{lines[__${l.index}__].values[__${v.index}__]}" placeholder="—"
+                       th:aria-label="|Line ${l.count}, column ${v.count}|">
+              </td>
+              <td class="align-top">
+                <div class="flex gap-1">
+                  <button type="submit" name="do" th:value="|move-line:${l.index}:-1|" class="btn-icon"
+                          th:disabled="${l.first}" aria-label="Move this line up">&uarr;</button>
+                  <button type="submit" name="do" th:value="|move-line:${l.index}:1|" class="btn-icon"
+                          th:disabled="${l.last}" aria-label="Move this line down">&darr;</button>
+                  <button type="submit" name="do" th:value="|remove-line:${l.index}|" class="btn-icon"
+                          aria-label="Remove this line">&times;</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button type="submit" name="do" value="add-line" class="btn-secondary mt-1">+ Line</button>
+
+      <div class="mt-4">
+        <p class="text-sm text-bakery-600">
+          Small print under this table — minimums, what can't be mixed, how delivery is charged.
+        </p>
+        <div class="mt-2 space-y-2">
+          <div th:each="note, n : *{notes}" class="flex items-start gap-2">
+            <label class="flex-1">
+              <span class="sr-only" th:text="|Note ${n.count}|">Note</span>
+              <textarea class="field min-h-[3.25rem]" rows="2" th:field="*{notes[__${n.index}__]}"></textarea>
+            </label>
+            <button type="submit" name="do" th:value="|remove-note:${n.index}|" class="btn-icon mt-1"
+                    aria-label="Remove this note">&times;</button>
+          </div>
+        </div>
+        <button type="submit" name="do" value="add-note" class="btn-secondary mt-2">+ Note</button>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-bakery-100 pt-3">
+        <button type="submit" name="do" value="save" class="btn-primary">Save this table</button>
+        <a th:href="@{/admin/catering/tables/{id}(id=${tableId})}" class="btn-secondary">Start again</a>
+        <span th:if="${unsaved}" class="text-sm text-bakery-700">
+          Not saved yet — press Save when the table looks right.
+        </span>
+      </div>
+    </div>
+  </form>
+</div>
+</body>
+</html>

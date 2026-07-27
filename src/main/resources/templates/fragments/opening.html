@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  How a page begins. Every page, the same three things in the same order: a small-caps line, the title in
+  the display face, and one sentence saying what this is.
+
+  Two dresses for it. `photographed` is for the pages that are selling or telling — catering and the story
+  — where a blurred photo under the sage wash does the work the homepage hero does. `plain` is for the
+  pages you arrive at already knowing what you want, where a photograph would be in the way of the thing
+  you came for: the catalogue, the contact form.
+
+  Before this the four openings were four different pieces of markup that happened to look similar.
+*/-->
+
+<section th:fragment="photographed(eyebrow, title, lede, image)"
+         class="band relative flex items-center bg-bakery-900 text-white overflow-hidden">
+  <img th:src="${photos.of(image)}" alt=""
+       class="absolute inset-0 w-full h-full object-cover blur-[3px] scale-110">
+  <!--/* Sage wash rather than a neutral black scrim — the tint is the identity. */-->
+  <div class="absolute inset-0 bg-bakery-900/80"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
+
+  <div class="relative container w-full min-w-0">
+    <div class="measure text-center">
+      <p class="eyebrow text-bakery-200" th:text="${eyebrow}">Order ahead</p>
+      <h1 class="h1 mt-3 text-bakery-50" th:text="${title}">Goodie boxes &amp; catering</h1>
+      <p class="lede mt-5 text-bakery-100" th:text="${lede}">One line about the page.</p>
+    </div>
+  </div>
+</section>
+
+<header th:fragment="plain(eyebrow, title, lede)" class="page-head">
+  <p class="eyebrow text-bakery-500" th:text="${eyebrow}">From the counter</p>
+  <h1 class="h1 mt-3 text-bakery-900" th:text="${title}">Our products</h1>
+  <p class="lede mt-4 measure text-bakery-800" th:text="${lede}">One line about the page.</p>
+</header>
+
+<!--/*
+  How a section begins, as opposed to a page: the title, centred, and optionally a line under it. Pass an
+  empty string for no line.
+
+  It was five different pieces of markup — centred with one margin, centred with another, left-aligned
+  with a blurb — for what is one idea repeated down every page.
+*/-->
+<div th:fragment="section-head(title, blurb)" class="measure text-center">
+  <h2 class="h2 text-bakery-900" th:text="${title}">What people come in for</h2>
+  <p th:if="${!#strings.isEmpty(blurb)}" class="mt-3 text-bakery-700 leading-relaxed" th:text="${blurb}">A line.</p>
+</div>
+
+<!--/* The same, on the sage bands, where the type is cream. */-->
+<div th:fragment="section-head-dark(title, blurb)" class="measure text-center">
+  <h2 class="h2" th:text="${title}">Before you order</h2>
+  <p th:if="${!#strings.isEmpty(blurb)}" class="mt-3 text-bakery-100 leading-relaxed" th:text="${blurb}">A line.</p>
+</div>
+
+<!--/* The branch from the wordmark, between one part of a page and the next. */-->
+<div th:fragment="divider" class="flex justify-center" aria-hidden="true">
+  <span class="mark mark-r w-12 h-12 text-bakery-400"></span>
+</div>
+</body>
+</html>

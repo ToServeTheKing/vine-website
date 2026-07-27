@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+  The opening times and the address, printed from the shop's own record rather than from markup.
+
+  They were three hand-written lines repeated in three templates. Now `Hours` collapses the week into the
+  lines a sign would show — consecutive days that keep the same times become one row — and the same data
+  answers "are they open right now?" in the header and describes the shop to a search engine. A shop that
+  changes its Saturday hours changes them in Shop.java, once.
+
+  Both fragments take the classes that vary by where they sit — cream in the footer, sage on white in a
+  card — so the content is shared without the styling being averaged into something that suits neither.
+*/-->
+
+<ul th:fragment="hours(rowClass)" class="space-y-3">
+  <li th:each="span : ${hours}" th:class="'flex justify-between gap-4 ' + ${rowClass}">
+    <span th:text="${span.days}">Tuesday – Friday</span>
+    <span class="font-medium whitespace-nowrap" th:text="${span.hours}">7:00am – 2:00pm</span>
+  </li>
+</ul>
+
+<address th:fragment="address(linkClass)" class="not-italic space-y-3">
+  <p th:text="${shopStreet}">215 E Main Street</p>
+  <p th:text="${shopTown}">Princeville, IL 61559</p>
+  <p>
+    <a th:href="|tel:${shopPhone}|" th:class="${linkClass}" th:text="${shopPhoneSpoken}">(309) 701-0660</a>
+  </p>
+  <p class="break-words">
+    <a th:href="|mailto:${shopEmail}|" th:class="${linkClass}" th:text="${shopEmail}">contact@itsthevine.com</a>
+  </p>
+</address>
+
+<!--/* "Open until 2:00pm", or when it opens next. The one thing a visitor at 2:30 on a Sunday wants. */-->
+<!--/* The caller passes the display too (`inline-flex`, or `hidden lg:inline-flex`): setting it here as
+       well would be two rules for one property, and the winner would depend on Tailwind's output order
+       rather than on the markup. */-->
+<span th:fragment="open-now(dotClass, textClass)"
+      th:class="'items-center gap-2 ' + ${textClass}">
+  <span th:class="'h-2 w-2 rounded-full shrink-0 ' + ${dotClass}" aria-hidden="true"></span>
+  <span th:text="${openNow.summary}">Open until 2:00pm</span>
+</span>
+</body>
+</html>

@@ -1,6 +1,7 @@
 target/
-frontend/node_modules/
-frontend/dist/
+# The Tailwind CLI's dependencies. The compiled stylesheet needs no rule of its own: it is written
+# straight into target/classes/static/css, which is already ignored above.
+src/main/styles/node_modules/
 .idea/
 *.iml
 .vscode/
