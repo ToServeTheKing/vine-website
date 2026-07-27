@@ -62,7 +62,7 @@ class CateringMenuTest {
         List<CateringMenu.PackageView> tables = catering.menu().packages();
 
         assertThat(tables).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office boxes", "Parties", "Weddings");
+                .containsExactly("Office boxes", "Parties", "Gatherings", "Weddings");
 
         CateringMenu.PackageView office = tables.get(0);
         assertThat(office.tiers()).extracting(CateringMenu.TierView::label)
@@ -82,12 +82,17 @@ class CateringMenuTest {
         assertThat(office.blurb()).contains("morning meeting");
         assertThat(office.notes()).anySatisfy(note -> assertThat(note).contains("Baked in sixes"));
 
+        // V8 relabelled the middle column to the 27 it actually feeds, and put the entry price at $57 —
+        // still a loss leader, but a deliberate one rather than an accident of the spreadsheet.
         assertThat(tables.get(1).tiers()).extracting(CateringMenu.TierView::label)
-                .containsExactly("15–20 people", "20–30 people", "30–40 people");
-        assertThat(tables.get(2).tiers()).extracting(CateringMenu.TierView::price)
-                .containsExactly("$236", "$310", "$386");
+                .containsExactly("15–20 people", "20–27 people", "30–40 people");
+        assertThat(tables.get(1).tiers()).extracting(CateringMenu.TierView::price)
+                .containsExactly("$57", "$76", "$98");
+        assertThat(tables.get(3).tiers()).extracting(CateringMenu.TierView::price)
+                .containsExactly("$298", "$372", "$463");
         // Wedding delivery terms belong to the wedding table, not to the page.
-        assertThat(tables.get(2).notes()).anySatisfy(note -> assertThat(note).contains("delivery fee"));
+        assertThat(tables.get(3).notes()).anySatisfy(note -> assertThat(note).contains("$30 elsewhere"));
+        assertThat(tables.get(3).notes()).anySatisfy(note -> assertThat(note).contains("$50 deposit"));
         // No cell anywhere still speaks in shorthand.
         assertThat(tables).allSatisfy(table -> assertThat(table.rows()).allSatisfy(row ->
                 assertThat(row.values()).noneMatch(value -> value.matches(".*\\b(dz|B&G|in cake)\\b.*"))));
@@ -99,13 +104,16 @@ class CateringMenuTest {
         // over literally, which left two lines with no quantity in any column: a row of dashes on the
         // page. V5 reads it as a baker would (a 12x17 pan is the sheet pan; "cc or sc" is what the dozens
         // count) and the guards in it mean an edit made in the admin since would have survived instead.
-        CateringMenu.PackageView weddings = catering.menu().packages().get(2);
+        CateringMenu.PackageView weddings = catering.menu().packages().get(3);
 
         assertThat(weddings.rows()).extracting(CateringMenu.RowView::label)
                 .containsExactly("Bride & groom cake", "Sheet cakes or 12×17 bars",
                         "Cupcakes or sugar cookies");
-        assertThat(weddings.rows().get(1).values()).containsExactly("Two pans", "Three pans", "Four pans");
-        assertThat(weddings.rows().get(2).values()).containsExactly("Four dozen", "Five dozen", "Six dozen");
+        // V8 added a pan to the two larger columns and a dozen to the smallest. A pan cuts 48, and the
+        // bride & groom cake is ceremonial, so before that the columns held 144/204/264 servings against
+        // the 156/250/313 that 1.25 a guest asks for — every one of them short of its own head count.
+        assertThat(weddings.rows().get(1).values()).containsExactly("Two pans", "Four pans", "Five pans");
+        assertThat(weddings.rows().get(2).values()).containsExactly("Five dozen", "Five dozen", "Six dozen");
         // Nothing left that is blank the whole way across.
         assertThat(weddings.rows())
                 .noneMatch(row -> row.values().stream().allMatch(String::isEmpty));
@@ -120,8 +128,35 @@ class CateringMenuTest {
                 .containsExactly("Cake", "Cupcakes or sugar cookies");
         assertThat(parties.rows().get(0).values())
                 .containsExactly("A 6-inch cake", "An 8-inch cake", "A 10-inch cake");
+        // The smallest column gained half a dozen in V8: it was labelled for twenty and held eighteen
+        // servings. Its cupcake count now matches the column above it, and only the cake size differs.
+        assertThat(parties.rows().get(1).values())
+                .containsExactly("Eighteen, your choice", "Eighteen, your choice", "Two dozen, your choice");
         assertThat(parties.rows())
                 .noneMatch(row -> row.values().stream().allMatch(String::isEmpty));
+    }
+
+    @Test
+    void theGatheringsTableFillsTheGapBetweenAPartyAndAWedding() {
+        // The page went from "30–40 people" straight to "125" and had nothing for a sixty-person
+        // graduation. V8 sizes this one from the pan rather than guessing: a pan cuts 48, so 72 and 120
+        // servings are 57.6 and 96 people at 1.25 a head. The labels round DOWN — with a number nobody
+        // has been promised before, under is the safe direction.
+        CateringMenu.PackageView gatherings = catering.menu().packages().get(2);
+
+        assertThat(gatherings.name()).isEqualTo("Gatherings");
+        assertThat(gatherings.tiers()).extracting(CateringMenu.TierView::label)
+                .containsExactly("About 55 people", "About 95 people");
+        assertThat(gatherings.tiers()).extracting(CateringMenu.TierView::price)
+                .containsExactly("$110", "$170");
+        // The column already says the head count, so `serves` would only repeat it.
+        assertThat(gatherings.tiers()).extracting(CateringMenu.TierView::serves).containsOnlyNulls();
+        // The wedding table's shape without the bride & groom cake.
+        assertThat(gatherings.rows()).extracting(CateringMenu.RowView::label)
+                .containsExactly("Sheet cakes or 12×17 bars", "Cupcakes or sugar cookies");
+        assertThat(gatherings.rows().get(0).values()).containsExactly("One pan", "Two pans");
+        assertThat(gatherings.rows().get(1).values())
+                .containsExactly("Two dozen, your choice", "Two dozen, your choice");
     }
 
     @Test
@@ -150,8 +185,12 @@ class CateringMenuTest {
 
     @Test
     void statesThePageWideTermsSeparatelyFromAnyOneTable() {
-        assertThat(catering.menu().notes()).hasSize(2);
+        assertThat(catering.menu().notes()).hasSize(3);
         assertThat(catering.menu().notes().get(0)).contains("price may change");
+        // Delivery belongs to the page rather than any one table: it was stated only on the weddings
+        // before V8, and a box bought FOR an office is exactly the case that needed it.
+        assertThat(catering.menu().notes()).anySatisfy(note ->
+                assertThat(note).contains("$10 in Princeville").contains("Peoria County"));
     }
 
     @Test
@@ -240,7 +279,7 @@ class CateringMenuTest {
         CateringMenu.PackageView fresh = catering.add("Holiday boxes");
 
         assertThat(catering.everything().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office boxes", "Parties", "Weddings", "Holiday boxes");
+                .containsExactly("Office boxes", "Parties", "Gatherings", "Weddings", "Holiday boxes");
         assertThat(catering.menu().packages()).extracting(CateringMenu.PackageView::name)
                 .doesNotContain("Holiday boxes");
 
@@ -255,7 +294,7 @@ class CateringMenuTest {
 
     @Test
     void deletingATableTakesItsColumnsLinesAndCellsWithIt() {
-        CateringMenu.PackageView weddings = catering.everything().packages().get(2);
+        CateringMenu.PackageView weddings = catering.everything().packages().get(3);
 
         catering.remove(weddings.id());
         // Flushed on purpose: a delete that leaves its children behind fails against the real foreign
@@ -264,20 +303,22 @@ class CateringMenuTest {
         entityManager.clear();
 
         assertThat(catering.everything().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Office boxes", "Parties");
+                .containsExactly("Office boxes", "Parties", "Gatherings");
         // The page's own terms outlive any one table.
-        assertThat(catering.menu().notes()).hasSize(2);
+        assertThat(catering.menu().notes()).hasSize(3);
     }
 
     @Test
     void putsTheTablesWhereTheEditorLeftThem() {
         List<CateringMenu.PackageView> tables = catering.everything().packages();
-        List<Long> weddingsFirst = List.of(tables.get(2).id(), tables.get(0).id(), tables.get(1).id());
+        List<Long> weddingsFirst = List.of(tables.get(3).id(), tables.get(0).id(), tables.get(1).id());
 
+        // Gatherings is deliberately left out of the list: anything omitted keeps its relative place
+        // after the ones that were named.
         assertThat(catering.reorder(weddingsFirst)).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Weddings", "Office boxes", "Parties");
+                .containsExactly("Weddings", "Office boxes", "Parties", "Gatherings");
         assertThat(catering.menu().packages()).extracting(CateringMenu.PackageView::name)
-                .containsExactly("Weddings", "Office boxes", "Parties");
+                .containsExactly("Weddings", "Office boxes", "Parties", "Gatherings");
     }
 
     @Test
