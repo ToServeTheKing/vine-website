@@ -1,6 +1,5 @@
 package com.itsthevine.web;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,19 +16,72 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class SiteModel {
 
-    /** The shop is in Princeville, Illinois; the container runs on UTC, which turns over first. */
-    private static final ZoneId SHOP_TIME = ZoneId.of("America/Chicago");
-
     private final SitePhotos photos;
+    private final Hours hours;
+    private final StructuredData structuredData;
     private final String baseUrl;
     private final String build;
 
-    public SiteModel(SitePhotos photos,
+    public SiteModel(SitePhotos photos, Hours hours, StructuredData structuredData,
                      @Value("${site.base-url:https://itsthevine.com}") String baseUrl,
                      @Value("${site.build:dev}") String build) {
         this.photos = photos;
+        this.hours = hours;
+        this.structuredData = structuredData;
         this.baseUrl = baseUrl.replaceAll("/+$", "");
         this.build = build;
+    }
+
+    /** The opening times as the page prints them — see Hours#week. */
+    @ModelAttribute("hours")
+    public java.util.List<Hours.Span> hours() {
+        return hours.week();
+    }
+
+    /** Whether the shop is open at this moment, for the line in the header. */
+    @ModelAttribute("openNow")
+    public Hours.Status openNow() {
+        return hours.now();
+    }
+
+    // The shop's own facts, so no template states an address or a phone number itself. Four attributes
+    // rather than one object because a template reading `${shopStreet}` needs no explaining.
+
+    @ModelAttribute("shopStreet")
+    public String shopStreet() {
+        return Shop.STREET;
+    }
+
+    @ModelAttribute("shopTown")
+    public String shopTown() {
+        return Shop.CITY + ", " + Shop.STATE + " " + Shop.POSTCODE;
+    }
+
+    @ModelAttribute("shopPhone")
+    public String shopPhone() {
+        return Shop.PHONE;
+    }
+
+    @ModelAttribute("shopPhoneSpoken")
+    public String shopPhoneSpoken() {
+        return Shop.PHONE_SPOKEN;
+    }
+
+    @ModelAttribute("shopEmail")
+    public String shopEmail() {
+        return Shop.EMAIL;
+    }
+
+    /** schema.org JSON-LD for the head. Written by Jackson; see StructuredData. */
+    @ModelAttribute("structuredData")
+    public String structuredData() {
+        return structuredData.bakery();
+    }
+
+    /** What a shared link should show. */
+    @ModelAttribute("shareImage")
+    public String shareImage() {
+        return photos.of("gallery/Outside.webp");
     }
 
     /** Lets a template ask for a photo by key: {@code ${photos.of('gallery/Outside.webp')}}. */
@@ -64,6 +116,6 @@ public class SiteModel {
     /** The footer's copyright year. */
     @ModelAttribute("year")
     public int year() {
-        return ZonedDateTime.now(SHOP_TIME).getYear();
+        return ZonedDateTime.now(Shop.ZONE).getYear();
     }
 }

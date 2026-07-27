@@ -27,6 +27,10 @@
   <meta property="og:title" th:content="${title}">
   <meta property="og:description" th:content="${description}">
   <meta property="og:url" th:content="${baseUrl + (path == '/' ? '' : path)}">
+  <!--/* Without an image a shared link is a grey box with a title. This is the storefront. */-->
+  <meta property="og:image" th:content="${shareImage}">
+  <meta property="og:image:alt" content="The Vine Coffeehouse + Bakery on Main Street, Princeville">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
   <meta name="keywords" content="bakery, coffeehouse, pastries, custom cakes, cinnamon rolls, paninis, Princeville IL">
@@ -34,6 +38,11 @@
   <!--/* ?v= is the commit sha in a deployment. One hand-written stylesheet has no content hash in its
          name, so without it a returning visitor keeps the CSS they cached before the deploy. */-->
   <link rel="stylesheet" th:href="|/css/site.css?v=${build}|">
+
+  <!--/* The shop as a search engine reads it: a Bakery, its address, its phone number and its opening
+         times, from the same record the page prints. It is how a local shop gets "Open ⋅ closes 2pm"
+         next to its listing. Unescaped because it is JSON, written by Jackson — see StructuredData. */-->
+  <script type="application/ld+json" th:utext="${structuredData}"></script>
 </head>
 <body></body>
 </html>

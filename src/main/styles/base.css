@@ -83,3 +83,42 @@ select.field {
   background-size: 1.1rem;
   padding-right: 2.4rem;
 }
+
+/*
+ * PRINT. The catering page is a price list, and a bakery prints price lists — so what comes out of a
+ * printer should be the prices, not a screenshot of a website. The chrome goes, the sage bands go (they
+ * would eat a cartridge), the cards keep their edges so the columns stay readable, and links stop being
+ * blue-and-underlined because paper has no links.
+ */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    opacity: 1;
+    animation: none;
+  }
+
+  /* Sage-on-white blocks become plain text: the words matter, the ink does not. */
+  [class*="bg-bakery-8"],
+  [class*="bg-bakery-9"] {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* A card should not be split across a page break mid-price. */
+  article,
+  section {
+    break-inside: avoid;
+  }
+}

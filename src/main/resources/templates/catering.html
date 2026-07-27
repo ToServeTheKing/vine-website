@@ -15,7 +15,7 @@
     <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
 
     <div class="relative container w-full min-w-0">
-      <div class="max-w-3xl mx-auto text-center">
+      <div class="measure text-center">
         <p class="eyebrow text-bakery-200">Order ahead</p>
         <h1 class="h1 mt-3 text-bakery-50">Goodie boxes &amp; catering</h1>
         <p class="lede mt-5 text-bakery-100">
@@ -117,7 +117,7 @@
               </ul>
             </div>
             <a th:href="|/contact?about=${#uris.escapeQueryParam(table.name)}|"
-               class="pill-outline mt-6"
+               class="pill-outline mt-6 no-print"
                th:text="|Ask about ${#strings.toLowerCase(table.name)}|">Ask about office boxes</a>
           </div>
         </section>
@@ -134,7 +134,7 @@
 
   <!--/* The terms that apply whichever table you were reading, and the one real call to action. On sage,
          like the homepage's story band, so the page ends rather than trailing off. */-->
-  <section class="section bg-bakery-800 text-white">
+  <section class="section bg-bakery-800 text-white no-print">
     <div class="container">
       <div class="measure text-center">
         <h2 class="h3">Before you order</h2>
