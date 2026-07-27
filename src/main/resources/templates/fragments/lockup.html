@@ -4,15 +4,20 @@
 <!--/*
   The wordmark: branch · "The Vine" over "Coffeehouse + Bakery" · branch.
 
-  The two branch marks are masks over currentColor (see .mark in tokens.css), so the whole lockup takes
+  The two branch marks are masks over currentColor (see .mark in components.css), so the whole lockup takes
   its colour from the `tint` class the caller passes — sage in the header, cream on the hero and in the
   footer. Branch heights track the two-line wordmark so the marks read as part of it.
+
+  Every size here steps at a breakpoint, because the lockup is three things that have to stay in
+  proportion: two fixed-width marks and a tagline that cannot wrap. Give a phone the desktop sizes and
+  they add up to more than its width, and the only part that CAN give — the name — wraps to two lines with
+  the marks centred against it. Which is what it did.
 */-->
 
 <th:block th:fragment="inner(branch, name, tag)">
   <span th:class="'mark mark-r shrink-0 ' + ${branch}" aria-hidden="true"></span>
   <span class="flex flex-col items-center leading-none min-w-0">
-    <span th:class="'font-lejour ' + ${name}" style="letter-spacing: 0.01em">The Vine</span>
+    <span th:class="'font-lejour whitespace-nowrap ' + ${name}" style="letter-spacing: 0.01em">The Vine</span>
     <span th:class="'font-adbhashitha uppercase mt-1.5 whitespace-nowrap ' + ${tag}">Coffeehouse + Bakery</span>
   </span>
   <span th:class="'mark mark-l shrink-0 ' + ${branch}" aria-hidden="true"></span>
@@ -22,14 +27,20 @@
 <a th:fragment="small(tint)" href="/"
    th:class="'flex items-center gap-1.5 sm:gap-2 min-w-0 shrink ' + ${tint}"
    aria-label="The Vine Coffeehouse + Bakery, home">
-  <th:block th:replace="~{:: inner('w-12 h-12 sm:w-14 sm:h-14', 'text-xl sm:text-2xl xl:text-3xl', 'text-[0.6rem] sm:text-xs tracking-[0.18em]')}"></th:block>
+  <th:block th:replace="~{:: inner(
+      'w-11 h-11 sm:w-14 sm:h-14',
+      'text-xl sm:text-2xl xl:text-3xl',
+      'text-[0.55rem] sm:text-xs tracking-[0.12em] sm:tracking-[0.18em]')}"></th:block>
 </a>
 
 <!--/* The hero, on the homepage — where a link back to "/" would be pointless. */-->
 <div th:fragment="large(tint)"
      th:class="'flex items-center justify-center gap-2 sm:gap-4 min-w-0 shrink ' + ${tint}"
      role="img" aria-label="The Vine Coffeehouse + Bakery">
-  <th:block th:replace="~{:: inner('w-20 h-20 sm:w-28 sm:h-28', 'text-4xl sm:text-5xl md:text-6xl', 'text-xs sm:text-base tracking-[0.2em]')}"></th:block>
+  <th:block th:replace="~{:: inner(
+      'w-14 h-14 sm:w-20 sm:h-20 md:w-28 md:h-28',
+      'text-3xl sm:text-5xl md:text-6xl',
+      'text-[0.6rem] sm:text-base tracking-[0.15em] sm:tracking-[0.2em]')}"></th:block>
 </div>
 </body>
 </html>
