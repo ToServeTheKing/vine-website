@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The catalogue, editable by the person who bakes it — as pages and form posts.
@@ -168,6 +173,27 @@ public class AdminController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             flash.addFlashAttribute("problem", e.getMessage());
         }
+        return "redirect:/admin";
+    }
+
+    /**
+     * A photo bigger than the configured limit, said in a sentence instead of a stack trace.
+     *
+     * <p>This is the same {@code problem} flash the refusals above use, so the editor reads it in the
+     * same place on the same page. Before it existed, an over-sized file escaped as the container's own
+     * parsing error: a 500, and then a second failure forwarding to {@code /error}, because that forward
+     * re-parsed the same too-large request. Reaching this handler at all depends on {@code
+     * spring.servlet.multipart.resolve-lazily} — parsed eagerly, the throw happens before any handler
+     * method is chosen and there is nothing here to catch it.
+     *
+     * <p>The flash map is written directly rather than through {@code RedirectAttributes}, which is not
+     * an argument Spring supplies to an {@code @ExceptionHandler}.
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String photoTooBig(HttpServletRequest request) {
+        RequestContextUtils.getOutputFlashMap(request).put("problem",
+                "That photo is too large. Anything up to 15 MB is fine — a photo straight off a phone "
+                        + "normally is — and we resize it here, so there is no need to shrink it first.");
         return "redirect:/admin";
     }
 }
