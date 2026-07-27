@@ -2,40 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/*
-  The opening hours and the address, in one place.
+  The opening times and the address, printed from the shop's own record rather than from markup.
 
-  They were on the homepage and in the footer already, and the moment the contact page wanted them too
-  that became three copies of the one fact a customer most often comes here for. A shop that changes its
-  Saturday hours should change them once.
+  They were three hand-written lines repeated in three templates. Now `Hours` collapses the week into the
+  lines a sign would show — consecutive days that keep the same times become one row — and the same data
+  answers "are they open right now?" in the header and describes the shop to a search engine. A shop that
+  changes its Saturday hours changes them in Shop.java, once.
 
-  Both fragments take the classes that vary by where they sit — cream text in the footer, sage on white
-  in a card — so the content is shared without the styling being averaged into something that suits
-  neither.
+  Both fragments take the classes that vary by where they sit — cream in the footer, sage on white in a
+  card — so the content is shared without the styling being averaged into something that suits neither.
 */-->
 
 <ul th:fragment="hours(rowClass)" class="space-y-3">
-  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
-    <span>Tuesday &ndash; Friday</span>
-    <span class="font-medium whitespace-nowrap">7:00am &ndash; 2:00pm</span>
-  </li>
-  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
-    <span>Saturday</span>
-    <span class="font-medium whitespace-nowrap">7:00am &ndash; 12:00pm</span>
-  </li>
-  <li th:class="'flex justify-between gap-4 ' + ${rowClass}">
-    <span>Sunday &ndash; Monday</span>
-    <span class="font-medium">Closed</span>
+  <li th:each="span : ${hours}" th:class="'flex justify-between gap-4 ' + ${rowClass}">
+    <span th:text="${span.days}">Tuesday – Friday</span>
+    <span class="font-medium whitespace-nowrap" th:text="${span.hours}">7:00am – 2:00pm</span>
   </li>
 </ul>
 
 <address th:fragment="address(linkClass)" class="not-italic space-y-3">
-  <p>215 E Main Street<br>Princeville, IL 61559</p>
+  <p th:text="${shopStreet}">215 E Main Street</p>
+  <p th:text="${shopTown}">Princeville, IL 61559</p>
   <p>
-    <a href="tel:+13097010660" th:class="${linkClass}">(309) 701-0660</a>
+    <a th:href="|tel:${shopPhone}|" th:class="${linkClass}" th:text="${shopPhoneSpoken}">(309) 701-0660</a>
   </p>
   <p class="break-words">
-    <a href="mailto:contact@itsthevine.com" th:class="${linkClass}">contact@itsthevine.com</a>
+    <a th:href="|mailto:${shopEmail}|" th:class="${linkClass}" th:text="${shopEmail}">contact@itsthevine.com</a>
   </p>
 </address>
+
+<!--/* "Open until 2:00pm", or when it opens next. The one thing a visitor at 2:30 on a Sunday wants. */-->
+<span th:fragment="open-now(dotClass, textClass)"
+      th:class="'inline-flex items-center gap-2 ' + ${textClass}">
+  <span th:class="'h-2 w-2 rounded-full shrink-0 ' + ${dotClass}" aria-hidden="true"></span>
+  <span th:text="${openNow.summary}">Open until 2:00pm</span>
+</span>
 </body>
 </html>
