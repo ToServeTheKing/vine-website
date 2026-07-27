@@ -103,9 +103,12 @@ class SiteControllerTest {
         mvc.perform(get("/catering")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Office boxes")))
                 .andExpect(content().string(containsString("Weddings")))
+                // V8's new table, filling the gap between a forty-person party and a wedding.
+                .andExpect(content().string(containsString("Gatherings")))
                 // Prices as the server writes them — the page never formats money.
                 .andExpect(content().string(containsString("$24")))
-                .andExpect(content().string(containsString("$236")))
+                .andExpect(content().string(containsString("$298")))
+                .andExpect(content().string(containsString("$110")))
                 // A cell and a note, in the wording a customer reads rather than the spreadsheet's.
                 // The office box is a total mixed in sixes, not three separate things.
                 .andExpect(content().string(containsString("Any mix of mini muffins")))
