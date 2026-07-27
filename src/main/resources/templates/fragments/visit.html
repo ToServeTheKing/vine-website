@@ -11,16 +11,21 @@
 
   Both fragments take the classes that vary by where they sit — cream in the footer, sage on white in a
   card — so the content is shared without the styling being averaged into something that suits neither.
+
+  They take TWO classes each, and the outer one is not a convenience. A caller cannot put a class on the
+  tag it writes the th:replace on: th:replace swaps that whole tag out for the fragment, so the attribute
+  is dropped and nothing says so. Every call site here had tried it — an mt-4 that never spaced anything,
+  a text-bakery-800 that left the address a shade darker than the hours beside it.
 */-->
 
-<ul th:fragment="hours(rowClass)" class="space-y-3">
+<ul th:fragment="hours(className, rowClass)" th:class="'space-y-3 ' + ${className}">
   <li th:each="span : ${hours}" th:class="'flex justify-between gap-4 ' + ${rowClass}">
     <span th:text="${span.days}">Tuesday – Friday</span>
     <span class="font-medium whitespace-nowrap" th:text="${span.hours}">7:00am – 2:00pm</span>
   </li>
 </ul>
 
-<address th:fragment="address(linkClass)" class="not-italic space-y-3">
+<address th:fragment="address(className, linkClass)" th:class="'not-italic space-y-3 ' + ${className}">
   <p th:text="${shopStreet}">215 E Main Street</p>
   <p th:text="${shopTown}">Princeville, IL 61559</p>
   <p>

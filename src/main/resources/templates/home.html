@@ -45,14 +45,18 @@
   <!--/* What people come in for */-->
   <section class="section bg-bakery-50">
     <div class="container">
-      <div class="mb-12" th:replace="~{fragments/opening :: section-head('What people come in for', '')}"></div>
-      <div class="card-grid">
+      <!--/* The gap under a section head belongs to the element BELOW it, the way catering's price grids
+             already do it. It cannot live on this tag: th:replace swaps the whole element out for the
+             fragment, so a class written here never reaches the page — which is what happened to the
+             mb-12 that used to sit here, leaving the title flush against the cards. */-->
+      <div th:replace="~{fragments/opening :: section-head('What people come in for', '')}"></div>
+      <div class="card-grid mt-14 md:mt-18">
         <div th:each="item : ${ {'Cinnamon Rolls', 'Sugar Cookies', 'Cakes'} }"
              class="panel overflow-hidden text-center">
           <!--/* The filenames carry the spaces in these names; SitePhotos encodes them. */-->
           <img th:src="${photos.of('gallery/' + item + '.webp')}" th:alt="${item}" width="600" height="400" loading="lazy"
                class="w-full h-56 object-cover">
-          <h3 class="panel-head border-b-0 border-t h4 md:text-2xl text-bakery-800 py-6" th:text="${item}">Cinnamon Rolls</h3>
+          <h3 class="panel-head border-b-0 border-t h4 md:text-2xl text-bakery-800 px-4 py-8" th:text="${item}">Cinnamon Rolls</h3>
         </div>
       </div>
     </div>
@@ -103,16 +107,16 @@
   <!--/* Visit us */-->
   <section id="visit" class="section bg-bakery-50 scroll-mt-24">
     <div class="container">
-      <div class="mb-12" th:replace="~{fragments/opening :: section-head('Visit us', '')}"></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 measure-wide">
+      <!--/* Same as above: the margin goes on the grid, not on a tag th:replace is about to discard. */-->
+      <div th:replace="~{fragments/opening :: section-head('Visit us', '')}"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 measure-wide mt-14 md:mt-18">
         <div class="panel p-6 md:p-8">
-          <h2 class="h3 text-bakery-900 mb-6">Our hours</h2>
-          <div th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
+          <h2 class="h3 text-bakery-900 mb-8">Our hours</h2>
+          <div th:replace="~{fragments/visit :: hours('', 'text-bakery-800')}"></div>
         </div>
         <div class="panel p-6 md:p-8">
-          <h2 class="h3 text-bakery-900 mb-6">Find us</h2>
-          <div class="text-bakery-800"
-               th:replace="~{fragments/visit :: address('link-plain')}"></div>
+          <h2 class="h3 text-bakery-900 mb-8">Find us</h2>
+          <div th:replace="~{fragments/visit :: address('text-bakery-800', 'link-plain')}"></div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 /*
- * Element defaults: the page background, the body type, the fade-in, and the two small resets the site
- * needs. Anything with a class name belongs in components.css instead.
+ * Element defaults: the page background, the body type, how one page gives way to the next, and the two
+ * small resets the site needs. Anything with a class name belongs in components.css instead.
  */
 
 html {
@@ -14,23 +14,32 @@ body {
   color: var(--color-bakery-900);
   font-family: var(--font-sans);
   overflow-x: hidden;
-  opacity: 0;
-  animation: fadeIn 0.5s ease-in forwards;
+}
+
+/*
+ * BETWEEN PAGES.
+ *
+ * The body used to open at `opacity: 0` and fade in over half a second on every page. That belonged to
+ * the SPA, where it ran ONCE, when React booted — the rest of the site's navigation happened inside a
+ * document that had already faded in. Server-rendered, every nav link and every filter chip is a new
+ * document, so the same two lines fired on every click: the page went blank, then slid 10px and faded
+ * back. A navigation that was already fast read as the whole site reloading.
+ *
+ * A cross-document view transition is what that fade was reaching for. The browser holds the old page
+ * up until the new one is ready and cross-fades between the two, so nothing is ever blank — and where
+ * it isn't supported you get a plain, immediate page load, which is the correct fallback and is still
+ * better than what this replaced.
+ */
+@view-transition {
+  navigation: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  body { animation: none; opacity: 1; }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  /* Cut the cross-fade, keep the navigation. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
 
@@ -109,8 +118,6 @@ select.field {
   body {
     background: #fff;
     color: #000;
-    opacity: 1;
-    animation: none;
   }
 
   /* Sage-on-white blocks become plain text: the words matter, the ink does not. */

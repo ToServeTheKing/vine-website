@@ -54,8 +54,9 @@
   <p th:if="${!#strings.isEmpty(blurb)}" class="mt-3 text-bakery-100 leading-relaxed" th:text="${blurb}">A line.</p>
 </div>
 
-<!--/* The branch from the wordmark, between one part of a page and the next. */-->
-<div th:fragment="divider" class="flex justify-center" aria-hidden="true">
+<!--/* The branch from the wordmark, between one part of a page and the next. Takes its own spacing,
+       because the tag a caller writes the th:replace on is discarded along with any class on it. */-->
+<div th:fragment="divider(className)" th:class="'flex justify-center ' + ${className}" aria-hidden="true">
   <span class="mark mark-r w-12 h-12 text-bakery-400"></span>
 </div>
 </body>

@@ -81,13 +81,11 @@
       <aside class="space-y-6">
         <div class="panel p-6 md:p-8">
           <h2 class="h4 text-bakery-900">Our hours</h2>
-          <div class="mt-4 text-bakery-800"
-               th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
+          <div th:replace="~{fragments/visit :: hours('mt-4', 'text-bakery-800')}"></div>
         </div>
         <div class="panel p-6 md:p-8">
           <h2 class="h4 text-bakery-900">Find us</h2>
-          <div class="mt-4 text-bakery-800"
-               th:replace="~{fragments/visit :: address('link-plain')}"></div>
+          <div th:replace="~{fragments/visit :: address('mt-4 text-bakery-800', 'link-plain')}"></div>
         </div>
         <div class="panel-quiet p-6 md:p-8">
           <h2 class="h4 text-bakery-900">Ordering for a crowd?</h2>
