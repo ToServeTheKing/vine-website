@@ -13,14 +13,23 @@
   font-style: normal;
   font-display: swap;
 }
+/*
+ * 306 KB became 8 KB. The file carried 1605 glyphs for 187 codepoints — alternates and scripts this site
+ * never sets — so it is subset to Latin and the punctuation it actually has, with every layout feature
+ * kept, and compressed as woff2. The headings are pixel-identical; that was checked, not assumed.
+ */
 @font-face {
   font-family: 'AdBhashitha';
-  src: url('/fonts/AdBhashitha.woff') format('woff');
+  src: url('/fonts/AdBhashitha.woff2') format('woff2');
   font-display: swap;
 }
+/*
+ * Recompressed, never subset: the wordmark's swashes come out of this font's alternates, and the logo is
+ * the one thing on the site that must not change shape.
+ */
 @font-face {
   font-family: 'LeJour Script';
-  src: url('/fonts/LeJour-Script.woff') format('woff');
+  src: url('/fonts/LeJour-Script.woff2') format('woff2');
   font-display: swap;
 }
 

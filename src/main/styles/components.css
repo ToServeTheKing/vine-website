@@ -55,8 +55,13 @@
  * FIELDS. One input, everywhere. The public form had its own (cream, ring-2, py-2.5) and the admin had
  * another (white, ring-1, py-2, text-sm), which is what happens when a form gets written twice.
  */
+/*
+ * text-base on a phone, not text-sm: Safari zooms the whole page in when you focus an input smaller than
+ * 16px, which on the contact form means every enquiry typed on a phone starts by throwing the layout
+ * sideways. The denser size comes back at sm, where no browser does that.
+ */
 @utility field {
-  @apply w-full rounded-field border border-bakery-300 bg-white px-3.5 py-2.5 text-sm
+  @apply w-full rounded-field border border-bakery-300 bg-white px-3.5 py-2.5 text-base sm:text-sm
          focus:border-bakery-500 focus:outline-none focus:ring-1 focus:ring-bakery-500;
 }
 
@@ -178,10 +183,13 @@
   @apply pill border border-bakery-200/60 text-bakery-50 hover:bg-bakery-50/10;
 }
 
-/* Smaller, for a filter row rather than a call to action. */
+/*
+ * Smaller than a pill, for a filter row rather than a call to action — but still 44px tall, which is the
+ * smallest thing a thumb should be asked to hit.
+ */
 @utility chip {
-  @apply inline-flex items-center rounded-full border px-6 py-2 label
-         bg-white border-bakery-300 text-bakery-700 transition-colors hover:bg-bakery-100;
+  @apply inline-flex items-center justify-center rounded-full border px-5 sm:px-6 min-h-11 label
+         whitespace-nowrap bg-white border-bakery-300 text-bakery-700 transition-colors hover:bg-bakery-100;
 }
 
 @utility chip-on {
@@ -199,6 +207,19 @@
 
 @utility band {
   @apply py-14 md:py-20;
+}
+
+/*
+ * A row of filters that scrolls sideways on a phone instead of wrapping onto three lines with one item
+ * stranded on the last. It wraps and centres from sm, where there is room. The negative margin lets the
+ * strip bleed to the screen edge so a half-visible chip shows there is more.
+ */
+@utility filter-row {
+  @apply flex gap-3 overflow-x-auto no-scrollbar snap-x -mx-4 px-4
+         sm:flex-wrap sm:justify-center sm:gap-4 sm:overflow-visible sm:mx-0 sm:px-0;
+  & > * {
+    @apply snap-start;
+  }
 }
 
 /*

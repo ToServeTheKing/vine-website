@@ -109,13 +109,24 @@ public class SiteController {
      * <p>It renders rather than redirects on both outcomes, deliberately. A failed send has to come
      * back with what the visitor typed still in the boxes: they wrote it once, and the failure is ours
      * (a refused relay), not theirs. On success the fields are cleared and the message replaces them.
+     *
+     * @param website the trap. It is a real field with a plausible name, hidden from anyone reading the
+     *                page and skipped by the tab key — a person cannot fill it in, and the crawlers that
+     *                post to every form they find fill in everything. A filled one is answered with the
+     *                same thank-you a person gets: telling a bot it failed only teaches it to try again,
+     *                and the enquiry is simply never recorded or sent.
      */
     @PostMapping("/contact")
     public String submit(@RequestParam String name,
                          @RequestParam String email,
                          @RequestParam String message,
+                         @RequestParam(required = false) String website,
                          Model model) {
         contactMeta(model);
+        if (website != null && !website.isBlank()) {
+            model.addAttribute("sent", true);
+            return "contact";
+        }
         try {
             enquiries.receive(name, email, message);
             model.addAttribute("sent", true);
