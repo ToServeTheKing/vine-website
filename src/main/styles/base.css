@@ -1,0 +1,133 @@
+/*
+ * Element defaults: the page background, the body type, the fade-in, and the two small resets the site
+ * needs. Anything with a class name belongs in components.css instead.
+ */
+
+html {
+  scroll-behavior: smooth;
+  /* Nothing on this site is meant to scroll sideways. */
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--color-bakery-50);
+  color: var(--color-bakery-900);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body { animation: none; opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::selection {
+  background-color: var(--color-bakery-300);
+  color: var(--color-bakery-900);
+}
+
+/* The mobile menu is a <details>; its default disclosure triangle would sit beside the hamburger. Lost
+   once already in a refactor, which is exactly the kind of thing nobody notices until a phone. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/*
+ * FOCUS. One visible ring for everything you can reach with a keyboard, as an outline rather than a
+ * shadow so it shows up on cream, on white and on the sage bands without needing three variants.
+ * :where() keeps its specificity at zero, so a utility can still override it.
+ */
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-bakery-500);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/*
+ * On the sage bands that same sage is about 2.5:1 against the background — under the 3:1 a focus
+ * indicator needs, so the ring effectively disappeared exactly where the page's main calls to action
+ * live. Cream on those sections.
+ */
+:where(.bg-bakery-800, .bg-bakery-900) :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: var(--color-bakery-100);
+}
+
+/*
+ * THE Z-INDEX SCALE, in full. Two layers is all this site has, and writing them down is what stops a
+ * third being invented at 9999:
+ *
+ *   40  the sticky header
+ *   30  the mobile menu panel, which is a child of the header and therefore already inside its stacking
+ *       context — it can only ever sit under the bar, which is exactly where it belongs
+ *
+ * Everything else stacks in document order: the hero's tint sits over its photo because it comes after
+ * it, and the product-card arrows sit over the photos for the same reason.
+ */
+
+/*
+ * A native select still gets its own arrow from the platform, in the platform's colour. This is the one
+ * control the admin uses that we don't draw ourselves, so it gets the site's chevron instead.
+ */
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5740' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1.1rem;
+  padding-right: 2.4rem;
+}
+
+/*
+ * PRINT. The catering page is a price list, and a bakery prints price lists — so what comes out of a
+ * printer should be the prices, not a screenshot of a website. The chrome goes, the sage bands go (they
+ * would eat a cartridge), the cards keep their edges so the columns stay readable, and links stop being
+ * blue-and-underlined because paper has no links.
+ */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    opacity: 1;
+    animation: none;
+  }
+
+  /* Sage-on-white blocks become plain text: the words matter, the ink does not. */
+  [class*="bg-bakery-8"],
+  [class*="bg-bakery-9"] {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* A card should not be split across a page break mid-price. */
+  article,
+  section {
+    break-inside: avoid;
+  }
+}

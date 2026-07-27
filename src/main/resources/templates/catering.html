@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content">
+
+  <div th:replace="~{fragments/opening :: photographed(
+      'Order ahead',
+      'Goodie boxes &amp; catering',
+      'Boxes for the office, packages for a party, and cakes and desserts for a wedding.',
+      'gallery/Cakes.webp')}"></div>
+
+  <div class="bg-bakery-50">
+    <div class="container pt-14 pb-16 md:pt-16 md:pb-24">
+
+      <p class="measure text-center text-bakery-800 leading-relaxed">
+        Every one of these is a starting point. Tell us the date, the number of people and what you had in
+        mind, and we will bake to it.
+      </p>
+
+      <div class="mt-10" th:replace="~{fragments/opening :: divider}"></div>
+
+      <div class="mt-12 max-w-6xl mx-auto space-y-16 md:space-y-20">
+
+        <!--/*
+          One block per table, and each size within it is a card: the price, then what you get for it.
+
+          This replaced a real <table>. A table is the honest shape for a price matrix, and it is how the
+          bakery keeps these — but it is also exactly what the source spreadsheet looks like, and reading a
+          spreadsheet back to a customer is not an offer. Cards say "here is what you get" three times over
+          instead of asking someone to find the cell where a row meets a column, and they need no separate
+          phone rendering, because a stack of cards IS the phone rendering.
+
+          Each card walks the same rows in the same order and takes the cell for its own column — the
+          alignment the aggregate guarantees.
+        */-->
+        <section th:each="table : ${menu.packages}">
+          <div th:replace="~{fragments/opening :: section-head(${table.name}, ${table.blurb})}"></div>
+
+          <!--/* Three sizes is the common case; a table with one or two shouldn't stretch to fill the row. */-->
+          <!--/*
+            Three sizes go three-up from md, not lg like the shared `card-grid`: a grid of PHOTOS is fine
+            two-wide, but three prices are a comparison, and landing 2 + 1 on a laptop strands the third
+            size on its own row where it reads as an afterthought.
+
+            The column count is entirely in the classappend rather than overriding `card-grid`, and that
+            is not a style preference: Tailwind emits grid-cols-1, -2, -3 in that order, so `grid-cols-3`
+            from the shared class would beat a `grid-cols-2` written next to it in the markup. Two classes
+            for one property, with the winner decided by the stylesheet's order — the same trap that made
+            `hidden` fail to hide the open-now line. Never both.
+          */-->
+          <div class="grid gap-6 md:gap-8 mt-8"
+               th:classappend="${#lists.size(table.tiers) == 1} ? 'max-w-sm mx-auto'
+                             : (${#lists.size(table.tiers) == 2} ? 'sm:grid-cols-2 max-w-3xl mx-auto'
+                             : 'sm:grid-cols-2 md:grid-cols-3')">
+            <article th:each="tier, t : ${table.tiers}"
+                     class="relative flex flex-col overflow-hidden panel">
+              <!--/* The wordmark's branch, at watermark weight. */-->
+              <span class="panel-mark -top-3 -right-4 w-24 h-24 rotate-12" aria-hidden="true"></span>
+
+              <div class="panel-head relative px-6 py-6 md:px-8">
+                <p class="label text-bakery-600" th:text="${tier.label}">Small</p>
+                <p th:if="${tier.price}" class="price mt-2 text-bakery-900" th:text="${tier.price}">$24</p>
+                <!--/* No price means "ask us" — say so rather than leaving a hole in the card. */-->
+                <p th:unless="${tier.price}" class="price mt-2 text-2xl text-bakery-700">Ask us</p>
+                <!--/* "Small" doesn't tell anyone how many it feeds. A column whose heading is already a
+                       head count leaves this blank rather than saying it twice. */-->
+                <p th:if="${tier.serves}" class="mt-1 text-sm text-bakery-600" th:text="${tier.serves}">About 6–8 people</p>
+              </div>
+
+              <ul class="px-6 py-6 md:px-8 space-y-3 text-bakery-800">
+                <li th:each="row : ${table.rows}" class="flex gap-3">
+                  <!--/* A tick, not a bullet: this is a list of what you get, not prose. */-->
+                  <svg class="mt-1 h-4 w-4 shrink-0 text-bakery-500" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                  <span>
+                    <span th:text="${row.label}">Mini muffins</span>
+                    <!--/* A line the bakery hasn't quantified for this size still belongs in the box; it
+                           simply appears without a number, rather than as an empty cell in a grid. */-->
+                    <span th:if="${!#strings.isEmpty(row.values[t.index])}" class="text-bakery-600"
+                          th:text="|&mdash; ${row.values[t.index]}|">&mdash; a dozen</span>
+                  </span>
+                </li>
+              </ul>
+
+            </article>
+          </div>
+
+          <!--/*
+            The small print, then one link for the whole table.
+
+            A button on every card was the obvious pricing-page move and it was wrong twice over: all
+            three cards led to the same place, since an enquiry is about the table rather than the size,
+            and the label read "Ask about the 15–20 people" on the tables whose sizes are headcounts.
+          */-->
+          <div class="panel-quiet mt-8 measure px-6 py-6 text-center">
+            <div th:if="${!#lists.isEmpty(table.notes)}">
+              <h3 class="label text-bakery-500">Good to know</h3>
+              <ul class="mt-3 space-y-2 text-sm text-bakery-700">
+                <li th:each="note : ${table.notes}" th:text="${note}">Everything is baked in sixes.</li>
+              </ul>
+            </div>
+            <a th:href="|/contact?about=${#uris.escapeQueryParam(table.name)}|"
+               class="pill-outline mt-6 no-print"
+               th:text="|Ask about ${#strings.toLowerCase(table.name)}|">Ask about office boxes</a>
+          </div>
+        </section>
+
+        <!--/* Only shows if every table has been emptied out in the admin. Better than a bare heading. */-->
+        <p th:if="${#lists.isEmpty(menu.packages)}" class="text-center text-bakery-800">
+          Our catering list is being updated. Call us on
+          <a href="tel:+13097010660" class="link-plain">(309) 701-0660</a> and we will
+          talk it through.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!--/* The terms that apply whichever table you were reading, and the one real call to action. On sage,
+         like the homepage's story band, so the page ends rather than trailing off. */-->
+  <section class="section bg-bakery-800 text-white no-print">
+    <div class="container">
+      <div class="measure text-center">
+        <h2 class="h3">Before you order</h2>
+        <ul th:if="${!#lists.isEmpty(menu.notes)}" class="mt-6 space-y-3 text-bakery-100 leading-relaxed">
+          <li th:each="note : ${menu.notes}" th:text="${note}">These are a guide rather than a menu.</li>
+        </ul>
+        <div class="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/contact"
+             class="pill-cream">
+            Tell us what you need
+          </a>
+          <a href="tel:+13097010660"
+             class="pill-ghost">
+            (309) 701-0660
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

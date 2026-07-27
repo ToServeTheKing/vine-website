@@ -1,0 +1,47 @@
+/*
+ * The admin's controls.
+ *
+ * Component classes rather than utility strings repeated through the markup, because the admin is made
+ * of forms: there are dozens of buttons on a page and each one is its own <form>. The public pages keep
+ * their utilities inline — they each look different — but "a button in the admin" should be one decision
+ * in one place. These are the same buttons the React screen had, from the same class strings it composed.
+ *
+ * @utility, not `.btn { @apply … }` in a components layer: Tailwind v4 will only let you @apply a class
+ * it knows as a utility, and only a registered utility can take a variant — which `file:btn-secondary`
+ * on the photo pickers needs.
+ */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-field px-3 py-1.5 text-sm font-medium
+         transition-colors;
+}
+
+@utility btn-primary {
+  @apply btn bg-bakery-600 text-white hover:bg-bakery-700
+         disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+@utility btn-secondary {
+  @apply btn border border-bakery-300 text-bakery-800 hover:bg-bakery-100
+         disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+@utility btn-danger {
+  @apply btn text-red-700 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+/* Square, for the arrows and the crosses — a row of these is how anything gets reordered. */
+@utility btn-icon {
+  @apply inline-flex items-center justify-center w-7 h-7 rounded-field border border-bakery-300
+         text-bakery-700 hover:bg-bakery-100 transition-colors
+         disabled:opacity-30 disabled:cursor-not-allowed;
+}
+
+/* `field` is shared with the public form — see components.css. */
+
+@utility card {
+  @apply rounded-panel border border-bakery-200 bg-white p-4 shadow-sm;
+}
+
+@utility card-heading {
+  @apply font-adbhashitha text-xl text-bakery-800;
+}

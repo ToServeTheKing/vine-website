@@ -1,0 +1,71 @@
+/*
+ * The typographic ladder, taken from the logo and walked down to something you can read a paragraph in.
+ *
+ * The lockup is the brand's whole voice: "The Vine" in LeJour Script over COFFEEHOUSE + BAKERY in
+ * AdBhashitha, letterspaced. Everything below is that idea, made progressively more readable:
+ *
+ *   1. .wordmark   LeJour Script   the name, and nothing else. A script face is unreadable at length,
+ *                                  so it never leaves the lockup.
+ *   2. .h1 .h2 .h3 AdBhashitha     the lockup's second font, carrying every heading. It keeps the
+ *                                  wordmark's 0.01em letter-spacing so a heading sits on the same
+ *                                  rhythm as the logo above it.
+ *   3. .eyebrow    Raleway, caps   the hinge: sans, but letterspaced like the lockup's tagline. Used
+ *                    .label        above a heading and on small labels, it carries the brand into
+ *                                  places a display face would be shouting.
+ *   4. .lede, body Raleway         plain, and left alone.
+ *
+ * Sizes are declared here rather than in the templates so a heading is a decision made once. None of
+ * these set a colour: the same heading appears in sage on cream and in cream on sage, and a class that
+ * decided that would be fought with a utility every time.
+ */
+
+@utility wordmark {
+  font-family: var(--font-lejour);
+  letter-spacing: 0.01em;
+}
+
+@utility h1 {
+  @apply font-adbhashitha text-4xl md:text-5xl leading-tight text-balance;
+  letter-spacing: 0.01em;
+}
+
+@utility h2 {
+  @apply font-adbhashitha text-3xl md:text-4xl leading-tight text-balance;
+  letter-spacing: 0.01em;
+}
+
+@utility h3 {
+  @apply font-adbhashitha text-2xl md:text-3xl leading-snug;
+  letter-spacing: 0.01em;
+}
+
+@utility h4 {
+  @apply font-adbhashitha text-xl leading-snug;
+  letter-spacing: 0.01em;
+}
+
+/* Above a heading, or as a section's own small heading. */
+@utility eyebrow {
+  @apply text-xs sm:text-sm uppercase font-medium;
+  letter-spacing: 0.2em;
+}
+
+/* Smaller, tighter: a column heading, a "good to know", a category chip. */
+@utility label {
+  @apply text-xs uppercase font-medium;
+  letter-spacing: 0.15em;
+}
+
+/* The sentence under a page title. One size up from body, and balanced so it doesn't leave an orphan. */
+@utility lede {
+  @apply text-base sm:text-lg leading-relaxed text-balance;
+}
+
+/*
+ * A price. The display face at a size nothing else uses, because on a catering card the number is the
+ * thing the eye should land on after the size.
+ */
+@utility price {
+  @apply font-adbhashitha text-4xl leading-none;
+  letter-spacing: 0.01em;
+}

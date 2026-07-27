@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--/*
+  The admin's shell.
+
+  It deliberately doesn't wear the site's chrome: the public nav would offer an editor links away from
+  what they were doing, and the opening hours in the footer are noise on a screen whose whole job is the
+  catalogue. Same stylesheet, same brand.
+
+  Getting here at all means signing in — /admin/** is an authenticated path, so an unknown visitor is
+  sent to Authentik before any of this renders.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title, content)">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/images/resources/logo_L.png">
+  <title th:text="|${title} · The Vine|">The Vine — admin</title>
+  <link rel="stylesheet" th:href="|/css/site.css?v=${build}|">
+</head>
+<body>
+<div class="min-h-screen bg-bakery-50">
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+
+    <header class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="font-lejour text-4xl text-bakery-700">The Vine</h1>
+        <nav class="mt-1 flex flex-wrap gap-4 text-sm">
+          <a href="/admin" class="link">The catalogue</a>
+          <a href="/admin/catering" class="link">Goodie boxes &amp; catering</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/products" class="btn-secondary">View the site</a>
+        <!--/* A real form post: the platform's logout expects one, and it also ends the Authentik
+               session — a link would leave you signed in at the identity provider and straight back in
+               on the next click. */-->
+        <form method="post" action="/logout">
+          <button type="submit" class="btn-secondary">Sign out</button>
+        </form>
+      </div>
+    </header>
+
+    <!--/* One place for the outcome of the last edit, whichever page posted it. */-->
+    <div th:if="${problem}" role="alert"
+         class="mt-6 rounded-field border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+         th:text="${problem}">Something did not save.</div>
+    <div th:if="${done}" role="status"
+         class="mt-6 rounded-field border border-bakery-200 bg-white px-4 py-3 text-sm text-bakery-800"
+         th:text="${done}">Saved.</div>
+
+    <div class="mt-6 space-y-6">
+      <div th:replace="${content}"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

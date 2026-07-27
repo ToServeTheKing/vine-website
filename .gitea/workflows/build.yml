@@ -40,7 +40,26 @@ jobs:
             mvn -B -ntp -s .gitea/ci-settings.xml -DskipFrontend=true verify
 
       # Build + Trivy on every run (PRs included), so a broken Dockerfile or a new HIGH/CRITICAL CVE
-      # blocks the merge. Only the push is main-only.
+      # blocks the merge.
+      #
+      # A PULL REQUEST MUST NOT TOUCH THE :latest TAG. This runner builds on the host's Docker daemon —
+      # the same daemon the live container runs on — so retagging :latest IS a deployment: Watchtower
+      # compares the running container's image against :latest, finds they differ, and recreates the
+      # container from the locally built image. Gating only the push was not enough; on 2026-07-26 the PR
+      # builds for this branch deployed unmerged code to itsthevine.com several times over, and each time
+      # Watchtower's next pull of the (older) registry :latest reverted it. One of those deploys ran a
+      # migration against the production database.
+      #
+      # So a PR builds pr-<number> instead, which nothing watches. Trivy scans whatever was built, and the
+      # push step below still only runs off a PR.
+      - name: Choose the image tag
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "IMAGE_TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
+          else
+            echo "IMAGE_TAG=latest" >> "$GITHUB_ENV"
+          fi
+
       - name: Build image
         env:
           DOCKER_BUILDKIT: "1"
@@ -51,17 +70,18 @@ jobs:
             --secret id=maven_user,env=MAVEN_USER \
             --secret id=maven_token,env=MAVEN_TOKEN \
             --build-arg GIT_SHA=${{ github.sha }} \
-            -t git.thebennett.net/thevine/itsthevine:latest -t git.thebennett.net/thevine/itsthevine:${{ github.sha }} .
+            -t "git.thebennett.net/thevine/itsthevine:$IMAGE_TAG" \
+            -t "git.thebennett.net/thevine/itsthevine:${{ github.sha }}" .
 
       - name: Scan image (Trivy)
         run: |
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             aquasec/trivy:latest image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --no-progress \
-            git.thebennett.net/thevine/itsthevine:latest || true
+            "git.thebennett.net/thevine/itsthevine:$IMAGE_TAG" || true
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             aquasec/trivy:latest image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed \
             --pkg-types library --exit-code 1 --no-progress \
-            git.thebennett.net/thevine/itsthevine:latest
+            "git.thebennett.net/thevine/itsthevine:$IMAGE_TAG"
 
       # Publish only on a real push to main (or manual dispatch) — never from a pull request.
       - name: Push image

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*
+  The page head. `title`, `description`, `path` and (on the homepage) `preload` come from the model —
+  see SiteController, where each route states its own.
+
+  This is what the SPA could not do. PageMetaController used to rewrite the shell's <title> and four
+  meta tags with regular expressions on the way out, and its test read the real index.html so that
+  reformatting that file failed the build rather than silently breaking the rewriting. A page that is
+  rendered on the server just writes its own head, so all of that is gone.
+*/-->
+<head th:fragment="head(title, description, path)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" media="(prefers-color-scheme: light)" href="/images/resources/logo_L.png">
+  <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/resources/logo_dark.png">
+
+  <!--/* Open the connection to the photo bucket while the head is still parsing. */-->
+  <link rel="preconnect" th:href="${assetOrigin}" crossorigin>
+  <!--/* All three are above the fold — the wordmark, every heading, and the body — and all three together
+         are now smaller than the display face alone used to be. Without preloading, each page opens in
+         the fallback and then reflows into the brand. */-->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/raleway-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/LeJour-Script.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/AdBhashitha.woff2" crossorigin>
+  <link th:if="${preload}" rel="preload" as="image" th:href="${preload}" fetchpriority="high">
+
+  <title th:text="${title}">The Vine Coffeehouse + Bakery</title>
+  <meta name="description" th:content="${description}">
+  <meta property="og:title" th:content="${title}">
+  <meta property="og:description" th:content="${description}">
+  <meta property="og:url" th:content="${baseUrl + (path == '/' ? '' : path)}">
+  <!--/* Without an image a shared link is a grey box with a title. This is the storefront. */-->
+  <meta property="og:image" th:content="${shareImage}">
+  <meta property="og:image:alt" content="The Vine Coffeehouse + Bakery on Main Street, Princeville">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta name="keywords" content="bakery, coffeehouse, pastries, custom cakes, cinnamon rolls, paninis, Princeville IL">
+
+  <!--/* ?v= is the commit sha in a deployment. One hand-written stylesheet has no content hash in its
+         name, so without it a returning visitor keeps the CSS they cached before the deploy. */-->
+  <link rel="stylesheet" th:href="|/css/site.css?v=${build}|">
+
+  <!--/* The shop as a search engine reads it: a Bakery, its address, its phone number and its opening
+         times, from the same record the page prints. It is how a local shop gets "Open ⋅ closes 2pm"
+         next to its listing. Unescaped because it is JSON, written by Jackson — see StructuredData. */-->
+  <script type="application/ld+json" th:utext="${structuredData}"></script>
+</head>
+<body></body>
+</html>

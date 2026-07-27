@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--/*
+  Anything that isn't a 404: the site's own page rather than Boot's white error screen, which shows a
+  stack-trace-shaped block of text to whoever happens to be standing in the shop.
+
+  It deliberately says nothing about what broke. The person reading it can't act on that; the phone
+  number is the thing they can use, and the log has the details.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/page :: page(
+          'Something went wrong · The Vine Coffeehouse + Bakery',
+          'Something went wrong on our side. Call The Vine on (309) 701-0660.',
+          '/', ~{::content})}">
+<body>
+<div th:fragment="content" class="bg-bakery-50">
+  <div class="container py-24 md:py-32 text-center">
+    <h1 class="h1 text-bakery-900 mb-6">Something went wrong</h1>
+    <p class="text-bakery-800 mb-10">
+      That is our fault, not yours. Try again in a moment, or call us on
+      <a href="tel:+13097010660" class="link-plain">(309) 701-0660</a>.
+    </p>
+    <a href="/"
+       class="pill-sage">
+      Back home
+    </a>
+  </div>
+</div>
+</body>
+</html>

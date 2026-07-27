@@ -69,13 +69,25 @@ class AdminSecurityTest {
     }
 
     @Test
-    void everyAdminApiIsClosedToAnonymousVisitors() throws Exception {
-        // csrf() on the writes, so these assert AUTHORIZATION (401), not a missing token.
-        mvc.perform(get("/api/admin/products")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/api/admin/categories")).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/admin/products").with(csrf())).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/admin/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"x\"}"))
+    void everyAdminWriteIsClosedToAnonymousVisitors() throws Exception {
+        // csrf() on the writes, so these assert AUTHORIZATION, not a missing token. The admin is pages
+        // and form posts now, so this is the whole surface — there is no JSON admin left to guard.
+        mvc.perform(get("/admin")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/admin/catering")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/admin/catering/tables/1")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/items").with(csrf()).param("name", "Free cake").param("category", "Cakes"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/items/1").with(csrf()).param("do", "delete"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/categories").with(csrf()).param("name", "x"))
+                .andExpect(status().isUnauthorized());
+        // The prices are the one thing on this site a stranger would most enjoy editing.
+        mvc.perform(post("/admin/catering/tables/1").with(csrf())
+                        .param("do", "save").param("name", "Free")
+                        .param("columns[0].label", "Any").param("columns[0].price", "0")
+                        .param("lines[0].label", "Everything").param("lines[0].values[0]", "yes"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(post("/admin/catering/notes").with(csrf()).param("notes", "anything"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -83,9 +95,11 @@ class AdminSecurityTest {
     void theAdminPageRedirectsABrowserToLogin() throws Exception {
         // Protecting /admin server-side is what makes sign-in work: a browser opening it is bounced to
         // Authentik and comes back signed in. The redirect only fires for a request that prefers HTML —
-        // the platform answers */* (a fetch/XHR) with a bare 401 so the SPA can handle it — so this
-        // must send a browser's Accept header to see the 302. (Verified against a running container.)
+        // the platform answers */* with a bare 401, which is why the checks above see 401 and this one
+        // has to send a browser's Accept header to see the 302. (Verified against a running container.)
         mvc.perform(get("/admin").header("Accept", "text/html,application/xhtml+xml"))
+                .andExpect(status().is3xxRedirection());
+        mvc.perform(get("/admin/catering").header("Accept", "text/html,application/xhtml+xml"))
                 .andExpect(status().is3xxRedirection());
     }
 
@@ -94,12 +108,14 @@ class AdminSecurityTest {
         // Locking the admin must not lock the menu.
         mvc.perform(get("/api/products")).andExpect(status().isOk());
         mvc.perform(get("/api/categories")).andExpect(status().isOk());
+        mvc.perform(get("/api/catering")).andExpect(status().isOk());
     }
 
     @Test
     void theContactFormStillNeedsItsCsrfToken() throws Exception {
-        // Enabling the security starter enables CSRF for the PUBLIC contact form too. Without the token
-        // it 403s; the SPA reads the XSRF-TOKEN cookie and sends X-XSRF-TOKEN.
+        // Enabling the security starter enables CSRF for the PUBLIC contact form too. Without a token it
+        // 403s. The page's own form carries a hidden field (Spring Security fills it in for any th:action
+        // form); this JSON endpoint needs the X-XSRF-TOKEN header from the cookie.
         mvc.perform(post("/api/contact").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Ada\",\"email\":\"ada@example.com\",\"message\":\"hi\"}"))
                 .andExpect(status().isForbidden());

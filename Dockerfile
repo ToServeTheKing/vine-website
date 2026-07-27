@@ -36,5 +36,8 @@ ARG GIT_SHA=unknown
 LABEL org.opencontainers.image.title="itsthevine" \
       org.opencontainers.image.source="https://git.thebennett.net/thevine/itsthevine" \
       org.opencontainers.image.revision="${GIT_SHA}"
+# Also the cache-buster on the stylesheet URL: one hand-written CSS file has no content hash in its
+# name, so a deploy has to tell the browser that what it cached is stale (see site.build).
+ENV GIT_SHA=${GIT_SHA}
 
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

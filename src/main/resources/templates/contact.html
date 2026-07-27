@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/page :: page(${title}, ${description}, ${path}, ~{::content})}">
+<body>
+<div th:fragment="content" class="min-h-screen bg-bakery-50">
+
+  <div th:replace="~{fragments/opening :: plain(
+      'Say hello',
+      'Contact us',
+      'Ask about a cake, a date, or an order for a crowd. We read everything that comes in.')}"></div>
+
+  <!--/*
+    The form, and beside it the things somebody on this page is usually actually after: when we are open,
+    where we are, and the phone number. They were on the homepage and in the footer but not here, which
+    made this page a form and nothing else.
+  */-->
+  <div class="container pb-16 md:pb-24">
+    <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] measure-wide items-start">
+      <div class="panel p-8 md:p-10">
+      <h2 class="h3 text-bakery-900 mb-2">Get in touch</h2>
+      <p class="text-bakery-700 mb-8">
+        Or call us: <a href="tel:+13097010660" class="link-plain">(309) 701-0660</a>
+      </p>
+
+      <!--/*
+        A plain form post. The enquiry is validated, written down and mailed by the server, which then
+        renders this page again with the outcome — no fetch, no JSON, and nothing to go wrong between
+        pressing the button and the enquiry being recorded.
+
+        Spring Security's CSRF token is added to any th:action form automatically, which is what keeps
+        this working on a deployment that has an identity provider configured (there, an unaccompanied
+        POST is rejected).
+      */-->
+      <!--/* th:unless, not th:if="${!sent}": the attribute is absent on a GET, and SpEL cannot negate
+             a null. */-->
+      <form th:action="@{/contact}" method="post" th:unless="${sent}">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-bakery-800 mb-2" for="name">Name</label>
+          <input type="text" id="name" name="name" th:value="${name}" required
+                 class="field">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-bakery-800 mb-2" for="email">Email</label>
+          <input type="email" id="email" name="email" th:value="${email}" required
+                 class="field">
+        </div>
+        <!--/*
+          The spam trap. Not display:none — the crawlers that matter check for that — but positioned off
+          the page, skipped by the tab key and told not to autofill. A person never sees it; a bot fills in
+          every field it finds. See SiteController#submit for what happens then.
+        */-->
+        <div class="absolute left-[-9999px]" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-bakery-800 mb-2" for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required th:text="${message}"
+                    class="field"></textarea>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <button type="submit"
+                  class="pill-sage">
+            Send message
+          </button>
+
+          <!--/* Never claim a success we did not get: say what happened and give them the phone number. */-->
+          <p th:if="${error}" role="alert" class="text-center text-red-700">
+            <span th:text="${error}">Could not send the message.</span>
+            Please call us on
+            <a href="tel:+13097010660" class="link-plain">(309) 701-0660</a>.
+          </p>
+        </div>
+      </form>
+
+      <p th:if="${sent}" role="status" class="text-bakery-700">
+        Thanks. Your message is on its way, and we will get back to you.
+      </p>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="panel p-6 md:p-8">
+          <h2 class="h4 text-bakery-900">Our hours</h2>
+          <div class="mt-4 text-bakery-800"
+               th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
+        </div>
+        <div class="panel p-6 md:p-8">
+          <h2 class="h4 text-bakery-900">Find us</h2>
+          <div class="mt-4 text-bakery-800"
+               th:replace="~{fragments/visit :: address('link-plain')}"></div>
+        </div>
+        <div class="panel-quiet p-6 md:p-8">
+          <h2 class="h4 text-bakery-900">Ordering for a crowd?</h2>
+          <p class="mt-2 text-sm text-bakery-700 leading-relaxed">
+            Goodie boxes, party packages and wedding desserts have their own page, with sizes and prices.
+          </p>
+          <a href="/catering" class="link mt-4 inline-block font-medium">
+            Goodie boxes &amp; catering
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+</body>
+</html>
