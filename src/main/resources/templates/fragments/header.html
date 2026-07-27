@@ -55,13 +55,18 @@
   </div>
 </header>
 
-<!--/* One list of links, worn two ways — so the phone and the desktop can't end up offering different
-       pages. */-->
+<!--/*
+  One list of links, worn two ways — so the phone and the desktop can't end up offering different pages.
+
+  The page you are on is marked: aria-current for a screen reader, and a sage rule under the word for
+  everyone else. A four-page site can get away without it, right up until someone clicks Catering, lands
+  on a page of prices, and has no idea whether the click worked.
+*/-->
 <th:block th:fragment="links(itemClass)">
-  <a href="/products" th:class="${itemClass}">Our Products</a>
-  <a href="/catering" th:class="${itemClass}">Catering</a>
-  <a href="/history" th:class="${itemClass}">Our Story</a>
-  <a href="/contact" th:class="${itemClass}">Contact</a>
+  <a th:each="item : ${ {{'/products','Our Products'},{'/catering','Catering'},{'/history','Our Story'},{'/contact','Contact'}} }"
+     th:href="${item[0]}" th:text="${item[1]}"
+     th:aria-current="${path == item[0] ? 'page' : null}"
+     th:class="${itemClass} + (${path == item[0]} ? ' is-here' : '')">Our Products</a>
 </th:block>
 </body>
 </html>

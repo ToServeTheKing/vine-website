@@ -200,3 +200,37 @@
 @utility band {
   @apply py-14 md:py-20;
 }
+
+/*
+ * THE PAGE YOU ARE ON, in the nav. A rule under the word rather than a colour change: the nav is already
+ * sage on cream, and darkening it further reads as a hover, not as "you are here".
+ */
+@utility is-here {
+  @apply text-bakery-900;
+  text-decoration: underline;
+  text-decoration-color: var(--color-bakery-500);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+
+/*
+ * The keyboard's way past the nav. Off-screen until focused, then a normal-looking button in the corner —
+ * the pattern only works if it becomes visible, which is the half everyone forgets.
+ */
+@utility skip-link {
+  @apply sr-only;
+  &:focus {
+    @apply not-sr-only fixed left-4 top-4 z-50 pill-sage;
+  }
+}
+
+/*
+ * An opening paragraph set like a printed one. Used once, on the story — a drop cap on every page would
+ * be a costume rather than a voice.
+ */
+@utility opening-para {
+  &::first-letter {
+    @apply font-adbhashitha text-6xl text-bakery-700 float-left mr-3 mt-1;
+    line-height: 0.75;
+  }
+}
