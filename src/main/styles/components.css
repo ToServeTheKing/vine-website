@@ -148,6 +148,25 @@
 }
 
 /*
+ * A card that is holding an aside rather than the thing you came for: the small print under a price
+ * table, a pointer to another page. Tinted and bordered, no shadow, so it sits ON the page instead of
+ * above it and does not compete with the cards it follows. There were two hand-rolled versions of this
+ * before it had a name, and they had different borders.
+ */
+@utility panel-quiet {
+  @apply rounded-panel border border-bakery-200/70 bg-bakery-50/60;
+}
+
+/*
+ * A grid of cards. It was written three times with three different sets of breakpoints and gaps — the
+ * homepage went to three columns at md, the catering tables at lg, the catalogue at lg with a wider gap —
+ * so cards on different pages lined up differently for no reason anyone chose.
+ */
+@utility card-grid {
+  @apply grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+/*
  * The branch, laid into a corner at the weight of a watermark. It is the one mark that is unmistakably
  * this shop, and at this size and colour it is texture rather than decoration.
  */
