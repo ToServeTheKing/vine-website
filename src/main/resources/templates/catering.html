@@ -3,27 +3,11 @@
 <body>
 <div th:fragment="content">
 
-  <!--/*
-    A short photographic band rather than the plain cream header the other pages use. This is the one page
-    that is selling something, and the same treatment as the homepage hero — blurred photo, sage wash —
-    carries the brand rather than inventing a new look for it.
-  */-->
-  <section class="band relative flex items-center bg-bakery-900 text-white overflow-hidden">
-    <img th:src="${photos.of('gallery/Cakes.webp')}" alt=""
-         class="absolute inset-0 w-full h-full object-cover blur-[3px] scale-110">
-    <div class="absolute inset-0 bg-bakery-900/80"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
-
-    <div class="relative container w-full min-w-0">
-      <div class="measure text-center">
-        <p class="eyebrow text-bakery-200">Order ahead</p>
-        <h1 class="h1 mt-3 text-bakery-50">Goodie boxes &amp; catering</h1>
-        <p class="lede mt-5 text-bakery-100">
-          Boxes for the office, packages for a party, and cakes and desserts for a wedding.
-        </p>
-      </div>
-    </div>
-  </section>
+  <div th:replace="~{fragments/opening :: photographed(
+      'Order ahead',
+      'Goodie boxes &amp; catering',
+      'Boxes for the office, packages for a party, and cakes and desserts for a wedding.',
+      'gallery/Cakes.webp')}"></div>
 
   <div class="bg-bakery-50">
     <div class="container pt-14 pb-16 md:pt-16 md:pb-24">
@@ -33,11 +17,7 @@
         mind, and we will bake to it.
       </p>
 
-      <!--/* The branch from the wordmark, as a divider. It is a mask over currentColor, so it takes the
-             colour of the text around it — see .mark in tokens.css. */-->
-      <div class="mt-10 flex justify-center" aria-hidden="true">
-        <span class="mark mark-r w-12 h-12 text-bakery-400"></span>
-      </div>
+      <div class="mt-10" th:replace="~{fragments/opening :: divider}"></div>
 
       <div class="mt-12 max-w-6xl mx-auto space-y-16 md:space-y-20">
 
@@ -67,7 +47,7 @@
                              : (${#lists.size(table.tiers) == 2} ? 'sm:grid-cols-2 max-w-3xl mx-auto'
                              : 'sm:grid-cols-2 lg:grid-cols-3')">
             <article th:each="tier, t : ${table.tiers}"
-                     class="relative flex flex-col overflow-hidden panel-lift">
+                     class="relative flex flex-col overflow-hidden panel">
               <!--/* The wordmark's branch, at watermark weight. */-->
               <span class="panel-mark -top-3 -right-4 w-24 h-24 rotate-12" aria-hidden="true"></span>
 

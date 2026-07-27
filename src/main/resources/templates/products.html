@@ -3,13 +3,10 @@
 <body>
 <div th:fragment="content" class="min-h-screen bg-bakery-50">
 
-  <header class="page-head">
-    <h1 class="h1 text-bakery-900">Our products</h1>
-    <p class="mt-4 text-bakery-800 measure leading-relaxed">
-      What comes out of the kitchen on Main Street. Cakes and decorated cookies are made to order, so
-      most of what follows started as somebody describing what they wanted.
-    </p>
-  </header>
+  <div th:replace="~{fragments/opening :: plain(
+      'From the counter',
+      'Our products',
+      'What comes out of the kitchen on Main Street. Cakes and decorated cookies are made to order, so most of what follows started as somebody describing what they wanted.')}"></div>
 
   <div class="container pb-16">
     <!--/*
@@ -31,7 +28,7 @@
            responding. The only motion left is the shadow on hover. */-->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div th:each="product : ${products}"
-           class="group panel-lift overflow-hidden">
+           class="panel overflow-hidden">
         <div class="relative w-full overflow-hidden">
           <div th:replace="~{:: gallery(${product})}"></div>
         </div>
