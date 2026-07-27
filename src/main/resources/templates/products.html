@@ -15,7 +15,7 @@
       forty items instead of whichever twelve the default filter showed. The filtering itself has always
       been the server's job — this just stopped pretending otherwise.
     */-->
-    <div class="flex flex-wrap justify-center gap-4 mb-12">
+    <div class="filter-row mb-12">
       <a th:each="category : ${categories}"
          th:href="${category == 'All' ? '/products' : '/products?category=' + #uris.escapeQueryParam(category)}"
          th:text="${category}"

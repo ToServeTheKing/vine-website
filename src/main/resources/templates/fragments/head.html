@@ -18,8 +18,12 @@
 
   <!--/* Open the connection to the photo bucket while the head is still parsing. */-->
   <link rel="preconnect" th:href="${assetOrigin}" crossorigin>
-  <!--/* The wordmark is set in Raleway; without preloading it arrives late and the logo visibly reflows. */-->
+  <!--/* All three are above the fold — the wordmark, every heading, and the body — and all three together
+         are now smaller than the display face alone used to be. Without preloading, each page opens in
+         the fallback and then reflows into the brand. */-->
   <link rel="preload" as="font" type="font/woff2" href="/fonts/raleway-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/LeJour-Script.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/AdBhashitha.woff2" crossorigin>
   <link th:if="${preload}" rel="preload" as="image" th:href="${preload}" fetchpriority="high">
 
   <title th:text="${title}">The Vine Coffeehouse + Bakery</title>

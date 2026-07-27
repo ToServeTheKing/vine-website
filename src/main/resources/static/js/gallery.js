@@ -14,7 +14,7 @@
   'use strict';
 
   var ARROW =
-    'absolute top-1/2 -translate-y-1/2 grid place-items-center h-10 w-10 rounded-full bg-bakery-900/40 ' +
+    'absolute top-1/2 -translate-y-1/2 grid place-items-center h-11 w-11 rounded-full bg-bakery-900/40 ' +
     'text-white backdrop-blur-sm transition hover:bg-bakery-900/60 focus:outline-none focus-visible:ring-2 ' +
     'focus-visible:ring-white';
 

@@ -60,6 +60,15 @@ summary::-webkit-details-marker {
 }
 
 /*
+ * On the sage bands that same sage is about 2.5:1 against the background — under the 3:1 a focus
+ * indicator needs, so the ring effectively disappeared exactly where the page's main calls to action
+ * live. Cream on those sections.
+ */
+:where(.bg-bakery-800, .bg-bakery-900) :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: var(--color-bakery-100);
+}
+
+/*
  * THE Z-INDEX SCALE, in full. Two layers is all this site has, and writing them down is what stops a
  * third being invented at 9999:
  *

@@ -2,7 +2,9 @@ package com.itsthevine.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +49,9 @@ class SiteControllerTest {
 
     @Autowired
     WebApplicationContext context;
+
+    @Autowired
+    com.itsthevine.web.domain.ContactEnquiryRepository enquiries;
 
     MockMvc mvc;
 
@@ -156,6 +161,18 @@ class SiteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(not(containsString("<script>alert(1)</script>"))))
                 .andExpect(content().string(not(containsString("like to ask about"))));
+    }
+
+    @Test
+    void aFilledInTrapIsThankedAndThrownAway() throws Exception {
+        // The bot is told the same thing a person is told — anything else is a training signal — and
+        // nothing is recorded or sent. The enquiry table is what proves the second half.
+        mvc.perform(post("/contact")
+                        .param("name", "Bot").param("email", "bot@example.com")
+                        .param("message", "Cheap watches").param("website", "http://example.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Your message is on its way")));
+        assertThat(enquiries.count()).isZero();
     }
 
     @Test

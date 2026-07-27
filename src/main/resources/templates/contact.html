@@ -43,6 +43,16 @@
           <input type="email" id="email" name="email" th:value="${email}" required
                  class="field">
         </div>
+        <!--/*
+          The spam trap. Not display:none — the crawlers that matter check for that — but positioned off
+          the page, skipped by the tab key and told not to autofill. A person never sees it; a bot fills in
+          every field it finds. See SiteController#submit for what happens then.
+        */-->
+        <div class="absolute left-[-9999px]" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <div class="mb-4">
           <label class="block text-sm font-medium text-bakery-800 mb-2" for="message">Message</label>
           <textarea id="message" name="message" rows="5" required th:text="${message}"
