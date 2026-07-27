@@ -112,12 +112,11 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 measure-wide mt-14 md:mt-18">
         <div class="panel p-6 md:p-8">
           <h2 class="h3 text-bakery-900 mb-8">Our hours</h2>
-          <div th:replace="~{fragments/visit :: hours('text-bakery-800')}"></div>
+          <div th:replace="~{fragments/visit :: hours('', 'text-bakery-800')}"></div>
         </div>
         <div class="panel p-6 md:p-8">
           <h2 class="h3 text-bakery-900 mb-8">Find us</h2>
-          <div class="text-bakery-800"
-               th:replace="~{fragments/visit :: address('link-plain')}"></div>
+          <div th:replace="~{fragments/visit :: address('text-bakery-800', 'link-plain')}"></div>
         </div>
       </div>
     </div>
