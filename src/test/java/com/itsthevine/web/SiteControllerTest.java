@@ -124,6 +124,24 @@ class SiteControllerTest {
     }
 
     @Test
+    void theNavMarksThePageYouAreOn() throws Exception {
+        // Generated from the path the controller set, so a wrong model attribute would mark nothing at
+        // all — and nothing at all looks exactly like a page that simply has no active link.
+        mvc.perform(get("/catering"))
+                .andExpect(content().string(containsString("href=\"/catering\" aria-current=\"page\"")));
+        mvc.perform(get("/products"))
+                .andExpect(content().string(containsString("href=\"/products\" aria-current=\"page\"")))
+                .andExpect(content().string(not(containsString("href=\"/catering\" aria-current"))));
+    }
+
+    @Test
+    void everyPageOffersTheKeyboardAWayPastTheNav() throws Exception {
+        mvc.perform(get("/"))
+                .andExpect(content().string(containsString("href=\"#content\"")))
+                .andExpect(content().string(containsString("id=\"content\"")));
+    }
+
+    @Test
     void aCateringButtonStartsTheEnquiryOffAboutThatTable() throws Exception {
         mvc.perform(get("/contact").param("about", "Weddings"))
                 .andExpect(content().string(containsString("like to ask about weddings catering")));

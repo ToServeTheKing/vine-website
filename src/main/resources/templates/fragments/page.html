@@ -15,8 +15,11 @@
 <head th:replace="~{fragments/head :: head(${title}, ${description}, ${path})}"></head>
 <body>
   <div class="min-h-screen bg-bakery-50 flex flex-col">
+    <!--/* Hidden until it has focus: the first thing a keyboard reaches, so the nav isn't a toll gate on
+           every page. */-->
+    <a href="#content" class="skip-link">Skip to the page</a>
     <div th:replace="~{fragments/header :: header}"></div>
-    <main class="flex-grow">
+    <main id="content" class="flex-grow">
       <div th:replace="${content}"></div>
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
