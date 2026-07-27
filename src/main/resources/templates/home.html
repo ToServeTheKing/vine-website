@@ -3,8 +3,15 @@
 <body>
 <div th:fragment="content">
 
-  <!--/* Hero — centred lockup on a sage wash. */-->
-  <section class="relative flex items-center min-h-[78svh] py-20 md:py-28 bg-bakery-900 text-white overflow-hidden">
+  <!--/*
+    Hero — centred lockup on a sage wash.
+
+    56svh, not 78: at 78 a laptop's first screen was the lockup and nothing else, so the page looked like
+    it had one thing on it. The floor is low enough now that the next section shows above the fold and
+    invites the scroll, and high enough that the lockup still has room to be the first thing you see. It
+    is a floor, not a height — the content wins on a short window.
+  */-->
+  <section class="relative flex items-center min-h-[56svh] py-16 md:py-20 bg-bakery-900 text-white overflow-hidden">
     <!--/* Softened on purpose: the storefront's own painted sign sits right behind the logo, so a sharp
            photo makes you read the name twice. scale-110 hides the blur's feathered edges. */-->
     <img th:src="${photos.of('gallery/Outside.webp')}" alt="" fetchpriority="high"
@@ -17,8 +24,8 @@
            page on narrow screens. */-->
     <div class="relative container w-full min-w-0">
       <div class="measure text-center">
-        <div th:replace="~{fragments/lockup :: large('text-bakery-50 mb-10')}"></div>
-        <p class="lede sm:text-xl text-bakery-100 mb-10">
+        <div th:replace="~{fragments/lockup :: large('text-bakery-50 mb-8')}"></div>
+        <p class="lede sm:text-xl text-bakery-100 mb-8">
           A coffeehouse and bakery in downtown Princeville, Illinois.
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
