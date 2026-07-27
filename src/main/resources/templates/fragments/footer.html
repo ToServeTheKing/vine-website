@@ -20,11 +20,10 @@
 
       <div>
         <h3 class="label text-bakery-300 mb-4 font-adbhashitha">Visit</h3>
-        <div th:replace="~{fragments/visit :: address('link-on-dark')}"></div>
+        <div th:replace="~{fragments/visit :: address('', 'link-on-dark')}"></div>
         <!--/* The hours are the thing people come to a bakery's site for, and the footer is on every
                page. */-->
-        <div class="mt-4 text-sm text-bakery-200"
-             th:replace="~{fragments/visit :: hours('text-sm text-bakery-200')}"></div>
+        <div th:replace="~{fragments/visit :: hours('mt-4', 'text-sm text-bakery-200')}"></div>
       </div>
     </div>
 
