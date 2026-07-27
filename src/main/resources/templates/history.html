@@ -3,24 +3,11 @@
 <body>
 <div th:fragment="content" class="bg-bakery-50">
 
-  <!--/* The shop's own front, which is what the story is about. Same band as the catering page. */-->
-  <section class="band relative flex items-center bg-bakery-900 text-white overflow-hidden">
-    <img th:src="${photos.of('gallery/Outside.webp')}" alt=""
-         class="absolute inset-0 w-full h-full object-cover object-bottom blur-[3px] scale-110">
-    <div class="absolute inset-0 bg-bakery-900/80"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-bakery-900 via-bakery-800/60 to-bakery-900/80"></div>
-    <div class="relative container w-full min-w-0">
-      <div class="measure text-center">
-        <p class="eyebrow text-bakery-200">Since 2024</p>
-        <h1 class="h1 mt-3 text-bakery-50">Our story</h1>
-        <p class="lede mt-5 text-bakery-100">
-          215 E Main Street, in the middle of downtown Princeville.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <header class="container pt-14 pb-2 md:pt-16 text-center"></header>
+  <div th:replace="~{fragments/opening :: photographed(
+      'Since 2024',
+      'Our story',
+      '215 E Main Street, in the middle of downtown Princeville.',
+      'gallery/Outside.webp')}"></div>
 
   <div class="container pb-16 md:pb-24">
     <div class="measure space-y-12">

@@ -3,12 +3,10 @@
 <body>
 <div th:fragment="content" class="min-h-screen bg-bakery-50">
 
-  <header class="page-head">
-    <h1 class="h1 text-bakery-900">Contact us</h1>
-    <p class="mt-4 text-bakery-800 max-w-xl mx-auto leading-relaxed">
-      Ask about a cake, a date, or an order for a crowd. We read everything that comes in.
-    </p>
-  </header>
+  <div th:replace="~{fragments/opening :: plain(
+      'Say hello',
+      'Contact us',
+      'Ask about a cake, a date, or an order for a crowd. We read everything that comes in.')}"></div>
 
   <!--/*
     The form, and beside it the things somebody on this page is usually actually after: when we are open,

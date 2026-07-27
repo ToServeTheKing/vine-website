@@ -32,8 +32,11 @@
 </address>
 
 <!--/* "Open until 2:00pm", or when it opens next. The one thing a visitor at 2:30 on a Sunday wants. */-->
+<!--/* The caller passes the display too (`inline-flex`, or `hidden lg:inline-flex`): setting it here as
+       well would be two rules for one property, and the winner would depend on Tailwind's output order
+       rather than on the markup. */-->
 <span th:fragment="open-now(dotClass, textClass)"
-      th:class="'inline-flex items-center gap-2 ' + ${textClass}">
+      th:class="'items-center gap-2 ' + ${textClass}">
   <span th:class="'h-2 w-2 rounded-full shrink-0 ' + ${dotClass}" aria-hidden="true"></span>
   <span th:text="${openNow.summary}">Open until 2:00pm</span>
 </span>
