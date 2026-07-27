@@ -26,7 +26,7 @@
     <!--/* Deliberately unanimated, as before: filtering used to run a layout reflow plus an enter/exit
            fade on every card, which on a 40-card grid reads as the page lurching rather than
            responding. The only motion left is the shadow on hover. */-->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="card-grid">
       <div th:each="product : ${products}"
            class="panel overflow-hidden">
         <div class="relative w-full overflow-hidden">

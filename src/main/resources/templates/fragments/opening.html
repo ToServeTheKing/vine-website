@@ -36,6 +36,24 @@
   <p class="lede mt-4 measure text-bakery-800" th:text="${lede}">One line about the page.</p>
 </header>
 
+<!--/*
+  How a section begins, as opposed to a page: the title, centred, and optionally a line under it. Pass an
+  empty string for no line.
+
+  It was five different pieces of markup — centred with one margin, centred with another, left-aligned
+  with a blurb — for what is one idea repeated down every page.
+*/-->
+<div th:fragment="section-head(title, blurb)" class="measure text-center">
+  <h2 class="h2 text-bakery-900" th:text="${title}">What people come in for</h2>
+  <p th:if="${!#strings.isEmpty(blurb)}" class="mt-3 text-bakery-700 leading-relaxed" th:text="${blurb}">A line.</p>
+</div>
+
+<!--/* The same, on the sage bands, where the type is cream. */-->
+<div th:fragment="section-head-dark(title, blurb)" class="measure text-center">
+  <h2 class="h2" th:text="${title}">Before you order</h2>
+  <p th:if="${!#strings.isEmpty(blurb)}" class="mt-3 text-bakery-100 leading-relaxed" th:text="${blurb}">A line.</p>
+</div>
+
 <!--/* The branch from the wordmark, between one part of a page and the next. */-->
 <div th:fragment="divider" class="flex justify-center" aria-hidden="true">
   <span class="mark mark-r w-12 h-12 text-bakery-400"></span>
