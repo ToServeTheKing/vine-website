@@ -60,6 +60,34 @@ class SiteControllerTest {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
+    /**
+     * The tab icon used to be the 1000x1000 logo PNG, which is 71 KB fetched to paint 16 pixels and, being
+     * a hairline drawing, arrived as a grey smudge at that size. The order matters and is the reason this
+     * asserts position: a browser takes the LAST icon format it understands, so the .ico has to come first
+     * or Chrome settles for the bitmap instead of the SVG.
+     */
+    @Test
+    void theTabIconIsAnIconRatherThanTheFullLogo() throws Exception {
+        String head = mvc.perform(get("/")).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(head).contains("<link rel=\"icon\" href=\"/favicon.ico\" sizes=\"32x32\">");
+        assertThat(head).contains("<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\">");
+        assertThat(head).contains("<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\">");
+        assertThat(head.indexOf("/favicon.ico")).isLessThan(head.indexOf("/favicon.svg"));
+        // The 1000x1000 logos are no longer offered as icons anywhere.
+        assertThat(head).doesNotContain("rel=\"icon\" media=");
+        assertThat(head).doesNotContain("logo_dark.png");
+    }
+
+    @Test
+    void theIconFilesAreActuallyServed() throws Exception {
+        // A link to a 404 is worse than no link: the browser shows its default and caches the miss.
+        for (String icon : new String[] {"/favicon.svg", "/favicon.ico", "/apple-touch-icon.png"}) {
+            mvc.perform(get(icon)).andExpect(status().isOk());
+        }
+    }
+
     @Test
     void everyPageStatesItsOwnTitleAndDescription() throws Exception {
         // One generic shell for every page was the SPA's problem, and the reason a controller used to
