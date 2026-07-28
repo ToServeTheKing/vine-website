@@ -13,8 +13,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="icon" media="(prefers-color-scheme: light)" href="/images/resources/logo_L.png">
-  <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/resources/logo_dark.png">
+  <!--/*
+    These pointed at the 1000x1000 logo PNGs, which is why the tab looked empty: 71 KB downloaded to
+    paint 16 square pixels, and the mark is a hairline vine branch whose strokes are thinner than one
+    pixel at that size, so it arrived as a grey smudge. favicon.svg is one leaf from that branch, filled
+    rather than stroked, and it answers prefers-color-scheme itself — so no media queries here.
+
+    Three lines is the whole modern set. The .ico is only for browsers that will not take an SVG icon
+    (Safari), and it is listed FIRST because a browser takes the last format it understands: reverse
+    these two and Chrome would settle for the bitmap.
+  */-->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
   <!--/* Open the connection to the photo bucket while the head is still parsing. */-->
   <link rel="preconnect" th:href="${assetOrigin}" crossorigin>

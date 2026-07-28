@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The Vine">
+  <!--
+    ONE LEAF, NOT THE LOGO. The wordmark's mark is a six-leaf vine branch drawn in hairlines, and at the
+    16px a browser tab actually paints it collapses into a grey smudge, because the strokes are thinner
+    than a pixel. So this takes the single recognisable unit of that branch, a lanceolate leaf, and draws
+    it filled rather than stroked: at this size a silhouette survives and an outline does not.
+
+    NO MIDRIB, deliberately. A vein was drawn first and rendered at 16px it split the leaf into two pale
+    slivers, which is the same legibility problem the outline had. It looked better at 32px and worse
+    where it counts, so it went. What identifies the shape is the two pointed ends, the tilt and the stem.
+
+    Sage on cream, both from the site's own palette (bakery-600 on bakery-50). An SVG favicon can answer
+    the browser's colour scheme, which a .ico cannot, so the dark variant swaps to bakery-400 on
+    bakery-900 rather than leaving a cream tile glowing in a dark tab strip.
+  -->
+  <style>
+    .ground { fill: #faf7f0; }
+    .leaf   { fill: #5f6f52; }
+    .stem   { stroke: #5f6f52; }
+    @media (prefers-color-scheme: dark) {
+      .ground { fill: #232b1e; }
+      .leaf   { fill: #a2ae8b; }
+      .stem   { stroke: #a2ae8b; }
+    }
+  </style>
+
+  <rect class="ground" width="64" height="64" rx="14"/>
+
+  <!-- Tilted so it reads as growing rather than floating. The stem's tip lands inside the tile after the
+       rotation: at -30 degrees it sits at roughly (46, 56) of 64. -->
+  <g transform="rotate(-30 32 32)">
+    <!-- Pointed at both ends: two mirrored curves from tip to tip, which is what makes it a leaf and
+         not an eye. -->
+    <path class="leaf" d="M32 7 C47 22 47 41 32 53 C17 41 17 22 32 7 Z"/>
+    <path class="stem" fill="none" stroke-width="3.4" stroke-linecap="round" d="M32 53 L32 60"/>
+  </g>
+</svg>
