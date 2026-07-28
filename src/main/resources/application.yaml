@@ -11,6 +11,23 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
+  servlet:
+    multipart:
+      # THIS BLOCK IS THE WHOLE REASON PHOTO UPLOADS FAILED. Unset, Boot defaults to a 1 MB max-file-size,
+      # and a photo off a phone is 3-12 MB — so every real upload died with FileSizeLimitExceededException
+      # before it reached ProductPhotoService, which exists precisely to resize "whatever came off a phone".
+      # The resizing pipeline could never run on the input it was written for.
+      max-file-size: 15MB
+      # The file input is `multiple`, so one submit can carry several photos; this bounds the whole request
+      # rather than each part. Four full-size photos at once is a realistic morning's worth of new stock.
+      max-request-size: 60MB
+      # Parse when the controller asks for the files, not while Tomcat is reading parameters. Eagerly, an
+      # oversize part throws from inside the container's parameter parsing, which no @ExceptionHandler can
+      # reach — the request dies as a 500 and then the forward to /error re-parses and throws again (the
+      # "Exception Processing [ErrorPage...]" pairs in the log). Lazily, it surfaces as a
+      # MaxUploadSizeExceededException during argument binding, where AdminController can catch it.
+      resolve-lazily: true
+
   mail:
     host: ${SMTP_SERVER:localhost}
     port: ${SMTP_PORT:25}
@@ -28,6 +45,13 @@ spring:
           # only the configured host, not every server we might ever talk to.
           ssl:
             trust: ${SMTP_SERVER:localhost}
+
+server:
+  tomcat:
+    # Read and discard the rest of an over-sized body instead of resetting the connection, so the browser
+    # actually receives the redirect and the message rather than "connection reset". Only reachable now for
+    # a genuinely enormous file, but that is exactly when a clear answer matters.
+    max-swallow-size: -1
 
 platform:
   web:

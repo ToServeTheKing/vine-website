@@ -1,5 +1,6 @@
 package com.itsthevine.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -13,7 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.unit.DataSize;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
@@ -77,6 +80,25 @@ class AdminPagesTest {
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
+    }
+
+    /**
+     * The bug this guards was an ABSENCE: nothing configured multipart, so Boot's 1 MB default applied and
+     * every photo off a phone was rejected by the container before {@code ProductPhotoService} — the class
+     * whose whole job is resizing phone photos — could see it. A default is exactly the kind of thing that
+     * comes back silently, so the numbers are asserted rather than trusted.
+     */
+    @Test
+    void photosOffAPhoneFitInsideTheUploadLimits() {
+        MultipartProperties multipart = context.getBean(MultipartProperties.class);
+
+        assertThat(multipart.getMaxFileSize()).isEqualTo(DataSize.ofMegabytes(15));
+        assertThat(multipart.getMaxRequestSize()).isEqualTo(DataSize.ofMegabytes(60));
+        // Without this the throw happens inside the container's parameter parsing, where no
+        // @ExceptionHandler can reach it — which is what made an over-sized photo a 500.
+        assertThat(multipart.isResolveLazily()).isTrue();
+        // The default is 1 MB. If this ever passes, the fix has been undone.
+        assertThat(multipart.getMaxFileSize()).isNotEqualTo(DataSize.ofMegabytes(1));
     }
 
     @Test
