@@ -34,8 +34,16 @@
         <a href="/products" class="btn-secondary">View the site</a>
         <!--/* A real form post: the platform's logout expects one, and it also ends the Authentik
                session — a link would leave you signed in at the identity provider and straight back in
-               on the next click. */-->
-        <form method="post" action="/logout">
+               on the next click.
+
+               th:action, NOT action, AND THAT IS NOT COSMETIC. Thymeleaf inserts the hidden _csrf input
+               while it processes a th:action; a plain action= is passed through untouched, so the form
+               posts with no token and Spring Security answers 403. That renders the site's error page and
+               logs NOTHING at ERROR, so the form simply appears to be broken with no trace anywhere. It
+               is how "Add something new" silently refused to create a product, and how this button
+               silently refused to sign anyone out. AdminPagesTest counts forms against tokens so a plain
+               action= cannot come back. */-->
+        <form method="post" th:action="@{/logout}">
           <button type="submit" class="btn-secondary">Sign out</button>
         </form>
       </div>

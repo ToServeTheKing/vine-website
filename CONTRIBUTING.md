@@ -42,7 +42,7 @@ mvn -B -s .gitea/ci-settings.xml verify
 # Faster inner loop — skip the frontend build when you're only touching Java.
 mvn -B -s .gitea/ci-settings.xml -DskipFrontend=true verify
 
-# Run the app locally (Postgres + any OIDC/storage config supplied via env — see the app's README).
+# Run the app locally (Postgres + any OIDC/storage config supplied via env, as application.yaml reads it).
 mvn -s .gitea/ci-settings.xml spring-boot:run
 ```
 
@@ -139,7 +139,5 @@ the workflow manually (`workflow_dispatch`) rather than pushing an empty commit.
   owns the data, the rules, and the validation. The SPA renders and calls `/api`. Prose and layout stay
   in the markup; only the parts that change without the page changing (prices, lists, links) become data.
 - Keep commits scoped and their messages in the imperative ("add booking link", not "added").
-- Don't commit secrets. Config comes from environment variables at deploy time (see the app's README for
-  the list); there is no `.env` in the repo.
-- Update the README when you change what the server owns or what env vars it needs — that's the file the
-  next person reads first.
+- Don't commit secrets. Config comes from environment variables at deploy time
+  (`src/main/resources/application.yaml` reads them); there is no `.env` in the repo.
