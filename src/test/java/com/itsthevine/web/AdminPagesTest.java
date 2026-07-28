@@ -101,6 +101,33 @@ class AdminPagesTest {
         assertThat(multipart.getMaxFileSize()).isNotEqualTo(DataSize.ofMegabytes(1));
     }
 
+    /**
+     * EVERY form on an admin page has to carry a CSRF token, and four of them did not.
+     *
+     * <p>Thymeleaf inserts the hidden {@code _csrf} input while it processes a {@code th:action}. A form
+     * written with a plain {@code action=} is passed through untouched, so it posts without a token and
+     * Spring Security answers 403 — which renders the site's error page and logs nothing at ERROR, so the
+     * failure was invisible from the outside. "Add something new" was one of the four, which is why no
+     * product could be created.
+     *
+     * <p>Counted rather than named, so a form added later is covered by this test without anyone
+     * remembering to extend it.
+     */
+    @Test
+    void everyAdminFormCarriesACsrfToken() throws Exception {
+        for (String page : new String[] {"/admin", "/admin/catering"}) {
+            String html = mvc.perform(get(page).with(user("morissa")))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            long forms = html.split("<form", -1).length - 1;
+            long tokens = html.split("name=\"_csrf\"", -1).length - 1;
+            assertThat(forms).as("%s should have forms to check", page).isPositive();
+            assertThat(tokens).as("%s: every one of its %d forms needs a token", page, forms)
+                    .isEqualTo(forms);
+        }
+    }
+
     @Test
     void theCatalogueScreenShowsWhatIsOnThePageWithItsPhotos() throws Exception {
         mvc.perform(get("/admin").with(user("morissa")))
